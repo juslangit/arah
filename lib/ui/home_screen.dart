@@ -9,6 +9,7 @@ import 'package:maplibre_gl/maplibre_gl.dart';
 
 import '../app/app_state.dart';
 import '../app/theme.dart';
+import '../config.dart';
 import '../core/geo.dart';
 import '../core/settings.dart';
 import '../nav/nav_engine.dart';
@@ -94,14 +95,18 @@ class _HomeScreenState extends State<HomeScreen> {
     return t == MapTheme.dark;
   }
 
-  /// Offline pack style when one is installed, OpenFreeMap otherwise.
+  /// Online: OpenFreeMap's world map. Offline (or if it can't be fetched): the
+  /// installed packs, which only cover Malaysia, Singapore and Brunei.
   Future<void> _refreshStyle() async {
     final app = context.appRead;
     final key = '${app.packs.installed.keys.join(',')}|$_dark|${app.online}';
     if (key == _styleKey) return;
     _styleKey = key;
-    final offline = await MapStyles.offlineStyle(app.packs, dark: _dark, online: app.online);
-    final style = offline ?? await MapStyles.onlineStyle(dark: _dark);
+    final online = app.online ? await MapStyles.onlineStyle(dark: _dark) : null;
+    final style =
+        online ??
+        await MapStyles.offlineStyle(app.packs, dark: _dark) ??
+        (_dark ? ArahConfig.onlineDarkStyleUrl : ArahConfig.onlineStyleUrl);
     if (!mounted) return;
     setState(() {
       _style = style;

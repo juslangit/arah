@@ -107,9 +107,9 @@ class MapStyles {
 
   static final _online = <bool, String>{};
 
-  /// OpenFreeMap's style, fetched and patched with [palestine]. Falls back to
-  /// the plain URL only if the style can't be fetched (then nothing loads anyway).
-  static Future<String> onlineStyle({bool dark = false}) async {
+  /// OpenFreeMap's style, fetched and patched with [palestine]; null if it
+  /// can't be fetched.
+  static Future<String?> onlineStyle({bool dark = false}) async {
     final cached = _online[dark];
     if (cached != null) return cached;
     final url = dark ? ArahConfig.onlineDarkStyleUrl : ArahConfig.onlineStyleUrl;
@@ -117,11 +117,11 @@ class MapStyles {
       final res = await http
           .get(Uri.parse(url), headers: ArahConfig.serverHeaders)
           .timeout(const Duration(seconds: 10));
-      if (res.statusCode != 200) return url;
+      if (res.statusCode != 200) return null;
       final style = palestine(jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>);
       return _online[dark] = jsonEncode(style);
     } catch (_) {
-      return url;
+      return null;
     }
   }
 
