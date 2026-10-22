@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arah — cute UI directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Fredoka:wght@400;500;600;700&family=M+PLUS+Rounded+1c:wght@500;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --page: #F3F3F6; --page-ink: #23212A; --page-muted: #5F5C68; --page-line: #E1E0E7;
+  }
+  /* Light page only: the mockups are judged on colour, against a neutral backdrop. */
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--page-ink); font: 16px/1.55 Nunito, system-ui, sans-serif; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 48px 16px 80px; }
+  header.top h1 { font: 900 44px/1.1 Nunito, sans-serif; margin: 0 0 10px; letter-spacing: -0.5px; }
+  header.top p { margin: 0; color: var(--page-muted); font-size: 18px; max-width: 760px; }
+  nav.jump { display: flex; gap: 10px; flex-wrap: wrap; margin: 22px 0 8px; }
+  nav.jump a { text-decoration: none; color: var(--page-ink); border: 1.5px solid var(--page-line); padding: 8px 14px; border-radius: 999px; font-weight: 800; }
+  nav.jump a:hover { background: var(--page-line); }
+
+  section.dir { margin-top: 64px; padding-top: 28px; border-top: 1.5px solid var(--page-line); }
+  .dir-head { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+  .dir-head .badge { width: 84px; height: 84px; }
+  .dir-head h2 { margin: 0; font-size: 34px; line-height: 1.1; }
+  .dir-head .vibe { margin: 4px 0 0; color: var(--page-muted); font-size: 17px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 18px 0 22px; align-items: center; font-size: 15px; color: var(--page-muted); }
+  .sw { display: inline-flex; gap: 5px; vertical-align: middle; }
+  .sw i { width: 22px; height: 22px; border-radius: 7px; display: inline-block; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+  .facts b { color: var(--page-ink); }
+  .phones { display: flex; gap: 26px; flex-wrap: wrap; }
+  .shot { display: flex; flex-direction: column; gap: 10px; }
+  .shot figcaption { font-weight: 800; color: var(--page-muted); font-size: 14px; text-align: center; }
+  .note { margin-top: 18px; max-width: 900px; color: var(--page-muted); }
+  .note b { color: var(--page-ink); }
+
+  /* ---------- phone frame ---------- */
+  .phone { position: relative; width: 300px; height: 634px; border-radius: 40px; overflow: hidden;
+           box-shadow: 0 0 0 9px #16131b, 0 0 0 10px #3a3442, 0 24px 50px rgba(0,0,0,.22); background: #ddd; flex: none; }
+  .phone > .map { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .phone .status { position: absolute; top: 0; left: 0; right: 0; height: 30px; display: flex; justify-content: space-between;
+                   padding: 8px 22px 0; font: 700 12px/1 system-ui; color: var(--status, #222); z-index: 5; }
+  .phone .notch { position: absolute; top: 8px; left: 50%; width: 76px; height: 20px; margin-left: -38px; background: #16131b; border-radius: 12px; z-index: 6; }
+  .ui { position: absolute; inset: 0; font-family: var(--font); color: var(--ink); }
+
+  /* shared building blocks, themed by variables */
+  .card { background: var(--card); border-radius: var(--r); border: var(--bw) solid var(--line); box-shadow: var(--sh); }
+  .search { position: absolute; top: 40px; left: 12px; right: 12px; height: 50px; display: flex; align-items: center; gap: 10px; padding: 0 8px 0 8px; }
+  .search .face { width: 36px; height: 36px; flex: none; }
+  .search .ph { flex: 1; font-weight: 700; font-size: 16px; color: var(--muted); }
+  .search .menu { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--card2); }
+  .chips { position: absolute; top: 100px; left: 12px; right: 0; display: flex; gap: 7px; overflow: hidden; }
+  .chip { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; font-weight: 700; font-size: 13.5px;
+          background: var(--card); border-radius: 999px; border: var(--bw) solid var(--line); box-shadow: var(--sh-s); }
+  .chip .dot { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; }
+  .fabs { position: absolute; right: 12px; bottom: 26px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+  .fab { width: 48px; height: 48px; display: grid; place-items: center; background: var(--card); border-radius: var(--rf); border: var(--bw) solid var(--line); box-shadow: var(--sh); }
+  .fab.big { width: 58px; height: 58px; background: var(--warn); }
+  .bubble { position: absolute; left: 14px; bottom: 30px; max-width: 196px; padding: 10px 12px; font-size: 13.5px; font-weight: 700; line-height: 1.3; }
+  .bubble small { display: block; font-weight: 600; color: var(--muted); margin-top: 2px; }
+  .buddy { position: absolute; }
+  .puck { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); }
+
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 14px 16px; background: var(--card); border-radius: var(--rs) var(--rs) 0 0;
+           border-top: var(--bw) solid var(--line); box-shadow: 0 -8px 24px rgba(0,0,0,.10); }
+  .grab { width: 40px; height: 5px; border-radius: 3px; background: var(--line2); margin: 0 auto 10px; }
+  .ends { position: absolute; top: 40px; left: 12px; right: 12px; padding: 10px 12px; display: grid; gap: 6px; }
+  .end { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 14.5px; }
+  .end .k { color: var(--muted); font-weight: 700; font-size: 12px; width: 32px; }
+  .end .pin { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+  .routes { display: flex; gap: 8px; }
+  .rt { flex: 1; padding: 9px 10px; border-radius: var(--rc); border: var(--bw2) solid var(--line2); background: var(--card); }
+  .rt.on { border-color: var(--accent); background: var(--accent-soft); }
+  .rt .t { font-size: 22px; font-weight: 800; line-height: 1.1; }
+  .rt.on .t { color: var(--accent-ink); }
+  .rt .s { font-size: 12.5px; font-weight: 700; color: var(--muted); }
+  .rt .toll { color: var(--toll); font-weight: 800; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: var(--accent); color: var(--on-accent); margin-top: 4px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 12px; }
+  .pill { font-size: 12.5px; font-weight: 800; padding: 5px 10px; border-radius: 999px; background: var(--card2); display: inline-flex; gap: 5px; align-items: center; }
+  .go { display: flex; gap: 8px; }
+  .btn { height: 50px; border-radius: var(--rb); display: grid; place-items: center; font-weight: 800; font-size: 17px; border: var(--bw) solid var(--line); }
+  .btn.ghost { width: 92px; background: var(--card2); color: var(--ink); font-size: 14px; }
+  .btn.primary { flex: 1; background: var(--accent); color: var(--on-accent); box-shadow: var(--sh-btn); }
+
+  .banner { position: absolute; top: 34px; left: 10px; right: 10px; padding: 12px 14px; display: flex; gap: 12px; align-items: center;
+            background: var(--banner); color: var(--on-banner); border-radius: var(--r); border: var(--bw) solid var(--line); box-shadow: var(--sh); }
+  .banner .arrow { width: 56px; height: 56px; border-radius: 18px; background: var(--banner2); display: grid; place-items: center; flex: none; }
+  .banner .d { font-size: 28px; font-weight: 800; line-height: 1; }
+  .banner .n { font-size: 15px; font-weight: 700; margin-top: 3px; }
+  .then { position: absolute; top: 122px; left: 10px; padding: 6px 12px; font-size: 13px; font-weight: 800; background: var(--banner2); color: var(--on-banner);
+          border-radius: 0 0 14px 14px; border: var(--bw) solid var(--line); border-top: 0; }
+  .alert { position: absolute; top: 162px; left: 10px; right: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
+  .alert .txt { flex: 1; font-weight: 800; font-size: 15px; line-height: 1.2; }
+  .alert .txt small { display: block; font-weight: 700; font-size: 12.5px; color: var(--muted); }
+  .limit { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 5px solid #E5484D; display: grid; place-items: center; font: 800 16px/1 system-ui; color: #111; flex: none; }
+  .speed { position: absolute; left: 12px; bottom: 98px; width: 70px; height: 70px; border-radius: 50%; display: grid; place-items: center; text-align: center;
+           background: var(--card); border: var(--bw) solid var(--line); box-shadow: var(--sh); line-height: 1; }
+  .speed b { font-size: 26px; display: block; }
+  .speed span { font-size: 11px; font-weight: 700; color: var(--muted); }
+  .eta { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 14px 18px; display: flex; align-items: center; gap: 10px; background: var(--card);
+         border-radius: var(--rs) var(--rs) 0 0; border-top: var(--bw) solid var(--line); }
+  .eta .x { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--card2); }
+  .eta .mid { flex: 1; text-align: center; }
+  .eta .mid b { font-size: 24px; color: var(--accent-ink); display: block; line-height: 1.1; }
+  .eta .mid span { font-size: 13px; font-weight: 700; color: var(--muted); }
+  svg.i { width: 20px; height: 20px; }
+
+  /* ---------- 1. Mochi ---------- */
+  .t-mochi { --font: Nunito, sans-serif; --ink: #5A3E4B; --muted: #86596D; --card: #FFFFFF; --card2: #FFF0F4; --line: transparent; --line2: #F6DCE5;
+    --bw: 0px; --bw2: 2px; --r: 26px; --rs: 30px; --rc: 20px; --rb: 999px; --rf: 50%;
+    --sh: 0 8px 22px rgba(240,120,160,.22); --sh-s: 0 4px 12px rgba(240,120,160,.18); --sh-btn: 0 8px 18px rgba(194,51,108,.35);
+    --accent: #C2336C; --accent-soft: #FFF0F5; --accent-ink: #C2386F; --on-accent: #fff; --toll: #9C5A06; --warn: #FFD66B;
+    --banner: #C2336C; --banner2: #A42A5C; --on-banner: #fff; --status: #5A3E4B; }
+  .t-mochi .search { border-radius: 999px; }
+  .t-mochi .chip .dot { background: #FFE3EC; }
+
+  /* ---------- 2. Sticker Pop ---------- */
+  .t-sticker { --font: Fredoka, sans-serif; --ink: #2B2340; --muted: #6D6390; --card: #FFFFFF; --card2: #FFF4C9; --line: #2B2340; --line2: #2B2340;
+    --bw: 2.5px; --bw2: 2.5px; --r: 18px; --rs: 22px; --rc: 14px; --rb: 16px; --rf: 16px;
+    --sh: 4px 4px 0 #2B2340; --sh-s: 3px 3px 0 #2B2340; --sh-btn: 4px 4px 0 #2B2340;
+    --accent: #5B3BEA; --accent-soft: #EEE9FF; --accent-ink: #4A2BD6; --on-accent: #fff; --toll: #A8430A; --warn: #FFD23F;
+    --banner: #5B3BEA; --banner2: #4527C9; --on-banner: #fff; --status: #2B2340; }
+  .t-sticker .chip .dot { background: #FFD23F; border: 2px solid #2B2340; }
+  .t-sticker .rt.on { box-shadow: 3px 3px 0 #2B2340; }
+  .t-sticker .pill { border: 2px solid #2B2340; }
+
+  /* ---------- 3. Pandan Kancil ---------- */
+  .t-pandan { --font: 'Baloo 2', sans-serif; --ink: #34432A; --muted: #5C6747; --card: #FFFDF6; --card2: #EEF5DD; --line: #E3D9BC; --line2: #E3D9BC;
+    --bw: 1.5px; --bw2: 2px; --r: 22px; --rs: 26px; --rc: 18px; --rb: 18px; --rf: 18px;
+    --sh: 0 6px 16px rgba(96,110,60,.18); --sh-s: 0 3px 8px rgba(96,110,60,.14); --sh-btn: 0 6px 14px rgba(29,122,82,.32);
+    --accent: #1D7A52; --accent-soft: #EAF6EE; --accent-ink: #186A47; --on-accent: #fff; --toll: #9A560C; --warn: #F7C548;
+    --banner: #1D7A52; --banner2: #16613F; --on-banner: #fff; --status: #34432A; }
+  .t-pandan .chip .dot { background: #F7E6B8; }
+  .t-pandan .banner { background-image: radial-gradient(circle at 92% 20%, rgba(255,255,255,.16) 0 18px, transparent 19px), radial-gradient(circle at 80% 85%, rgba(255,255,255,.10) 0 10px, transparent 11px); }
+
+  /* ---------- 4. Marshmallow Night ---------- */
+  .t-night { --font: 'M PLUS Rounded 1c', sans-serif; --ink: #F3EEFF; --muted: #C3B9EA; --card: #302A4D; --card2: #3B3460; --line: #4A4275; --line2: #4A4275;
+    --bw: 1.5px; --bw2: 2px; --r: 24px; --rs: 28px; --rc: 18px; --rb: 999px; --rf: 50%;
+    --sh: 0 0 0 1px rgba(255,255,255,.04), 0 10px 26px rgba(0,0,0,.45); --sh-s: 0 6px 14px rgba(0,0,0,.35); --sh-btn: 0 8px 18px rgba(0,0,0,.45);
+    --accent: #7CF0D9; --accent-soft: #2B4A55; --accent-ink: #7CF0D9; --on-accent: #1E1A33; --toll: #FFC66E; --warn: #FFB4D2;
+    --banner: #3B3460; --banner2: #574C8F; --on-banner: #fff; --status: #F3EEFF; }
+  .t-night .chip .dot { background: #4A4275; }
+  .t-night .banner { box-shadow: 0 0 0 1.5px #6C5FA8, 0 10px 26px rgba(0,0,0,.45); }
+  .t-night .limit { background: #fff; }
+
+  @media (max-width: 700px) { header.top h1 { font-size: 34px; } .phones { justify-content: center; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Arah, but cute</h1>
+    <p>Four directions for a new look, each on the same three screens: the home map, a route preview (Cyberjaya → Suria KLCC, real route and real RM 8.70 toll) and turn-by-turn navigation. The maps underneath are real, recoloured for each direction. Pick one, or mix parts, e.g. one direction's mascot with another's colours.</p>
+    <nav class="jump">
+      <a href="#mochi">1 · Mochi</a><a href="#sticker">2 · Sticker Pop</a><a href="#pandan">3 · Pandan Kancil</a><a href="#night">4 · Marshmallow Night</a>
+    </nav>
+  </header>
+
+  <!-- shared icon sprites -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1z" fill="currentColor"/></symbol>
+      <symbol id="i-work" viewBox="0 0 24 24"><path d="M9 6V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1h4a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm2 0h2V5h-2z" fill="currentColor"/></symbol>
+      <symbol id="i-fuel" viewBox="0 0 24 24"><path d="M5 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v7h1a2 2 0 0 1 2 2v3a1 1 0 0 0 2 0V9l-2-2 1.4-1.4L22 8.2V16a3 3 0 0 1-6 0v-3h-1v8H5zm2 0v5h6V4z" fill="currentColor"/></symbol>
+      <symbol id="i-food" viewBox="0 0 24 24"><path d="M7 2v8a2 2 0 0 1-1 1.7V22H4V11.7A2 2 0 0 1 3 10V2h1.5v6h1V2h1v6h1V2zm9 0c2.2 0 4 2.4 4 6v4h-2v10h-2z" fill="currentColor"/></symbol>
+      <symbol id="i-rr" viewBox="0 0 24 24"><path d="M3 6h14v5a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5zm14 1h1.5a2.5 2.5 0 0 1 0 5H17v-2h1.5a.5.5 0 0 0 0-1H17zM3 19h16v2H3z" fill="currentColor"/></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5zm-7.4 9.2L12 16.3l7.4-4.1L21 13l-9 5-9-5z" fill="currentColor"/></symbol>
+      <symbol id="i-locate" viewBox="0 0 24 24"><path d="M11 2h2v3.1A7 7 0 0 1 18.9 11H22v2h-3.1A7 7 0 0 1 13 18.9V22h-2v-3.1A7 7 0 0 1 5.1 13H2v-2h3.1A7 7 0 0 1 11 5.1zm1 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z" fill="currentColor"/></symbol>
+      <symbol id="i-report" viewBox="0 0 24 24"><path d="M8.3 2h7.4L22 8.3v7.4L15.7 22H8.3L2 15.7V8.3zM11 7v7h2V7zm0 9v2h2v-2z" fill="currentColor"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" fill="currentColor"/></symbol>
+      <symbol id="i-left" viewBox="0 0 24 24"><path d="M10 4 4 10l6 6v-4.5h5a3 3 0 0 1 3 3V21h3v-6.5a6 6 0 0 0-6-6h-5V4z" fill="currentColor"/></symbol>
+      <symbol id="i-cam" viewBox="0 0 24 24"><path d="M4 7h3l1.5-2h7L17 7h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zm8 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z" fill="currentColor"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="m6.4 5 5.6 5.6L17.6 5 19 6.4 13.4 12l5.6 5.6-1.4 1.4-5.6-5.6L6.4 19 5 17.6l5.6-5.6L5 6.4z" fill="currentColor"/></symbol>
+      <symbol id="i-steps" viewBox="0 0 24 24"><path d="M4 5h2v2H4zm4 0h12v2H8zm-4 6h2v2H4zm4 0h12v2H8zm-4 6h2v2H4zm4 0h12v2H8z" fill="currentColor"/></symbol>
+      <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 3 3 7l4 4V8h8V6H7zm10 10v3H9v2h8v3l4-4z" fill="currentColor"/></symbol>
+
+      <!-- Mascots -->
+      <symbol id="m-mochi" viewBox="0 0 100 100">
+        <ellipse cx="50" cy="94" rx="30" ry="5" fill="#000" opacity=".08"/>
+        <path d="M14 66c0-24 16-44 36-44s36 20 36 44c0 15-16 24-36 24S14 81 14 66z" fill="#fff" stroke="#F3C9D8" stroke-width="2.5"/>
+        <path d="M50 22c-2-9 4-15 13-14-1 8-6 13-13 14z" fill="#7CCB8E"/>
+        <path d="M50 22c1-7-3-12-9-12 0 6 3 10 9 12z" fill="#9ADBA9"/>
+        <circle cx="37" cy="60" r="4.2" fill="#5A3E4B"/><circle cx="63" cy="60" r="4.2" fill="#5A3E4B"/>
+        <circle cx="38.5" cy="58.5" r="1.3" fill="#fff"/><circle cx="64.5" cy="58.5" r="1.3" fill="#fff"/>
+        <ellipse cx="29" cy="69" rx="6" ry="3.6" fill="#FFB3C9"/><ellipse cx="71" cy="69" rx="6" ry="3.6" fill="#FFB3C9"/>
+        <path d="M45 67q5 5 10 0" fill="none" stroke="#5A3E4B" stroke-width="2.6" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="m-sticker" viewBox="0 0 100 100">
+        <rect x="8" y="34" width="84" height="44" rx="18" fill="#7B5CFF" stroke="#2B2340" stroke-width="5"/>
+        <path d="M26 36l8-16h32l8 16" fill="#CFC2FF" stroke="#2B2340" stroke-width="5" stroke-linejoin="round"/>
+        <circle cx="30" cy="80" r="10" fill="#2B2340"/><circle cx="70" cy="80" r="10" fill="#2B2340"/>
+        <circle cx="30" cy="80" r="4" fill="#FFD23F"/><circle cx="70" cy="80" r="4" fill="#FFD23F"/>
+        <circle cx="35" cy="53" r="9" fill="#fff" stroke="#2B2340" stroke-width="4"/><circle cx="65" cy="53" r="9" fill="#fff" stroke="#2B2340" stroke-width="4"/>
+        <circle cx="37" cy="54" r="4" fill="#2B2340"/><circle cx="67" cy="54" r="4" fill="#2B2340"/>
+        <path d="M43 66q7 6 14 0" fill="none" stroke="#2B2340" stroke-width="4" stroke-linecap="round"/>
+        <ellipse cx="20" cy="64" rx="5" ry="3" fill="#FF9EC4"/><ellipse cx="80" cy="64" rx="5" ry="3" fill="#FF9EC4"/>
+      </symbol>
+      <symbol id="m-kancil" viewBox="0 0 100 100">
+        <path d="M22 40c-14-14-12-30-4-32 8 3 14 16 16 27z" fill="#C98B55" stroke="#8E5A31" stroke-width="2.5"/>
+        <path d="M78 40c14-14 12-30 4-32-8 3-14 16-16 27z" fill="#C98B55" stroke="#8E5A31" stroke-width="2.5"/>
+        <path d="M24 34c-6-9-6-17-3-19 4 2 7 9 8 15z" fill="#F2C7A6"/><path d="M76 34c6-9 6-17 3-19-4 2-7 9-8 15z" fill="#F2C7A6"/>
+        <path d="M50 26c22 0 34 16 34 33 0 13-8 21-16 26-6 4-12 7-18 7s-12-3-18-7c-8-5-16-13-16-26 0-17 12-33 34-33z" fill="#D9A06A" stroke="#8E5A31" stroke-width="2.5"/>
+        <path d="M50 58c11 0 18 8 18 16 0 9-9 16-18 16s-18-7-18-16c0-8 7-16 18-16z" fill="#FBEBD8"/>
+        <ellipse cx="50" cy="70" rx="6" ry="4.4" fill="#4A2F1C"/>
+        <path d="M46 79q4 3 8 0" fill="none" stroke="#4A2F1C" stroke-width="2.4" stroke-linecap="round"/>
+        <ellipse cx="36" cy="52" rx="6" ry="7" fill="#3A2416"/><ellipse cx="64" cy="52" rx="6" ry="7" fill="#3A2416"/>
+        <circle cx="38" cy="49.5" r="2.2" fill="#fff"/><circle cx="66" cy="49.5" r="2.2" fill="#fff"/>
+        <ellipse cx="27" cy="63" rx="5" ry="3" fill="#F2A08C" opacity=".8"/><ellipse cx="73" cy="63" rx="5" ry="3" fill="#F2A08C" opacity=".8"/>
+        <path d="M50 30c3 4 3 9 0 12-3-3-3-8 0-12z" fill="#2E9E6B"/>
+      </symbol>
+      <symbol id="m-moon" viewBox="0 0 100 100">
+        <circle cx="50" cy="52" r="38" fill="#B9A7FF" opacity=".18"/>
+        <path d="M62 16a36 36 0 1 0 22 52A30 30 0 0 1 62 16z" fill="#FFE7A8" stroke="#F3C969" stroke-width="2.5"/>
+        <path d="M30 56q4-4 8 0" fill="none" stroke="#3B2F52" stroke-width="3" stroke-linecap="round"/>
+        <path d="M46 56q4-4 8 0" fill="none" stroke="#3B2F52" stroke-width="3" stroke-linecap="round"/>
+        <path d="M39 66q4 3 8 0" fill="none" stroke="#3B2F52" stroke-width="2.6" stroke-linecap="round"/>
+        <ellipse cx="29" cy="64" rx="4.5" ry="2.6" fill="#FF9EC4"/><ellipse cx="56" cy="64" rx="4.5" ry="2.6" fill="#FF9EC4"/>
+        <path d="M80 18l2.4 5 5.4.8-4 3.8 1 5.4-4.8-2.6-4.8 2.6 1-5.4-4-3.8 5.4-.8z" fill="#7CF0D9"/>
+        <circle cx="88" cy="40" r="2.4" fill="#FF9EC4"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- ================= 1. MOCHI ================= -->
+  <section class="dir t-mochi" id="mochi">
+    <div class="dir-head">
+      <svg class="badge"><use href="#m-mochi"/></svg>
+      <div><h2>1 · Mochi</h2><p class="vibe">Soft pastel, no outlines, pillowy shadows, everything round. Calm and friendly, like a stationery shop. The mascot is Mochi, a rice cake with a leaf that points the way.</p></div>
+    </div>
+    <div class="facts">
+      <span class="sw"><i style="background:#FF6FA0"></i><i style="background:#FFF0F4"></i><i style="background:#CDEFD6"></i><i style="background:#BFE3FF"></i><i style="background:#FFE3A3"></i></span>
+      <span>Font <b style="font-family:Nunito;font-weight:900">Nunito Black</b></span><span>Shape: pills and circles, shadows tinted pink</span><span>Best for: everyday, light theme</span>
+    </div>
+    <div class="phones">
+      <figure class="shot">
+        <div class="phone"><img class="map" src="maps/mochi-home.jpg" alt=""><div class="notch"></div><div class="status"><span>9:41</span><span>100%</span></div>
+          <div class="ui">
+            <div class="card search"><svg class="face"><use href="#m-mochi"/></svg><span class="ph">Where to today?</span><span class="menu"><svg class="i"><use href="#i-menu"/></svg></span></div>
+            <div class="chips"><span class="chip"><span class="dot">🏡</span>Home</span><span class="chip"><span class="dot">💼</span>Work</span><span class="chip"><span class="dot">⛽</span>Petrol</span><span class="chip"><span class="dot">🍜</span>Makan</span></div>
+            <svg class="puck" width="54" height="54"><use href="#m-mochi"/></svg>
+            <div class="card bubble">Hi Luqman! Roads look clear 🌸<small>Tap search to start a trip</small></div>
+            <div class="fabs"><div class="fab"><svg class="i"><use href="#i-layers"/></svg></div><div class="fab big"><svg class="i" style="width:26px;height:26px;color:#7A4B00"><use href="#i-report"/></svg></div><div class="fab"><svg class="i" style="color:#FF6FA0"><use href="#i-locate"/></svg></div></div>
+          </div></div>
+        <figcaption>Home</figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="phone"><img class="map" src="maps/mochi-route.jpg" alt=""><div class="notch"></div><div class="status"><span>9:41</span><span>100%</span></div>
+          <div class="ui">
+            <div class="card ends"><div class="end"><span class="k">From</span><span class="pin" style="background:#9FD3FF;box-shadow:0 0 0 3px #fff"></span>Your location</div><div class="end"><span class="k">To</span><span class="pin" style="background:#FF6FA0;box-shadow:0 0 0 3px #fff"></span>Suria KLCC</div></div>
+            <div class="sheet"><div class="grab"></div>
+              <div class="routes"><div class="rt on"><div class="t">42 min</div><div class="s">33 km · <span class="toll">RM 8.70</span></div><span class="tag">Fastest ✨</span></div><div class="rt"><div class="t">56 min</div><div class="s">43 km · <span class="toll">RM 11.80</span></div></div></div>
+              <div class="meta"><span class="pill">🎟 Tolls RM 8.70</span><span class="pill">📷 1 camera</span><span class="pill">🕘 Arrive 10:23</span></div>
+              <div class="go"><div class="btn ghost">Steps</div><div class="btn primary">Let's go! 🌸</div></div>
+            </div>
+          </div></div>
+        <figcaption>Route preview</figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="phone"><img class="map" src="maps/mochi-nav.jpg" alt=""><div class="notch"></div>
+          <div class="ui">
+            <div class="banner"><div class="arrow"><svg style="width:34px;height:34px"><use href="#i-left"/></svg></div><div><div class="d">300 m</div><div class="n">Turn left onto Persiaran Multimedia</div></div></div>
+            <div class="then">Then ↱</div>
+            <div class="card alert"><svg style="width:40px;height:40px;flex:none"><use href="#m-mochi"/></svg><div class="txt">Speed camera ahead<small>600 m · slow down a little 🍡</small></div><div class="limit">110</div></div>
+            <svg class="puck" style="top:63%" width="58" height="58"><use href="#m-mochi"/></svg>
+            <div class="speed"><div><b>52</b><span>km/h</span></div></div>
+            <div class="eta"><span class="x"><svg class="i"><use href="#i-x"/></svg></span><div class="mid"><b>10:23</b><span>38 min · 31 km</span></div><span class="x"><svg class="i"><use href="#i-steps"/></svg></span></div>
+          </div></div>
+        <figcaption>Navigation</figcaption>
+      </figure>
+    </div>
+    <p class="note"><b>Feels:</b> gentle and calming. <b>Watch out:</b> pastel pink on white is low-contrast, so instructions and distances keep a strong dark ink and the turn banner stays a saturated pink.</p>
+  </section>
+
+  <!-- ================= 2. STICKER POP ================= -->
+  <section class="dir t-sticker" id="sticker">
+    <div class="dir-head">
+      <svg class="badge"><use href="#m-sticker"/></svg>
+      <div><h2>2 · Sticker Pop</h2><p class="vibe">Bold and playful: thick dark outlines, hard offset shadows, bright flat colours, like stickers on a notebook. The mascot is Vroomie, a little purple car.</p></div>
+    </div>
+    <div class="facts">
+      <span class="sw"><i style="background:#7B5CFF"></i><i style="background:#FFD23F"></i><i style="background:#FF7AA8"></i><i style="background:#9BE3A4"></i><i style="background:#2B2340"></i></span>
+      <span>Font <b style="font-family:Fredoka;font-weight:700">Fredoka Bold</b></span><span>Shape: rounded squares, 2.5 px ink outline, 4 px hard shadow</span><span>Best for: standing out, very readable in sun</span>
+    </div>
+    <div class="phones">
+      <figure class="shot">
+        <div class="phone"><img class="map" src="maps/sticker-home.jpg" alt=""><div class="notch"></div><div class="status"><span>9:41</span><span>100%</span></div>
+          <div class="ui">
+            <div class="card search"><svg class="face"><use href="#m-sticker"/></svg><span class="ph">Where we going?</span><span class="menu" style="border:2px solid #2B2340"><svg class="i"><use href="#i-menu"/></svg></span></div>
+            <div class="chips"><span class="chip"><span class="dot"><svg style="width:12px;height:12px"><use href="#i-home"/></svg></span>Home</span><span class="chip"><span class="dot"><svg style="width:12px;height:12px"><use href="#i-work"/></svg></span>Work</span><span class="chip"><span class="dot"><svg style="width:12px;height:12px"><use href="#i-fuel"/></svg></span>Petrol</span><span class="chip"><span class="dot"><svg style="width:12px;height:12px"><use href="#i-food"/></svg></span>Makan</span></div>
+            <svg class="puck" width="58" height="58"><use href="#m-sticker"/></svg>
+            <div class="card bubble">Vroom vroom! Ready when you are 🚗<small>Long-press the map to drop a pin</small></div>
+            <div class="fabs"><div class="fab"><svg class="i"><use href="#i-layers"/></svg></div><div class="fab big"><svg class="i" style="width:26px;height:26px"><use href="#i-report"/></svg></div><div class="fab"><svg class="i" style="color:#7B5CFF"><use href="#i-locate"/></svg></div></div>
+          </div></div>
+        <figcaption>Home</figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="phone"><img class="map" src="maps/sticker-route.jpg" alt=""><div class="notch"></div><div class="status"><span>9:41</span><span>100%</span></div>
+          <div class="ui">
+            <div class="card ends"><div class="end"><span class="k">From</span><span class="pin" style="background:#7FD3F7;border:2px solid #2B2340"></span>Your location</div><div class="end"><span class="k">To</span><span class="pin" style="background:#FF7AA8;border:2px solid #2B2340"></span>Suria KLCC</div></div>
+            <div class="sheet"><div class="grab" style="background:#2B2340"></div>
+              <div class="routes"><div class="rt on"><div class="t">42 min</div><div class="s">33 km · <span class="toll">RM 8.70</span></div><span class="tag">FASTEST</span></div><div class="rt"><div class="t">56 min</div><div class="s">43 km · <span class="toll">RM 11.80</span></div></div></div>
+              <div class="meta"><span class="pill">Tolls RM 8.70</span><span class="pill">1 camera</span><span class="pill">Arrive 10:23</span></div>
+              <div class="go"><div class="btn ghost">Steps</div><div class="btn primary">LET'S GO!</div></div>
+            </div>
+          </div></div>
+        <figcaption>Route preview</figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="phone"><img class="map" src="maps/sticker-nav.jpg" alt=""><div class="notch"></div>
+          <div class="ui">
+            <div class="banner"><div class="arrow" style="background:#FFD23F;color:#2B2340;border:2.5px solid #2B2340"><svg style="width:34px;height:34px"><use href="#i-left"/></svg></div><div><div class="d">300 m</div><div class="n">Turn left onto Persiaran Multimedia</div></div></div>
+            <div class="then">Then ↱</div>
+            <div class="card alert" style="background:#FFF4C9"><svg style="width:40px;height:40px;flex:none;color:#2B2340"><use href="#i-cam"/></svg><div class="txt">SPEED CAMERA!<small>600 m ahead · limit 110</small></div><div class="limit">110</div></div>
+            <svg class="puck" style="top:63%" width="60" height="60"><use href="#m-sticker"/></svg>
+            <div class="speed"><div><b>52</b><span>km/h</span></div></div>
+            <div class="eta"><span class="x" style="border:2px solid #2B2340"><svg class="i"><use href="#i-x"/></svg></span><div class="mid"><b>10:23</b><span>38 min · 31 km</span></div><span class="x" style="border:2px solid #2B2340"><svg class="i"><use href="#i-steps"/></svg></span></div>
+          </div></div>
+        <figcaption>Navigation</figcaption>
+      </figure>
+    </div>
+    <p class="note"><b>Feels:</b> energetic and fun, the cutest of the four at a glance. <b>Watch out:</b> busier to look at for long drives; the outlines would be thinner on the map itself than in these cards.</p>
+  </section>
+
+  <!-- ================= 3. PANDAN KANCIL ================= -->
+  <section class="dir t-pandan" id="pandan">
+    <div class="dir-head">
+      <svg class="badge"><use href="#m-kancil"/></svg>
+      <div><h2>3 · Pandan Kancil</h2><p class="vibe">Cute and Malaysian: pandan green, santan cream, kuih-coloured accents, and Sang Kancil, the clever mousedeer from our folk tales, who always finds a way out. Warm, local, and a mascot with a story.</p></div>
+    </div>
+    <div class="facts">
+      <span class="sw"><i style="background:#2E9E6B"></i><i style="background:#F6F1E1"></i><i style="background:#F7CF7A"></i><i style="background:#F28C6B"></i><i style="background:#A8DCE0"></i></span>
+      <span>Font <b style="font-family:'Baloo 2';font-weight:800">Baloo 2</b> (rounded, made by an Indian foundry, reads well in Malay)</span><span>Best for: a brand that feels from here</span>
+    </div>
+    <div class="phones">
+      <figure class="shot">
+        <div class="phone"><img class="map" src="maps/pandan-home.jpg" alt=""><div class="notch"></div><div class="status"><span>9:41</span><span>100%</span></div>
+          <div class="ui">
+            <div class="card search"><svg class="face"><use href="#m-kancil"/></svg><span class="ph">Nak pergi mana?</span><span class="menu"><svg class="i"><use href="#i-menu"/></svg></span></div>
+            <div class="chips"><span class="chip"><span class="dot">🏠</span>Rumah</span><span class="chip"><span class="dot">💼</span>Kerja</span><span class="chip"><span class="dot">⛽</span>Minyak</span><span class="chip"><span class="dot">🍛</span>Makan</span></div>
+            <svg class="puck" width="56" height="56"><use href="#m-kancil"/></svg>
+            <div class="card bubble">Selamat pagi, Luqman! Jalan lancar hari ni 🌿<small>Sang Kancil sedia memandu</small></div>
+            <div class="fabs"><div class="fab"><svg class="i"><use href="#i-layers"/></svg></div><div class="fab big"><svg class="i" style="width:26px;height:26px;color:#6B4A00"><use href="#i-report"/></svg></div><div class="fab"><svg class="i" style="color:#2E9E6B"><use href="#i-locate"/></svg></div></div>
+          </div></div>
+        <figcaption>Home</figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="phone"><img class="map" src="maps/pandan-route.jpg" alt=""><div class="notch"></div><div class="status"><span>9:41</span><span>100%</span></div>
+          <div class="ui">
+            <div class="card ends"><div class="end"><span class="k">Dari</span><span class="pin" style="background:#7FB8E8;box-shadow:0 0 0 3px #fff"></span>Lokasi anda</div><div class="end"><span class="k">Ke</span><span class="pin" style="background:#F28C6B;box-shadow:0 0 0 3px #fff"></span>Suria KLCC</div></div>
+            <div class="sheet"><div class="grab"></div>
+              <div class="routes"><div class="rt on"><div class="t">42 min</div><div class="s">33 km · <span class="toll">RM 8.70</span></div><span class="tag">Paling cepat</span></div><div class="rt"><div class="t">56 min</div><div class="s">43 km · <span class="toll">RM 11.80</span></div></div></div>
+              <div class="meta"><span class="pill">🪙 Tol RM 8.70</span><span class="pill">📷 1 kamera</span><span class="pill">Tiba 10:23</span></div>
+              <div class="go"><div class="btn ghost">Langkah</div><div class="btn primary">Jom gerak! 🦌</div></div>
+            </div>
+          </div></div>
+        <figcaption>Route preview (shown in BM)</figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="phone"><img class="map" src="maps/pandan-nav.jpg" alt=""><div class="notch"></div>
+          <div class="ui">
+            <div class="banner"><div class="arrow"><svg style="width:34px;height:34px"><use href="#i-left"/></svg></div><div><div class="d">300 m</div><div class="n">Belok kiri ke Persiaran Multimedia</div></div></div>
+            <div class="then">Kemudian ↱</div>
+            <div class="card alert"><svg style="width:42px;height:42px;flex:none"><use href="#m-kancil"/></svg><div class="txt">Kamera laju di depan!<small>600 m · perlahan sikit ya</small></div><div class="limit">110</div></div>
+            <svg class="puck" style="top:63%" width="58" height="58"><use href="#m-kancil"/></svg>
+            <div class="speed"><div><b>52</b><span>km/j</span></div></div>
+            <div class="eta"><span class="x"><svg class="i"><use href="#i-x"/></svg></span><div class="mid"><b>10:23</b><span>38 min · 31 km</span></div><span class="x"><svg class="i"><use href="#i-steps"/></svg></span></div>
+          </div></div>
+        <figcaption>Navigation</figcaption>
+      </figure>
+    </div>
+    <p class="note"><b>Feels:</b> homegrown and warm; the kancil gives Arah a personality no foreign app has. <b>My pick</b> if Arah should feel Malaysian. The cream map is easy on the eyes and keeps strong contrast for the route.</p>
+  </section>
+
+  <!-- ================= 4. MARSHMALLOW NIGHT ================= -->
+  <section class="dir t-night" id="night">
+    <div class="dir-head">
+      <svg class="badge"><use href="#m-moon"/></svg>
+      <div><h2>4 · Marshmallow Night</h2><p class="vibe">The cute dark mode: deep lavender night, soft mint and pink, rounded everything. Made for evening drives, and it can be the night half of any of the three above. The mascot is Bulan, a sleepy moon.</p></div>
+    </div>
+    <div class="facts">
+      <span class="sw"><i style="background:#24203A"></i><i style="background:#302A4D"></i><i style="background:#7CF0D9"></i><i style="background:#FF9EC4"></i><i style="background:#B9A7FF"></i></span>
+      <span>Font <b style="font-family:'M PLUS Rounded 1c';font-weight:800">M PLUS Rounded</b></span><span>Shape: pills with soft rings</span><span>Best for: night driving, less glare</span>
+    </div>
+    <div class="phones">
+      <figure class="shot">
+        <div class="phone"><img class="map" src="maps/night-home.jpg" alt=""><div class="notch"></div><div class="status"><span>9:41</span><span>100%</span></div>
+          <div class="ui">
+            <div class="card search" style="border-radius:999px"><svg class="face"><use href="#m-moon"/></svg><span class="ph">Where to tonight?</span><span class="menu"><svg class="i"><use href="#i-menu"/></svg></span></div>
+            <div class="chips"><span class="chip"><span class="dot">🏡</span>Home</span><span class="chip"><span class="dot">💼</span>Work</span><span class="chip"><span class="dot">⛽</span>Petrol</span><span class="chip"><span class="dot">🍢</span>Supper</span></div>
+            <svg class="puck" width="56" height="56"><use href="#m-moon"/></svg>
+            <div class="card bubble">Late drive? I'll keep the screen gentle 🌙<small>Dark map turns on at 7 pm</small></div>
+            <div class="fabs"><div class="fab"><svg class="i"><use href="#i-layers"/></svg></div><div class="fab big"><svg class="i" style="width:26px;height:26px;color:#4A1D35"><use href="#i-report"/></svg></div><div class="fab"><svg class="i" style="color:#7CF0D9"><use href="#i-locate"/></svg></div></div>
+          </div></div>
+        <figcaption>Home</figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="phone"><img class="map" src="maps/night-route.jpg" alt=""><div class="notch"></div><div class="status"><span>9:41</span><span>100%</span></div>
+          <div class="ui">
+            <div class="card ends"><div class="end"><span class="k">From</span><span class="pin" style="background:#B9A7FF;box-shadow:0 0 0 3px #302A4D, 0 0 0 4.5px #B9A7FF"></span>Your location</div><div class="end"><span class="k">To</span><span class="pin" style="background:#FF9EC4;box-shadow:0 0 0 3px #302A4D, 0 0 0 4.5px #FF9EC4"></span>Suria KLCC</div></div>
+            <div class="sheet"><div class="grab"></div>
+              <div class="routes"><div class="rt on"><div class="t">42 min</div><div class="s">33 km · <span class="toll">RM 8.70</span></div><span class="tag">Fastest</span></div><div class="rt"><div class="t">56 min</div><div class="s">43 km · <span class="toll">RM 11.80</span></div></div></div>
+              <div class="meta"><span class="pill">Tolls RM 8.70</span><span class="pill">1 camera</span><span class="pill">Arrive 10:23</span></div>
+              <div class="go"><div class="btn ghost">Steps</div><div class="btn primary">Let's go ✦</div></div>
+            </div>
+          </div></div>
+        <figcaption>Route preview</figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="phone"><img class="map" src="maps/night-nav.jpg" alt=""><div class="notch"></div>
+          <div class="ui">
+            <div class="banner"><div class="arrow" style="background:#7CF0D9;color:#1E1A33"><svg style="width:34px;height:34px"><use href="#i-left"/></svg></div><div><div class="d">300 m</div><div class="n">Turn left onto Persiaran Multimedia</div></div></div>
+            <div class="then">Then ↱</div>
+            <div class="card alert"><svg style="width:40px;height:40px;flex:none"><use href="#m-moon"/></svg><div class="txt">Speed camera ahead<small>600 m · easy does it</small></div><div class="limit">110</div></div>
+            <svg class="puck" style="top:63%" width="58" height="58"><use href="#m-moon"/></svg>
+            <div class="speed"><div><b>52</b><span>km/h</span></div></div>
+            <div class="eta"><span class="x"><svg class="i"><use href="#i-x"/></svg></span><div class="mid"><b>10:23</b><span>38 min · 31 km</span></div><span class="x"><svg class="i"><use href="#i-steps"/></svg></span></div>
+          </div></div>
+        <figcaption>Navigation</figcaption>
+      </figure>
+    </div>
+    <p class="note"><b>Feels:</b> cosy and calm at night. <b>Idea:</b> pair it with Mochi or Pandan Kancil so the app is pastel by day and Marshmallow by night, switching on its own like the current Auto theme.</p>
+  </section>
+
+  <section class="dir" style="margin-top:64px">
+    <h2 style="font-size:28px;margin:0 0 8px">What changes in the app if you pick one</h2>
+    <p class="note" style="margin-top:0">The whole interface: colours, rounded font (bundled in the app, so it works offline), button and card shapes, a recoloured map for the light and dark themes, new map icons, the mascot as your location marker and in the camera warnings, and a friendlier tone in the text and voice. Safety parts stay serious: turn instructions, distances and speed limits keep strong contrast and large type.</p>
+  </section>
+</div>
+</body>
+</html>
