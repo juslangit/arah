@@ -67,8 +67,9 @@ class MapStyles {
     }
     if (maps.isEmpty) return null;
     final dir = await _ensureAssets();
-    final template =
-        jsonDecode(await rootBundle.loadString('assets/styles/${dark ? 'dark' : 'light'}.json')) as Map<String, dynamic>;
+    final template = jsonDecode(
+      await rootBundle.loadString('assets/styles/${dark ? 'dark' : 'light'}.json'),
+    ) as Map<String, dynamic>;
     // Online, the full font set covers Chinese and Tamil labels too.
     template['glyphs'] = online
         ? 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf'
@@ -79,7 +80,11 @@ class MapStyles {
     final layers = <Map<String, dynamic>>[];
     for (var i = 0; i < maps.length; i++) {
       final id = 'pack$i';
-      sources[id] = {'type': 'vector', 'url': 'pmtiles://file://${maps[i]}', 'attribution': '© OpenStreetMap · Protomaps'};
+      sources[id] = {
+        'type': 'vector',
+        'url': 'pmtiles://file://${maps[i]}',
+        'attribution': '© OpenStreetMap · Protomaps',
+      };
     }
     // Background once, every other layer once per pack (packs don't overlap).
     for (final l in baseLayers) {

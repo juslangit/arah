@@ -19,7 +19,9 @@ class Category {
 const categories = [
   Category('Stesen minyak', 'Petrol', Icons.local_gas_station, 'petrol', 'amenity:fuel', ['fuel']),
   Category('R&R', 'R&R', Icons.local_cafe, 'R&R', 'highway:services', ['services', 'rest_area']),
-  Category('Surau / Masjid', 'Surau / Mosque', Icons.mosque, 'masjid', 'amenity:place_of_worship', ['place_of_worship']),
+  Category('Surau / Masjid', 'Surau / Mosque', Icons.mosque, 'masjid', 'amenity:place_of_worship', [
+    'place_of_worship',
+  ]),
   Category('Parking', 'Parking', Icons.local_parking, 'parking', 'amenity:parking', ['parking']),
   Category('Makan', 'Food', Icons.restaurant, 'restoran', 'amenity:restaurant', [
     'restaurant',
@@ -170,7 +172,10 @@ class _SearchScreenState extends State<SearchScreen> {
               children: [
                 if (!app.online)
                   _Notice(
-                    context.tr('Luar talian — mencari dalam peta yang dimuat turun', 'Offline — searching downloaded maps'),
+                    context.tr(
+                      'Luar talian — mencari dalam peta yang dimuat turun',
+                      'Offline — searching downloaded maps',
+                    ),
                   ),
                 if (widget.offerMyLocation)
                   ListTile(
@@ -178,9 +183,14 @@ class _SearchScreenState extends State<SearchScreen> {
                       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                       child: const Icon(Icons.my_location),
                     ),
-                    title: Text(context.tr('Lokasi anda', 'Your location'), style: const TextStyle(fontWeight: FontWeight.w600)),
-                    onTap: () =>
-                        Navigator.pop(context, Place(name: app.tr('Lokasi anda', 'Your location'), pos: app.here, source: 'me')),
+                    title: Text(
+                      context.tr('Lokasi anda', 'Your location'),
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    onTap: () => Navigator.pop(
+                      context,
+                      Place(name: app.tr('Lokasi anda', 'Your location'), pos: app.here, source: 'me'),
+                    ),
                   ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
@@ -238,7 +248,8 @@ class _SearchScreenState extends State<SearchScreen> {
     leading: CircleAvatar(child: Icon(icon)),
     title: Text(label),
     subtitle: Text(
-      p?.name ?? context.tr('Belum ditetapkan — pilih tempat, kemudian "Tetapkan"', 'Not set — pick a place, then "Set"'),
+      p?.name ??
+          context.tr('Belum ditetapkan — pilih tempat, kemudian "Tetapkan"', 'Not set — pick a place, then "Set"'),
     ),
     onTap: p == null ? null : () => _pick(p),
   );
@@ -261,7 +272,10 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-    child: Text(text, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.primary)),
+    child: Text(
+      text,
+      style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.primary),
+    ),
   );
 }
 

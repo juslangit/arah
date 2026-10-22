@@ -32,7 +32,13 @@ class NavScreen extends StatefulWidget {
   final Place destination;
   final List<Place> stops;
   final String style;
-  const NavScreen({super.key, required this.route, required this.destination, required this.stops, required this.style});
+  const NavScreen({
+    super.key,
+    required this.route,
+    required this.destination,
+    required this.stops,
+    required this.style,
+  });
 
   @override
   State<NavScreen> createState() => _NavScreenState();
@@ -96,7 +102,8 @@ class _NavScreenState extends State<NavScreen> {
     _voice = VoicePlanner(r, lang: s.lang, timing: s.voiceTiming, bluetooth: s.bluetoothDelay);
     _offlineRoute = r.source == RouteSource.offline;
     final app = context.appRead;
-    _speedCams = app.settings.cameraAlerts ? (app.cameras?.along(r) ?? const []) : const [];
+    final st = app.settings;
+    _speedCams = st.cameraAlerts ? (app.cameras?.along(r, unverified: st.unverifiedCameras) ?? const []) : const [];
     _camAhead = null;
     _drawCameras();
   }
@@ -107,7 +114,13 @@ class _NavScreenState extends State<NavScreen> {
       'arah-cameras',
       collection([
         for (final c in _speedCams)
-          pointFeature(c.camera.pos, props: {'icon': c.camera.kind == CameraKind.redLight ? 'arah-cam-red' : 'arah-cam'}),
+          pointFeature(
+            c.camera.pos,
+            props: {
+              'icon':
+                  '${c.camera.kind == CameraKind.redLight ? 'arah-cam-red' : 'arah-cam'}${c.camera.verified ? '' : '-u'}',
+            },
+          ),
       ]),
     );
   }
@@ -139,12 +152,17 @@ class _NavScreenState extends State<NavScreen> {
       final app = context.appRead;
       if (app.settings.sound < 2) {
         final limit = next.camera.maxspeed;
+        final what = next.camera.kind == CameraKind.redLight
+            ? app.tr('Kamera lampu isyarat', 'Red light camera')
+            : app.tr('Kamera laju', 'Speed camera');
+        // Unverified: "Possible speed camera ahead."
+        final lead = next.camera.verified
+            ? what
+            : app.tr('Kemungkinan ${what.toLowerCase()}', 'Possible ${what.toLowerCase()}');
         app.speech.say(
-          next.camera.kind == CameraKind.redLight
-              ? app.tr('Kamera lampu isyarat di hadapan.', 'Red light camera ahead.')
-              : limit != null
-              ? app.tr('Kamera laju di hadapan. Had laju $limit.', 'Speed camera ahead. Limit $limit.')
-              : app.tr('Kamera laju di hadapan.', 'Speed camera ahead.'),
+          next.camera.kind != CameraKind.redLight && limit != null
+              ? app.tr('$lead di hadapan. Had laju $limit.', '$lead ahead. Limit $limit.')
+              : app.tr('$lead di hadapan.', '$lead ahead.'),
         );
       }
     }
@@ -266,7 +284,8 @@ class _NavScreenState extends State<NavScreen> {
     if (distanceM(u.position, s.pos) < 40) {
       setState(() => _stopsLeft.removeAt(0));
       final app = context.appRead;
-      if (app.settings.sound == 0) app.speech.say(app.tr('Anda telah tiba di hentian ${s.name}.', 'You have reached ${s.name}.'));
+      if (app.settings.sound == 0)
+        app.speech.say(app.tr('Anda telah tiba di hentian ${s.name}.', 'You have reached ${s.name}.'));
     }
   }
 
@@ -332,7 +351,13 @@ class _NavScreenState extends State<NavScreen> {
       }
       // Just passed it, same direction, sensible speed: ask once.
       final sameWay = fix.headingDeg == null || angleDiff(r.heading, fix.headingDeg!).abs() < 45;
-      if (dist < -20 && dist > -150 && !r.mine && !app.reports.asked(r) && sameWay && u.speedKmh < 120 && _ask == null) {
+      if (dist < -20 &&
+          dist > -150 &&
+          !r.mine &&
+          !app.reports.asked(r) &&
+          sameWay &&
+          u.speedKmh < 120 &&
+          _ask == null) {
         _askAbout(r);
       }
     }
@@ -345,7 +370,10 @@ class _NavScreenState extends State<NavScreen> {
   }
 
   String _aheadPhrase(AppState app, Report r) => switch (r.kind) {
-    ReportKind.polis when r.sub == 'perangkap' => app.tr('Perangkap laju dilaporkan di hadapan.', 'Speed trap reported ahead.'),
+    ReportKind.polis when r.sub == 'perangkap' => app.tr(
+      'Perangkap laju dilaporkan di hadapan.',
+      'Speed trap reported ahead.',
+    ),
     ReportKind.polis => app.tr('Polis dilaporkan di hadapan.', 'Police reported ahead.'),
     ReportKind.kemalangan => app.tr('Kemalangan dilaporkan di hadapan.', 'Crash reported ahead.'),
     ReportKind.banjir => app.tr('Banjir dilaporkan di hadapan.', 'Flooding reported ahead.'),
@@ -430,7 +458,8 @@ class _NavScreenState extends State<NavScreen> {
     final ms = _route.maneuvers;
     final next = u != null && u.nextIndex >= 0 ? ms[u.nextIndex] : (ms.length > 1 ? ms[1] : null);
     final then = u != null && u.thenIndex >= 0 ? ms[u.thenIndex] : null;
-    final toNext = u?.toNextM ?? (next != null ? _route.cumDist[next.shapeIndex.clamp(0, _route.cumDist.length - 1)] : 0);
+    final toNext =
+        u?.toNextM ?? (next != null ? _route.cumDist[next.shapeIndex.clamp(0, _route.cumDist.length - 1)] : 0);
     final remainingS = u?.remainingS ?? _route.durationS;
     final remainingM = u?.remainingM ?? _route.distanceM;
     final pad = MediaQuery.of(context).padding;
@@ -450,7 +479,11 @@ class _NavScreenState extends State<NavScreen> {
               },
               child: MapLibreMap(
                 styleString: widget.style,
-                initialCameraPosition: CameraPosition(target: ll(app.location.last?.pos ?? _route.start), zoom: 16, tilt: 50),
+                initialCameraPosition: CameraPosition(
+                  target: ll(app.location.last?.pos ?? _route.start),
+                  zoom: 16,
+                  tilt: 50,
+                ),
                 onMapCreated: (c) => _map = c,
                 onStyleLoadedCallback: _onStyleLoaded,
                 myLocationEnabled: true,
@@ -469,11 +502,13 @@ class _NavScreenState extends State<NavScreen> {
               right: 0,
               child: Column(
                 children: [
-                  if (next != null && !_arrived) _Banner(maneuver: next, distanceM: toNext, lang: app.lang, topPad: pad.top),
+                  if (next != null && !_arrived)
+                    _Banner(maneuver: next, distanceM: toNext, lang: app.lang, topPad: pad.top),
                   if (then != null && !_arrived) _ThenStrip(maneuver: then),
                   if (next != null && next.lanes.isNotEmpty && toNext <= 500 && !_arrived) LaneRow(lanes: next.lanes),
                   if (_rerouting) _Pill(icon: Icons.sync, text: context.tr('Mengira semula laluan…', 'Recalculating…')),
-                  if (u?.gpsWeak == true) _Pill(icon: Icons.gps_off, text: context.tr('Isyarat GPS lemah', 'Weak GPS signal')),
+                  if (u?.gpsWeak == true)
+                    _Pill(icon: Icons.gps_off, text: context.tr('Isyarat GPS lemah', 'Weak GPS signal')),
                   if (!app.online)
                     _Pill(
                       icon: Icons.cloud_off,
@@ -481,7 +516,8 @@ class _NavScreenState extends State<NavScreen> {
                           ? context.tr('Luar talian — laluan dari peta tersimpan', 'Offline — route from saved map')
                           : context.tr('Luar talian', 'Offline'),
                     ),
-                  if (_camAhead != null) _CameraCard(cam: _camAhead!.camera, distanceM: _camDist, kmh: u?.speedKmh ?? 0),
+                  if (_camAhead != null)
+                    _CameraCard(cam: _camAhead!.camera, distanceM: _camDist, kmh: u?.speedKmh ?? 0),
                   if (_alert != null) _AlertCard(report: _alert!, onClose: () => setState(() => _alert = null)),
                   if (_ask != null) _AskCard(report: _ask!, onAnswer: _answer),
                 ],
@@ -526,7 +562,8 @@ class _NavScreenState extends State<NavScreen> {
                       color: ArahColors.amber,
                       onTap: () {
                         final f = app.location.last;
-                        if (f != null) showReportSheet(context, f.pos, f.headingDeg ?? u?.bearingDeg ?? 0, driving: true);
+                        if (f != null)
+                          showReportSheet(context, f.pos, f.headingDeg ?? u?.bearingDeg ?? 0, driving: true);
                       },
                     ),
                     const SizedBox(height: 12),
@@ -711,10 +748,18 @@ class _CameraCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    red ? context.tr('Kamera lampu isyarat', 'Red light camera') : context.tr('Kamera laju', 'Speed camera'),
+                    red
+                        ? context.tr('Kamera lampu isyarat', 'Red light camera')
+                        : context.tr('Kamera laju', 'Speed camera'),
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: over ? Colors.white : null),
                   ),
-                  Text(displayDistance(distanceM), style: TextStyle(fontSize: 16, color: over ? Colors.white : null)),
+                  Text(
+                    [
+                      displayDistance(distanceM),
+                      if (!cam.verified) context.tr('Tidak disahkan', 'Unverified'),
+                    ].join(' · '),
+                    style: TextStyle(fontSize: 16, color: over ? Colors.white : null),
+                  ),
                 ],
               ),
             ),
@@ -849,7 +894,12 @@ class _Speedo extends StatelessWidget {
             children: [
               Text(
                 '${kmh.round()}',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, height: 1, color: speeding ? Colors.white : null),
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  height: 1,
+                  color: speeding ? Colors.white : null,
+                ),
               ),
               Text(context.tr('km/j', 'km/h'), style: TextStyle(fontSize: 12, color: speeding ? Colors.white : null)),
             ],
@@ -950,7 +1000,10 @@ class _EtaBar extends StatelessWidget {
                         height: 1.1,
                       ),
                     ),
-                    Text('${fmtDuration(remainingS, lang)} · ${fmtKm(remainingM)}', style: const TextStyle(fontSize: 16)),
+                    Text(
+                      '${fmtDuration(remainingS, lang)} · ${fmtKm(remainingM)}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
                   ],
                 ),
               ),

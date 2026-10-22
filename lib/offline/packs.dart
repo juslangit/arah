@@ -106,7 +106,8 @@ class PackManager extends ChangeNotifier {
   }
 
   static List<PackInfo> _parseCatalog(String s) => [
-    for (final p in (jsonDecode(s) as Map<String, dynamic>)['packs'] as List) PackInfo.fromJson(p as Map<String, dynamic>),
+    for (final p in (jsonDecode(s) as Map<String, dynamic>)['packs'] as List)
+      PackInfo.fromJson(p as Map<String, dynamic>),
   ];
 
   void _loadInstalled() {

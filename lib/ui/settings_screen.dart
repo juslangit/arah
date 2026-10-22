@@ -42,7 +42,10 @@ class SettingsScreen extends StatelessWidget {
             secondary: const Icon(Icons.cloud_off),
             title: Text(context.tr('Uji mod luar talian', 'Test offline mode')),
             subtitle: Text(
-              context.tr('Guna peta, carian dan laluan dari telefon sahaja', 'Use only the map, search and routes on the phone'),
+              context.tr(
+                'Guna peta, carian dan laluan dari telefon sahaja',
+                'Use only the map, search and routes on the phone',
+              ),
             ),
             value: s.forceOffline,
             onChanged: (v) => s.forceOffline = v,
@@ -84,7 +87,9 @@ class SettingsScreen extends StatelessWidget {
           ),
           SwitchListTile(
             title: Text(context.tr('Pampasan lewat Bluetooth', 'Bluetooth delay compensation')),
-            subtitle: Text(context.tr('Bercakap 1.5 saat lebih awal untuk audio kereta', 'Speak 1.5 s earlier for car audio')),
+            subtitle: Text(
+              context.tr('Bercakap 1.5 saat lebih awal untuk audio kereta', 'Speak 1.5 s earlier for car audio'),
+            ),
             value: s.bluetoothDelay,
             onChanged: (v) => s.bluetoothDelay = v,
           ),
@@ -160,6 +165,17 @@ class SettingsScreen extends StatelessWidget {
             onChanged: (v) => s.cameraAlerts = v,
           ),
           SwitchListTile(
+            title: Text(context.tr('Termasuk kamera tidak disahkan', 'Include unverified cameras')),
+            subtitle: Text(
+              context.tr(
+                'Kamera dari OpenStreetMap yang tiada dalam senarai JPJ',
+                'Cameras from OpenStreetMap that are not on JPJ\'s list',
+              ),
+            ),
+            value: s.unverifiedCameras,
+            onChanged: s.cameraAlerts ? (v) => s.unverifiedCameras = v : null,
+          ),
+          SwitchListTile(
             title: Text(context.tr('Tunjuk had laju', 'Show speed limit')),
             value: s.showSpeedLimit,
             onChanged: (v) => s.showSpeedLimit = v,
@@ -213,7 +229,8 @@ class SettingsScreen extends StatelessWidget {
               'Map data © OpenStreetMap contributors (ODbL). Tiles: OpenFreeMap, Protomaps. '
               'Routing: Valhalla (FOSSGIS). Search: Photon (Komoot). Map engine: MapLibre.',
             ),
-            onTap: () => showLicensePage(context: context, applicationName: 'Arah', applicationVersion: ArahConfig.appVersion),
+            onTap: () =>
+                showLicensePage(context: context, applicationName: 'Arah', applicationVersion: ArahConfig.appVersion),
           ),
           const SizedBox(height: 24),
         ],

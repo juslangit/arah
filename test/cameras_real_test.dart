@@ -27,7 +27,9 @@ void main() {
     print('$name (${(r.distanceM / 1000).round()} km): ${on.length} cameras');
     for (final c in on) {
       // ignore: avoid_print
-      print('   km ${(c.atM / 1000).toStringAsFixed(1)}  ${c.camera.kind.name} ${c.camera.maxspeed ?? '-'}  ${c.camera.road}');
+      print(
+        '   km ${(c.atM / 1000).toStringAsFixed(1)}  ${c.camera.kind.name} ${c.camera.maxspeed ?? '-'}  ${c.camera.road}${c.camera.verified ? '' : '  (unverified)'}',
+      );
     }
     return on;
   }
@@ -38,7 +40,21 @@ void main() {
     expect(up.length + down.length, greaterThan(0));
   }, skip: !have);
 
-  test('KL → Seremban', () => trip('KL→Seremban', const Geo(3.1478, 101.6953), const Geo(2.7297, 101.9381)), skip: !have);
+  test(
+    'KL → Seremban',
+    () => trip('KL→Seremban', const Geo(3.1478, 101.6953), const Geo(2.7297, 101.9381)),
+    skip: !have,
+  );
   test('KL → Johor Bahru', () => trip('KL→JB', const Geo(3.1478, 101.6953), const Geo(1.4927, 103.7414)), skip: !have);
-  test('KL → Alor Setar', () => trip('KL→Alor Setar', const Geo(3.1478, 101.6953), const Geo(6.1248, 100.3678)), skip: !have);
+  test(
+    'KL → Alor Setar',
+    () => trip('KL→Alor Setar', const Geo(3.1478, 101.6953), const Geo(6.1248, 100.3678)),
+    skip: !have,
+  );
+
+  test('Melaka city and Ipoh town: unverified red-light cameras show up', () {
+    final m = trip('Melaka Sentral→Bandar Hilir', const Geo(2.2160, 102.2470), const Geo(2.1920, 102.2490));
+    final i = trip('Ipoh town→Jalan Kuala Kangsar', const Geo(4.5975, 101.0901), const Geo(4.6400, 101.0950));
+    expect([...m, ...i].where((c) => !c.camera.verified), isNotEmpty);
+  }, skip: !have);
 }

@@ -19,7 +19,16 @@ class OpenPlaza {
   /// Not charged when the trip leaves a closed system at one of these gates,
   /// because that fare already includes it (Second Penang Bridge at Bandar Cassia).
   final List<String> skipIfClosedExit;
-  OpenPlaza(this.id, this.name, this.pos, this.car, this.moto, this.bothDirections, this.chargedHeading, this.skipIfClosedExit);
+  OpenPlaza(
+    this.id,
+    this.name,
+    this.pos,
+    this.car,
+    this.moto,
+    this.bothDirections,
+    this.chargedHeading,
+    this.skipIfClosedExit,
+  );
 }
 
 class Gate {
@@ -128,7 +137,8 @@ class TollData {
     if (pts.length < 2) return const TollEstimate([]);
     final box = Bounds.of(pts);
     const pad = 0.002;
-    bool near(Geo g) => g.lat > box.south - pad && g.lat < box.north + pad && g.lon > box.west - pad && g.lon < box.east + pad;
+    bool near(Geo g) =>
+        g.lat > box.south - pad && g.lat < box.north + pad && g.lon > box.west - pad && g.lon < box.east + pad;
     double headingAt(int i) {
       final j = i.clamp(0, pts.length - 2);
       return bearingDeg(pts[j], pts[j + 1]);

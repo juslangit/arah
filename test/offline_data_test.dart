@@ -30,8 +30,10 @@ void main() {
       final sw = Stopwatch()..start();
       final r = router.route(const Geo(2.9230, 101.6420), const Geo(2.9698, 101.7142), const RouteOptions());
       // ignore: avoid_print
-      print('cyberjaya→ioi: ${(r.distanceM / 1000).toStringAsFixed(1)} km, ${(r.durationS / 60).round()} min, '
-          '${r.maneuvers.length} maneuvers, ${sw.elapsedMilliseconds} ms');
+      print(
+        'cyberjaya→ioi: ${(r.distanceM / 1000).toStringAsFixed(1)} km, ${(r.durationS / 60).round()} min, '
+        '${r.maneuvers.length} maneuvers, ${sw.elapsedMilliseconds} ms',
+      );
       for (final m in r.maneuvers.take(12)) {
         // ignore: avoid_print
         print('  ${spokenPrompt(m, Lang.en)}  (${m.lengthM.round()} m)');
@@ -48,15 +50,21 @@ void main() {
       final r = router.route(const Geo(3.1478, 101.6953), const Geo(5.4141, 100.3288), const RouteOptions());
       final ms = sw.elapsedMilliseconds;
       // ignore: avoid_print
-      print('kl→penang: ${(r.distanceM / 1000).round()} km, ${(r.durationS / 3600).toStringAsFixed(1)} h, '
-          'toll=${r.hasToll}, $ms ms');
+      print(
+        'kl→penang: ${(r.distanceM / 1000).round()} km, ${(r.durationS / 3600).toStringAsFixed(1)} h, '
+        'toll=${r.hasToll}, $ms ms',
+      );
       expect(r.distanceM, inInclusiveRange(330000, 420000));
       expect(r.hasToll, isTrue);
     }, skip: !have);
 
     test('avoid tolls takes a different, slower road', () {
       final a = router.route(const Geo(3.1478, 101.6953), const Geo(2.7297, 101.9381), const RouteOptions());
-      final b = router.route(const Geo(3.1478, 101.6953), const Geo(2.7297, 101.9381), const RouteOptions(avoidTolls: true));
+      final b = router.route(
+        const Geo(3.1478, 101.6953),
+        const Geo(2.7297, 101.9381),
+        const RouteOptions(avoidTolls: true),
+      );
       // ignore: avoid_print
       print('kl→seremban: toll ${(a.durationS / 60).round()} min vs no-toll ${(b.durationS / 60).round()} min');
       expect(b.durationS, greaterThan(a.durationS));

@@ -33,6 +33,11 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+            // No R8: plugins built on JNI (shared_preferences_android 2.5) are called from
+            // Dart by name, and shrinking strips or renames those classes, so the app hangs
+            // on the splash screen (NoSuchMethodError / ClassNotFoundException).
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }

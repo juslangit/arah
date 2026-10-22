@@ -129,13 +129,22 @@ class MapLayers {
     await c.addImage('arah-stop', await iconBadge(Icons.flag, ArahColors.brand, size: 56));
     await c.addImage('arah-cam', await iconBadge(Icons.photo_camera, const Color(0xFF263238), size: 56));
     await c.addImage('arah-cam-red', await iconBadge(Icons.traffic, ArahColors.warn, size: 56));
+    // Unverified (OSM-only) cameras: same shapes, greyed.
+    await c.addImage('arah-cam-u', await iconBadge(Icons.photo_camera, const Color(0xFF90A4AE), size: 56));
+    await c.addImage('arah-cam-red-u', await iconBadge(Icons.traffic, const Color(0xFFE0A39C), size: 56));
     await c.addImage('arah-start', await iconBadge(Icons.trip_origin, ArahColors.route, size: 56));
 
     await c.addGeoJsonSource(routes, collection([]));
     await c.addLineLayer(
       routes,
       'arah-route-alt',
-      const LineLayerProperties(lineColor: '#9AA4B2', lineWidth: 7, lineCap: 'round', lineJoin: 'round', lineOpacity: 0.9),
+      const LineLayerProperties(
+        lineColor: '#9AA4B2',
+        lineWidth: 7,
+        lineCap: 'round',
+        lineJoin: 'round',
+        lineOpacity: 0.9,
+      ),
       filter: [
         '==',
         ['get', 'selected'],
@@ -196,7 +205,12 @@ class MapLayers {
     await c.addSymbolLayer(
       pin,
       'arah-pin',
-      const SymbolLayerProperties(iconImage: ['get', 'icon'], iconSize: 0.6, iconAnchor: 'bottom', iconAllowOverlap: true),
+      const SymbolLayerProperties(
+        iconImage: ['get', 'icon'],
+        iconSize: 0.6,
+        iconAnchor: 'bottom',
+        iconAllowOverlap: true,
+      ),
     );
   }
 

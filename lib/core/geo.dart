@@ -25,7 +25,8 @@ double _deg(double r) => r * 180 / math.pi;
 double distanceM(Geo a, Geo b) {
   final dLat = _rad(b.lat - a.lat);
   final dLon = _rad(b.lon - a.lon);
-  final h = math.pow(math.sin(dLat / 2), 2) + math.cos(_rad(a.lat)) * math.cos(_rad(b.lat)) * math.pow(math.sin(dLon / 2), 2);
+  final h =
+      math.pow(math.sin(dLat / 2), 2) + math.cos(_rad(a.lat)) * math.cos(_rad(b.lat)) * math.pow(math.sin(dLon / 2), 2);
   return 2 * earthRadiusM * math.asin(math.min(1, math.sqrt(h)));
 }
 

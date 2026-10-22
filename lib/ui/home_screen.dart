@@ -208,7 +208,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted && _place?.pos == g) setState(() => _place = named);
   }
 
-  Place _me() => Place(name: context.appRead.tr('Lokasi anda', 'Your location'), pos: context.appRead.here, source: 'me');
+  Place _me() =>
+      Place(name: context.appRead.tr('Lokasi anda', 'Your location'), pos: context.appRead.here, source: 'me');
   bool _isMe(Place? p) => p == null || p.source == 'me';
 
   Future<void> _directions() async {
@@ -288,7 +289,9 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(
         builder: (_) => SearchScreen(
           near: current?.pos ?? app.here,
-          hint: which == 0 ? app.tr('Pilih titik mula', 'Choose start') : app.tr('Pilih destinasi', 'Choose destination'),
+          hint: which == 0
+              ? app.tr('Pilih titik mula', 'Choose start')
+              : app.tr('Pilih destinasi', 'Choose destination'),
           offerMyLocation: true,
         ),
       ),
@@ -515,7 +518,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             IconButton(
                               tooltip: context.tr('Tetapan', 'Settings'),
                               icon: const Icon(Icons.menu),
-                              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
+                              onPressed: () =>
+                                  Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
                             ),
                             const SizedBox(width: 4),
                           ],
@@ -534,15 +538,26 @@ class _HomeScreenState extends State<HomeScreen> {
                             final h = app.settings.home;
                             h != null
                                 ? _select(h)
-                                : _snack(app.tr('Pilih tempat, kemudian "Tetapkan Rumah"', 'Pick a place, then "Set as Home"'));
+                                : _snack(
+                                    app.tr(
+                                      'Pilih tempat, kemudian "Tetapkan Rumah"',
+                                      'Pick a place, then "Set as Home"',
+                                    ),
+                                  );
                           }),
                           _chip(Icons.work, context.tr('Kerja', 'Work'), () {
                             final w = app.settings.work;
                             w != null
                                 ? _select(w)
-                                : _snack(app.tr('Pilih tempat, kemudian "Tetapkan Kerja"', 'Pick a place, then "Set as Work"'));
+                                : _snack(
+                                    app.tr(
+                                      'Pilih tempat, kemudian "Tetapkan Kerja"',
+                                      'Pick a place, then "Set as Work"',
+                                    ),
+                                  );
                           }),
-                          for (final c in categories.take(4)) _chip(c.icon, app.tr(c.ms, c.en), () => _openSearch(category: c)),
+                          for (final c in categories.take(4))
+                            _chip(c.icon, app.tr(c.ms, c.en), () => _openSearch(category: c)),
                         ],
                       ),
                     ),
@@ -575,7 +590,8 @@ class _HomeScreenState extends State<HomeScreen> {
           // Right-hand buttons.
           Positioned(
             right: 12,
-            bottom: (bottomPanel != null ? 16 : 32) + MediaQuery.of(context).padding.bottom + (bottomPanel != null ? 0 : 0),
+            bottom:
+                (bottomPanel != null ? 16 : 32) + MediaQuery.of(context).padding.bottom + (bottomPanel != null ? 0 : 0),
             child: SafeArea(
               child: AnimatedPadding(
                 duration: const Duration(milliseconds: 200),
@@ -695,7 +711,10 @@ class _PlaceCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(place.name, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+                    Text(
+                      place.name,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                    ),
                     const SizedBox(height: 2),
                     Text(
                       [if (place.context.isNotEmpty) place.context, if (d != null) fmtKm(d)].join(' · '),
@@ -733,7 +752,8 @@ class _PlaceCard extends StatelessWidget {
                 label: Text(context.tr('Tetapkan Rumah', 'Set as Home')),
                 onPressed: () {
                   s.home = place;
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.tr('Rumah ditetapkan', 'Home set'))));
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(context.tr('Rumah ditetapkan', 'Home set'))));
                 },
               ),
               ActionChip(
@@ -741,7 +761,8 @@ class _PlaceCard extends StatelessWidget {
                 label: Text(context.tr('Tetapkan Kerja', 'Set as Work')),
                 onPressed: () {
                   s.work = place;
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.tr('Kerja ditetapkan', 'Work set'))));
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(context.tr('Kerja ditetapkan', 'Work set'))));
                 },
               ),
               ActionChip(
@@ -936,7 +957,11 @@ class _RoutePreview extends StatelessWidget {
                         children: [
                           Text(
                             fmtDuration(r.durationS, app.lang),
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: sel ? ArahColors.route : null),
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              color: sel ? ArahColors.route : null,
+                            ),
                           ),
                           Row(
                             children: [
@@ -957,7 +982,10 @@ class _RoutePreview extends StatelessWidget {
                                 const SizedBox(width: 6),
                                 const Icon(Icons.toll, size: 16),
                               ],
-                              if (r.hasFerry) ...[const SizedBox(width: 6), const Icon(Icons.directions_boat, size: 16)],
+                              if (r.hasFerry) ...[
+                                const SizedBox(width: 6),
+                                const Icon(Icons.directions_boat, size: 16),
+                              ],
                             ],
                           ),
                         ],
@@ -968,7 +996,11 @@ class _RoutePreview extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            _RouteInfo(route: routes[selected], offline: offline, toll: selected < tolls.length ? tolls[selected] : null),
+            _RouteInfo(
+              route: routes[selected],
+              offline: offline,
+              toll: selected < tolls.length ? tolls[selected] : null,
+            ),
             const SizedBox(height: 10),
             Row(
               children: [
@@ -1060,13 +1092,23 @@ class _RouteInfo extends StatelessWidget {
         }
       }
     }
-    final cams = app.settings.cameraAlerts ? (app.cameras?.along(route).length ?? 0) : 0;
+    final s = app.settings;
+    final camList = s.cameraAlerts
+        ? (app.cameras?.along(route, unverified: s.unverifiedCameras) ?? const [])
+        : const [];
+    final cams = camList.where((c) => c.camera.verified).length;
+    final unverified = camList.length - cams;
     final parts = <String>[
       '${context.tr('Tiba', 'Arrive')} ${fmtEta(route.durationS)}',
       if (route.hasToll && (toll == null || toll!.isEmpty))
         context.tr('Ada tol (harga tidak diketahui)', 'Has tolls (price unknown)'),
       if (route.hasFerry) context.tr('Ada feri', 'Has ferry'),
       if (cams > 0) context.tr('$cams kamera laju', cams == 1 ? '1 speed camera' : '$cams speed cameras'),
+      if (unverified > 0)
+        context.tr(
+          '$unverified kamera tidak disahkan',
+          unverified == 1 ? '1 unverified camera' : '$unverified unverified cameras',
+        ),
       for (final e in counts.entries) '${e.value} ${_kindName(context, e.key)}',
       if (offline) context.tr('Laluan luar talian', 'Offline route'),
     ];
@@ -1165,7 +1207,13 @@ class _EndField extends StatelessWidget {
   final Color color;
   final String label, text;
   final VoidCallback onTap;
-  const _EndField({required this.icon, required this.color, required this.label, required this.text, required this.onTap});
+  const _EndField({
+    required this.icon,
+    required this.color,
+    required this.label,
+    required this.text,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -1211,7 +1259,11 @@ class _StopRow extends StatelessWidget {
           child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
         ),
         if (onRemove != null)
-          IconButton(visualDensity: VisualDensity.compact, icon: const Icon(Icons.close, size: 18), onPressed: onRemove),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            icon: const Icon(Icons.close, size: 18),
+            onPressed: onRemove,
+          ),
       ],
     ),
   );

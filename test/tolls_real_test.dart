@@ -72,8 +72,12 @@ void main() {
   }, skip: !have);
 
   test('motorcycles pay nothing', () {
-    final e = trip('KL→Seremban by motorbike', const Geo(3.1478, 101.6953), const Geo(2.7297, 101.9381),
-        mode: TravelMode.motorcycle);
+    final e = trip(
+      'KL→Seremban by motorbike',
+      const Geo(3.1478, 101.6953),
+      const Geo(2.7297, 101.9381),
+      mode: TravelMode.motorcycle,
+    );
     expect(e.total, 0);
   }, skip: !have);
 }

@@ -67,7 +67,10 @@ class OfflineSearch {
         final km = distanceM(near, pos) / 1000;
         s -= math.log(1 + km) * 0.8;
       }
-      scored.add((s, Place(name: name, kind: r['kind'] as String, context: r['context'] as String, pos: pos, source: 'offline')));
+      scored.add((
+        s,
+        Place(name: name, kind: r['kind'] as String, context: r['context'] as String, pos: pos, source: 'offline'),
+      ));
     }
     scored.sort((a, b) => b.$1.compareTo(a.$1));
     final out = <Place>[];
@@ -112,12 +115,10 @@ class OfflineSearch {
   /// Nearest named thing to a point, for a dropped pin when offline.
   Place? nearest(Geo p) {
     final d = 0.003;
-    final rows = _db.select('SELECT name, kind, context, lat, lon FROM place WHERE lat BETWEEN ? AND ? AND lon BETWEEN ? AND ?', [
-      p.lat - d,
-      p.lat + d,
-      p.lon - d,
-      p.lon + d,
-    ]);
+    final rows = _db.select(
+      'SELECT name, kind, context, lat, lon FROM place WHERE lat BETWEEN ? AND ? AND lon BETWEEN ? AND ?',
+      [p.lat - d, p.lat + d, p.lon - d, p.lon + d],
+    );
     Place? best;
     var bd = double.infinity;
     for (final r in rows) {

@@ -127,8 +127,17 @@ Old AES sites still mapped in OSM but missing from both JPJ lists, so presumed r
 - Duplicates of included sites: 36360549 (Pagoh SB), 6804709747 (GCE NB), 9667604207 (Behrang).
 - Near the Brunei border: 5089448814, 5089469737 (Bandar Seri Begawan) and 11594141332.
 
-If the app should warn about these anyway, add them as a separate "unverified" layer. Do not
-add them to the JPJ set.
+Since 2026-10-22 the app warns about these too, as a separate **unverified** layer
+(`build_unverified.py` → `unverified.json`; `slim.py` adds them to the app asset with
+`"verified": false`). They are never mixed into `cameras.json` (the JPJ set). After removing
+duplicates there are 27: 11 speed, 16 red light; 26 have a direction.
+- kind: red_light if a mapped traffic signal is within 60 m, else speed.
+- heading_deg: the bearing of the one-way road the node sits on; null on two-way roads.
+- Duplicates (same kind and direction, under 150 m apart) are merged, keeping the node nearer a
+  signal: 8104184449 into 8104196984 (Ipoh), 12560483104 into 11077958600 and 6122463885 into
+  6154342292 (Melaka).
+- The app greys out their map icons, adds "Unverified" to the warning card, and says
+  "Possible speed camera ahead". Settings → "Include unverified cameras" turns them off.
 
 ## Sources
 
@@ -160,6 +169,7 @@ add them to the JPJ set.
 
    For a new KM site, add it to `kmplace.py` and recheck the offset against nearby known cameras.
 5. Edit the `SITES` / `UNPLACED` table in `build_cameras.py`, then run
-   `../.venv/bin/python build_cameras.py` from `cameras/`.
+   `../.venv/bin/python build_cameras.py`, `../.venv/bin/python build_unverified.py` and
+   `python3 slim.py` from `cameras/`.
 6. If an OSM node id disappears, `build_cameras.py` fails with a KeyError. Find the new node with
    `verify.py`, or switch that site to a `km` placement.

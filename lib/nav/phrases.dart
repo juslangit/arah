@@ -86,7 +86,8 @@ String action(Maneuver m, Lang l) {
 String target(Maneuver m, Lang l, {bool spoken = true}) {
   final ms = l == Lang.ms;
   if (isArrival(m.turn) || m.turn == Turn.start) return '';
-  final isExit = m.turn == Turn.exitLeft || m.turn == Turn.exitRight || m.turn == Turn.rampLeft || m.turn == Turn.rampRight;
+  final isExit =
+      m.turn == Turn.exitLeft || m.turn == Turn.exitRight || m.turn == Turn.rampLeft || m.turn == Turn.rampRight;
   if (isExit && m.toward.isNotEmpty) return ms ? 'arah ${m.toward}' : 'towards ${m.toward}';
   if (m.street.isNotEmpty) return ms ? 'ke ${m.street}' : 'onto ${m.street}';
   // Spoken refs read better spelled out: "E1" → "E 1".
@@ -129,7 +130,9 @@ String _join(List<String> parts) => parts.where((p) => p.isNotEmpty).join(' ');
 /// A full spoken prompt. [distanceM] null means "now".
 String spokenPrompt(Maneuver m, Lang l, {double? distanceM, Maneuver? then, double? thenGapM}) {
   final ms = l == Lang.ms;
-  final lead = distanceM == null ? '' : (ms ? 'Dalam ${spokenDistance(distanceM, l)},' : 'In ${spokenDistance(distanceM, l)},');
+  final lead = distanceM == null
+      ? ''
+      : (ms ? 'Dalam ${spokenDistance(distanceM, l)},' : 'In ${spokenDistance(distanceM, l)},');
   var s = _join([lead, action(m, l), target(m, l)]);
   if (then != null) {
     final gap = (thenGapM != null && thenGapM >= 50)
@@ -154,7 +157,9 @@ String arrivalSoon(Maneuver m, double d, Lang l) {
       : m.turn == Turn.destinationRight
       ? (l == Lang.ms ? ' di sebelah kanan' : ' on the right')
       : '';
-  return l == Lang.ms ? 'Destinasi$side dalam ${spokenDistance(d, l)}.' : 'Your destination is$side in ${spokenDistance(d, l)}.';
+  return l == Lang.ms
+      ? 'Destinasi$side dalam ${spokenDistance(d, l)}.'
+      : 'Your destination is$side in ${spokenDistance(d, l)}.';
 }
 
 String arrived(Lang l) => l == Lang.ms ? 'Anda telah tiba.' : 'You have arrived.';

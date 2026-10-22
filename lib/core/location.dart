@@ -31,7 +31,12 @@ class LocationService {
       intervalDuration: const Duration(seconds: 1),
       forceLocationManager: true,
       foregroundNotificationConfig: navigating
-          ? ForegroundNotificationConfig(notificationTitle: title, notificationText: text, enableWakeLock: true, setOngoing: true)
+          ? ForegroundNotificationConfig(
+              notificationTitle: title,
+              notificationText: text,
+              enableWakeLock: true,
+              setOngoing: true,
+            )
           : null,
     );
     _sub = Geolocator.getPositionStream(locationSettings: settings).listen((p) {

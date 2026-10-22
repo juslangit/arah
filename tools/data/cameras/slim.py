@@ -24,6 +24,10 @@ else:
         for c in osm['nodes'] if malaysia(c)]}
 keep = ('id', 'kind', 'lat', 'lon', 'maxspeed', 'heading_deg', 'road')
 out = {'updated': cams.get('updated', ''), 'cameras': [{k: c.get(k) for k in keep} for c in cams['cameras']]}
+# OSM-only cameras that are not on JPJ's list (build_unverified.py): shown as unverified.
+unv = os.path.join(here, 'unverified.json')
+if os.path.exists(src) and os.path.exists(unv):
+    out['cameras'] += [{**{k: c.get(k) for k in keep}, 'verified': False} for c in json.load(open(unv))['cameras']]
 path = os.path.join(here, '..', '..', '..', 'assets', 'cameras.json')
 json.dump(out, open(path, 'w'), separators=(',', ':'), ensure_ascii=False)
-print(f"{len(out['cameras'])} cameras → assets/cameras.json")
+print(f"{len(out['cameras'])} cameras ({sum(c.get('verified') is False for c in out['cameras'])} unverified) → assets/cameras.json")

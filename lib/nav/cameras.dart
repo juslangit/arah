@@ -15,7 +15,10 @@ class Camera {
   final int? maxspeed;
   final double? heading; // enforced direction of travel; null = both or unknown
   final String road;
-  const Camera(this.id, this.kind, this.pos, this.maxspeed, this.heading, this.road);
+
+  /// False for cameras only OpenStreetMap knows about, not on JPJ's list.
+  final bool verified;
+  const Camera(this.id, this.kind, this.pos, this.maxspeed, this.heading, this.road, {this.verified = true});
 }
 
 /// A camera the route passes, and where along the route it is.
@@ -48,6 +51,7 @@ class CameraData {
             (c['maxspeed'] as num?)?.toInt(),
             (c['heading_deg'] as num?)?.toDouble(),
             c['road'] as String? ?? '',
+            verified: c['verified'] != false,
           ),
     ]);
   }
@@ -57,15 +61,19 @@ class CameraData {
   static const passM = 35.0;
 
   /// Cameras the route drives past, in order, facing the way we travel.
-  List<CameraOnRoute> along(ArahRoute r) {
+  List<CameraOnRoute> along(ArahRoute r, {bool unverified = true}) {
     final pts = r.points;
     if (pts.length < 2) return const [];
     final box = Bounds.of(pts);
     const pad = 0.001;
     final out = <CameraOnRoute>[];
     for (final c in cameras) {
+      if (!unverified && !c.verified) {
+        continue;
+      }
       final g = c.pos;
-      if (g.lat < box.south - pad || g.lat > box.north + pad || g.lon < box.west - pad || g.lon > box.east + pad) continue;
+      if (g.lat < box.south - pad || g.lat > box.north + pad || g.lon < box.west - pad || g.lon > box.east + pad)
+        continue;
       var best = passM;
       int? seg;
       double t = 0;

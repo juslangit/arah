@@ -46,7 +46,10 @@ class OfflineScreen extends StatelessWidget {
             ),
           const Padding(
             padding: EdgeInsets.all(16),
-            child: Text('Data © OpenStreetMap contributors (ODbL) · Map tiles: Protomaps', style: TextStyle(fontSize: 12)),
+            child: Text(
+              'Data © OpenStreetMap contributors (ODbL) · Map tiles: Protomaps',
+              style: TextStyle(fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -86,7 +89,9 @@ class _PackTile extends StatelessWidget {
       if (app.settings.wifiOnlyDownloads && !app.onWifi) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(app.tr('Sambung ke Wi-Fi, atau matikan "Wi-Fi sahaja"', 'Connect to Wi-Fi, or turn off "Wi-Fi only"')),
+            content: Text(
+              app.tr('Sambung ke Wi-Fi, atau matikan "Wi-Fi sahaja"', 'Connect to Wi-Fi, or turn off "Wi-Fi only"'),
+            ),
           ),
         );
         return;
@@ -105,7 +110,11 @@ class _PackTile extends StatelessWidget {
           title: Text(name, style: const TextStyle(fontWeight: FontWeight.w600)),
           subtitle: Text(subtitle),
           trailing: running
-              ? IconButton(tooltip: app.tr('Jeda', 'Pause'), icon: const Icon(Icons.pause), onPressed: () => packs.pause(pack.id))
+              ? IconButton(
+                  tooltip: app.tr('Jeda', 'Pause'),
+                  icon: const Icon(Icons.pause),
+                  onPressed: () => packs.pause(pack.id),
+                )
               : installed != null && !packs.hasUpdate(pack.id)
               ? IconButton(
                   tooltip: app.tr('Padam', 'Delete'),
@@ -117,8 +126,14 @@ class _PackTile extends StatelessWidget {
                         title: Text(app.tr('Padam $name?', 'Delete $name?')),
                         content: Text(app.tr('Hanya data luar talian dipadam.', 'Only the offline data is removed.')),
                         actions: [
-                          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(app.tr('Batal', 'Cancel'))),
-                          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(app.tr('Padam', 'Delete'))),
+                          TextButton(
+                            onPressed: () => Navigator.pop(ctx, false),
+                            child: Text(app.tr('Batal', 'Cancel')),
+                          ),
+                          FilledButton(
+                            onPressed: () => Navigator.pop(ctx, true),
+                            child: Text(app.tr('Padam', 'Delete')),
+                          ),
                         ],
                       ),
                     );

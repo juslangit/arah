@@ -64,7 +64,9 @@ class ValhallaClient {
     }
     if (res.statusCode == 429) throw const RoutingException('busy', busy: true);
     if (res.statusCode != 200) {
-      throw RoutingException('HTTP ${res.statusCode}: ${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
+      throw RoutingException(
+        'HTTP ${res.statusCode}: ${res.body.length > 200 ? res.body.substring(0, 200) : res.body}',
+      );
     }
     return parseResponse(jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>);
   }
@@ -112,7 +114,8 @@ class ValhallaClient {
 
   static Maneuver _parseManeuver(Map<String, dynamic> m, Turn turn, int offset) {
     String firstText(List? l) => (l == null || l.isEmpty) ? '' : ((l.first as Map)['text'] as String? ?? '');
-    String joinText(List? l) => l == null ? '' : l.map((e) => (e as Map)['text']).whereType<String>().take(2).join(' / ');
+    String joinText(List? l) =>
+        l == null ? '' : l.map((e) => (e as Map)['text']).whereType<String>().take(2).join(' / ');
 
     final names = (m['street_names'] as List?)?.cast<String>() ?? const <String>[];
     // Valhalla puts refs ("E1") and names in the same list; split them.

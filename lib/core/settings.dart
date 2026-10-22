@@ -54,6 +54,10 @@ class Settings extends ChangeNotifier {
   /// Warn about fixed speed and red-light cameras ahead.
   bool get cameraAlerts => _p.getBool('cameraAlerts') ?? true;
   set cameraAlerts(bool v) => _set(() => _p.setBool('cameraAlerts', v));
+
+  /// Also warn about cameras only OpenStreetMap lists (not on JPJ's list).
+  bool get unverifiedCameras => _p.getBool('unverifiedCameras') ?? true;
+  set unverifiedCameras(bool v) => _set(() => _p.setBool('unverifiedCameras', v));
   bool get showSpeedLimit => _p.getBool('speedLimit') ?? true;
   set showSpeedLimit(bool v) => _set(() => _p.setBool('speedLimit', v));
 
@@ -107,7 +111,8 @@ class Settings extends ChangeNotifier {
     for (final s in _p.getStringList(k) ?? const <String>[]) Place.fromJson(jsonDecode(s) as Map<String, dynamic>),
   ];
 
-  void _savePlaces(String k, List<Place> v) => _set(() => _p.setStringList(k, [for (final x in v) jsonEncode(x.toJson())]));
+  void _savePlaces(String k, List<Place> v) =>
+      _set(() => _p.setStringList(k, [for (final x in v) jsonEncode(x.toJson())]));
 
   void _set(Future<bool> Function() f) {
     f();

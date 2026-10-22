@@ -169,7 +169,9 @@ class OfflineRouter {
     final dLen = g.lengthM(d.edge);
     final dRev = g.reverseOf(d.edge, da);
     final extraA = _allowed(d.edge, o) ? _cost(d.edge, o) * (d.alongM / math.max(dLen, 0.1)) : double.infinity;
-    final extraB = (dRev >= 0 && _allowed(dRev, o)) ? _cost(dRev, o) * (1 - d.alongM / math.max(dLen, 0.1)) : double.infinity;
+    final extraB = (dRev >= 0 && _allowed(dRev, o))
+        ? _cost(dRev, o) * (1 - d.alongM / math.max(dLen, 0.1))
+        : double.infinity;
 
     // Same road piece, start before goal in the direction of travel: no search needed.
     final sameEdge = s.edge == d.edge || s.edge == dRev;
@@ -469,7 +471,9 @@ class TurnBuilder {
         continue; // the road just bends
       }
       // Slight bends at junctions where every other way is a sharp turn are just the road.
-      if ((turn == Turn.slightLeft || turn == Turn.slightRight) && !nameChanged && options.every((a) => (a - angle).abs() > 60)) {
+      if ((turn == Turn.slightLeft || turn == Turn.slightRight) &&
+          !nameChanged &&
+          options.every((a) => (a - angle).abs() > 60)) {
         i++;
         continue;
       }

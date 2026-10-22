@@ -173,7 +173,8 @@ class NavEngine {
     var thenIdx = -1;
     var thenGap = 0.0;
     if (next >= 0 && next + 1 < ms.length) {
-      thenGap = cum[ms[next + 1].shapeIndex.clamp(0, cum.length - 1)] - cum[ms[next].shapeIndex.clamp(0, cum.length - 1)];
+      thenGap =
+          cum[ms[next + 1].shapeIndex.clamp(0, cum.length - 1)] - cum[ms[next].shapeIndex.clamp(0, cum.length - 1)];
       if (thenGap <= t.thenWithinM) thenIdx = next + 1;
     }
 
