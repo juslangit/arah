@@ -154,6 +154,12 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           SwitchListTile(
+            title: Text(context.tr('Amaran kamera laju', 'Speed camera alerts')),
+            subtitle: Text(context.tr('Kamera AWAS / AES di sepanjang laluan', 'AWAS / AES cameras along the route')),
+            value: s.cameraAlerts,
+            onChanged: (v) => s.cameraAlerts = v,
+          ),
+          SwitchListTile(
             title: Text(context.tr('Tunjuk had laju', 'Show speed limit')),
             value: s.showSpeedLimit,
             onChanged: (v) => s.showSpeedLimit = v,

@@ -50,6 +50,10 @@ class Settings extends ChangeNotifier {
 
   MapTheme get theme => MapTheme.values[_p.getInt('theme') ?? 0];
   set theme(MapTheme v) => _set(() => _p.setInt('theme', v.index));
+
+  /// Warn about fixed speed and red-light cameras ahead.
+  bool get cameraAlerts => _p.getBool('cameraAlerts') ?? true;
+  set cameraAlerts(bool v) => _set(() => _p.setBool('cameraAlerts', v));
   bool get showSpeedLimit => _p.getBool('speedLimit') ?? true;
   set showSpeedLimit(bool v) => _set(() => _p.setBool('speedLimit', v));
 

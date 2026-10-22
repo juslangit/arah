@@ -127,6 +127,8 @@ class MapLayers {
     }
     await c.addImage('arah-pin', await pinImage(ArahColors.warn));
     await c.addImage('arah-stop', await iconBadge(Icons.flag, ArahColors.brand, size: 56));
+    await c.addImage('arah-cam', await iconBadge(Icons.photo_camera, const Color(0xFF263238), size: 56));
+    await c.addImage('arah-cam-red', await iconBadge(Icons.traffic, ArahColors.warn, size: 56));
     await c.addImage('arah-start', await iconBadge(Icons.trip_origin, ArahColors.route, size: 56));
 
     await c.addGeoJsonSource(routes, collection([]));
@@ -180,6 +182,14 @@ class MapLayers {
           1.0,
         ],
       ),
+    );
+
+    // Speed cameras along the route (navigation screen).
+    await c.addGeoJsonSource('arah-cameras', collection([]));
+    await c.addSymbolLayer(
+      'arah-cameras',
+      'arah-cameras',
+      const SymbolLayerProperties(iconImage: ['get', 'icon'], iconSize: 0.55, iconAllowOverlap: true),
     );
 
     await c.addGeoJsonSource(pin, collection([]));

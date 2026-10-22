@@ -1060,11 +1060,13 @@ class _RouteInfo extends StatelessWidget {
         }
       }
     }
+    final cams = app.settings.cameraAlerts ? (app.cameras?.along(route).length ?? 0) : 0;
     final parts = <String>[
       '${context.tr('Tiba', 'Arrive')} ${fmtEta(route.durationS)}',
       if (route.hasToll && (toll == null || toll!.isEmpty))
         context.tr('Ada tol (harga tidak diketahui)', 'Has tolls (price unknown)'),
       if (route.hasFerry) context.tr('Ada feri', 'Has ferry'),
+      if (cams > 0) context.tr('$cams kamera laju', cams == 1 ? '1 speed camera' : '$cams speed cameras'),
       for (final e in counts.entries) '${e.value} ${_kindName(context, e.key)}',
       if (offline) context.tr('Laluan luar talian', 'Offline route'),
     ];

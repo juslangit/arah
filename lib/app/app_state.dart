@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import '../core/geo.dart';
 import '../core/location.dart';
 import '../core/settings.dart';
+import '../nav/cameras.dart';
 import '../nav/phrases.dart';
 import '../nav/speech.dart';
 import '../offline/packs.dart';
@@ -34,6 +35,9 @@ class AppState extends ChangeNotifier {
   /// Toll prices (assets/tolls.json); null if the table failed to load.
   TollData? tolls;
 
+  /// Fixed speed / red-light cameras (assets/cameras.json).
+  CameraData? cameras;
+
   AppState._(this.settings, this.packs, this.routing, this.search, this.reports) {
     settings.addListener(notifyListeners);
     packs.addListener(notifyListeners);
@@ -47,6 +51,9 @@ class AppState extends ChangeNotifier {
     await s._watchNetwork();
     try {
       s.tolls = TollData.parse(await rootBundle.loadString('assets/tolls.json'));
+    } catch (_) {}
+    try {
+      s.cameras = CameraData.parse(await rootBundle.loadString('assets/cameras.json'));
     } catch (_) {}
     unawaited(packs.refreshCatalog());
     unawaited(s.speech.init(settings.lang, volume: settings.voiceVolume));

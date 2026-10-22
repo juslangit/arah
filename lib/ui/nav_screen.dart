@@ -14,6 +14,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import '../app/app_state.dart';
 import '../app/theme.dart';
 import '../core/geo.dart';
+import '../nav/cameras.dart';
 import '../nav/nav_engine.dart';
 import '../nav/phrases.dart';
 import '../nav/voice_planner.dart';
@@ -64,6 +65,11 @@ class _NavScreenState extends State<NavScreen> {
   Timer? _askTimer;
   final _alerted = <String>{};
 
+  List<CameraOnRoute> _speedCams = [];
+  CameraOnRoute? _camAhead; // the next camera, once inside the warning distance
+  double _camDist = 0;
+  final _camWarned = <String>{};
+
   late List<Place> _stopsLeft;
   bool _arrived = false;
 
@@ -89,6 +95,59 @@ class _NavScreenState extends State<NavScreen> {
     _engine = NavEngine(r);
     _voice = VoicePlanner(r, lang: s.lang, timing: s.voiceTiming, bluetooth: s.bluetoothDelay);
     _offlineRoute = r.source == RouteSource.offline;
+    final app = context.appRead;
+    _speedCams = app.settings.cameraAlerts ? (app.cameras?.along(r) ?? const []) : const [];
+    _camAhead = null;
+    _drawCameras();
+  }
+
+  void _drawCameras() {
+    if (!_styleReady) return;
+    _map?.setGeoJsonSource(
+      'arah-cameras',
+      collection([
+        for (final c in _speedCams)
+          pointFeature(c.camera.pos, props: {'icon': c.camera.kind == CameraKind.redLight ? 'arah-cam-red' : 'arah-cam'}),
+      ]),
+    );
+  }
+
+  /// Waze-style camera warning: a card from 300 m in town, 600 m on fast
+  /// roads, 1 km on expressways — and one spoken warning per camera.
+  void _checkCameras(NavUpdate u) {
+    CameraOnRoute? next;
+    for (final c in _speedCams) {
+      if (c.atM > u.travelledM - 10) {
+        next = c;
+        break;
+      }
+    }
+    final warnAt = u.speedKmh > 90
+        ? 1000.0
+        : u.speedKmh > 60
+        ? 600.0
+        : 300.0;
+    final d = next == null ? 0.0 : next.atM - u.travelledM;
+    final show = next != null && d <= warnAt;
+    if (show != (_camAhead != null) || (show && (d - _camDist).abs() > 20)) {
+      setState(() {
+        _camAhead = show ? next : null;
+        _camDist = d;
+      });
+    }
+    if (show && _camWarned.add(next.camera.id)) {
+      final app = context.appRead;
+      if (app.settings.sound < 2) {
+        final limit = next.camera.maxspeed;
+        app.speech.say(
+          next.camera.kind == CameraKind.redLight
+              ? app.tr('Kamera lampu isyarat di hadapan.', 'Red light camera ahead.')
+              : limit != null
+              ? app.tr('Kamera laju di hadapan. Had laju $limit.', 'Speed camera ahead. Limit $limit.')
+              : app.tr('Kamera laju di hadapan.', 'Speed camera ahead.'),
+        );
+      }
+    }
   }
 
   Future<void> _startGps() async {
@@ -159,6 +218,7 @@ class _NavScreenState extends State<NavScreen> {
       return;
     }
     if (u.event == NavEvent.offRoute) _reroute(fix);
+    _checkCameras(u);
     _checkReports(u, fix);
   }
 
@@ -285,6 +345,7 @@ class _NavScreenState extends State<NavScreen> {
   }
 
   String _aheadPhrase(AppState app, Report r) => switch (r.kind) {
+    ReportKind.polis when r.sub == 'perangkap' => app.tr('Perangkap laju dilaporkan di hadapan.', 'Speed trap reported ahead.'),
     ReportKind.polis => app.tr('Polis dilaporkan di hadapan.', 'Police reported ahead.'),
     ReportKind.kemalangan => app.tr('Kemalangan dilaporkan di hadapan.', 'Crash reported ahead.'),
     ReportKind.banjir => app.tr('Banjir dilaporkan di hadapan.', 'Flooding reported ahead.'),
@@ -325,6 +386,7 @@ class _NavScreenState extends State<NavScreen> {
     await _layers!.showReports(context.appRead.reports.alive());
     await _layers!.showPins([for (final s in _stopsLeft) (s.pos, 'arah-stop'), (widget.destination.pos, 'arah-pin')]);
     await _layers!.showRoutes([_route], 0);
+    _drawCameras();
     final fix = context.appRead.location.last;
     if (fix != null) _onFix(fix);
   }
@@ -419,6 +481,7 @@ class _NavScreenState extends State<NavScreen> {
                           ? context.tr('Luar talian — laluan dari peta tersimpan', 'Offline — route from saved map')
                           : context.tr('Luar talian', 'Offline'),
                     ),
+                  if (_camAhead != null) _CameraCard(cam: _camAhead!.camera, distanceM: _camDist, kmh: u?.speedKmh ?? 0),
                   if (_alert != null) _AlertCard(report: _alert!, onClose: () => setState(() => _alert = null)),
                   if (_ask != null) _AskCard(report: _ask!, onAnswer: _answer),
                 ],
@@ -432,7 +495,9 @@ class _NavScreenState extends State<NavScreen> {
                 bottom: 104 + pad.bottom,
                 child: _Speedo(
                   kmh: u?.speedKmh ?? 0,
-                  limit: app.settings.showSpeedLimit ? (u?.speedLimitKmh ?? 0) : 0,
+                  limit: app.settings.showSpeedLimit
+                      ? ((u?.speedLimitKmh ?? 0) > 0 ? u!.speedLimitKmh : (_camAhead?.camera.maxspeed ?? 0))
+                      : 0,
                   margin: app.settings.speedingMargin,
                 ),
               ),
@@ -619,6 +684,60 @@ class _ThenStrip extends StatelessWidget {
       ),
     ),
   );
+}
+
+/// "Kamera laju · 450 m · 90": turns red when you're over the camera's limit.
+class _CameraCard extends StatelessWidget {
+  final Camera cam;
+  final double distanceM;
+  final double kmh;
+  const _CameraCard({required this.cam, required this.distanceM, required this.kmh});
+
+  @override
+  Widget build(BuildContext context) {
+    final red = cam.kind == CameraKind.redLight;
+    final over = !red && cam.maxspeed != null && kmh > cam.maxspeed!;
+    return Card(
+      margin: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+      color: over ? ArahColors.warn : null,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        child: Row(
+          children: [
+            Icon(red ? Icons.traffic : Icons.photo_camera, size: 34, color: over ? Colors.white : null),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    red ? context.tr('Kamera lampu isyarat', 'Red light camera') : context.tr('Kamera laju', 'Speed camera'),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: over ? Colors.white : null),
+                  ),
+                  Text(displayDistance(distanceM), style: TextStyle(fontSize: 16, color: over ? Colors.white : null)),
+                ],
+              ),
+            ),
+            if (cam.maxspeed != null)
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: ArahColors.warn, width: 6),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '${cam.maxspeed}',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.black),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _Pill extends StatelessWidget {

@@ -69,6 +69,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/tolls.json
+    - assets/cameras.json
     - assets/styles/
     - assets/sprites/
     - assets/glyphs/Noto Sans Italic/

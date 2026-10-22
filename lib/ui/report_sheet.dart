@@ -21,7 +21,11 @@ String reportName(BuildContext c, ReportKind k) => switch (k) {
 };
 
 List<(String, String, String)> _subs(ReportKind k) => switch (k) {
-  ReportKind.polis => [('tersorok', 'Tersorok', 'Hidden'), ('seberang', 'Seberang jalan', 'Other side')],
+  ReportKind.polis => [
+    ('perangkap', 'Perangkap laju', 'Speed trap'),
+    ('tersorok', 'Tersorok', 'Hidden'),
+    ('seberang', 'Seberang jalan', 'Other side'),
+  ],
   ReportKind.kemalangan => [
     ('kecil', 'Kecil', 'Minor'),
     ('besar', 'Besar', 'Major'),
