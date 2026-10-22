@@ -50,13 +50,15 @@ class PackInfo {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name_ms': nameMs,
-        'name_en': nameEn,
-        'bbox': [bounds.west, bounds.south, bounds.east, bounds.north],
-        'date': dataDate,
-        'files': [for (final f in files) {'name': f.name, 'bytes': f.bytes, 'url': f.url}],
-      };
+    'id': id,
+    'name_ms': nameMs,
+    'name_en': nameEn,
+    'bbox': [bounds.west, bounds.south, bounds.east, bounds.north],
+    'date': dataDate,
+    'files': [
+      for (final f in files) {'name': f.name, 'bytes': f.bytes, 'url': f.url},
+    ],
+  };
 }
 
 enum DownloadState { idle, running, paused, failed, done }
@@ -103,8 +105,9 @@ class PackManager extends ChangeNotifier {
     return m;
   }
 
-  static List<PackInfo> _parseCatalog(String s) =>
-      [for (final p in (jsonDecode(s) as Map<String, dynamic>)['packs'] as List) PackInfo.fromJson(p as Map<String, dynamic>)];
+  static List<PackInfo> _parseCatalog(String s) => [
+    for (final p in (jsonDecode(s) as Map<String, dynamic>)['packs'] as List) PackInfo.fromJson(p as Map<String, dynamic>),
+  ];
 
   void _loadInstalled() {
     for (final d in dir.listSync().whereType<Directory>()) {
@@ -179,7 +182,11 @@ class PackManager extends ChangeNotifier {
         }
         await _fetch(pack, f, part, doneBefore);
         if (_cancel[pack.id] == true) {
-          progress[pack.id] = DownloadProgress(DownloadState.paused, doneBefore + (part.existsSync() ? part.lengthSync() : 0), pack.bytes);
+          progress[pack.id] = DownloadProgress(
+            DownloadState.paused,
+            doneBefore + (part.existsSync() ? part.lengthSync() : 0),
+            pack.bytes,
+          );
           notifyListeners();
           return;
         }

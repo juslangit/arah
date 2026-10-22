@@ -29,11 +29,7 @@ PromptDistances distancesFor(double speedKmh, {double timing = 1.0, bool bluetoo
   }
   // Bluetooth car audio starts late; speak 1.5 s earlier.
   final lead = bluetooth ? speedKmh / 3.6 * 1.5 : 0.0;
-  return PromptDistances(
-    d.early == 0 ? 0 : d.early * timing + lead,
-    d.mid * timing + lead,
-    d.now * timing + lead,
-  );
+  return PromptDistances(d.early == 0 ? 0 : d.early * timing + lead, d.mid * timing + lead, d.now * timing + lead);
 }
 
 class VoicePrompt {
@@ -104,12 +100,17 @@ class VoicePlanner {
 
     // "Now" — includes a 12 m positioning tolerance.
     if (!stages.contains('now') && u.toNextM <= d.now + 12) {
-      stages..add('now')..add('mid')..add('early');
+      stages
+        ..add('now')
+        ..add('mid')
+        ..add('early');
       return _say(spokenPrompt(m, lang, then: then, thenGapM: u.thenGapM), now, urgent: true);
     }
     // "In X m" — skipped when fewer than 15 s remain (the now prompt follows).
     if (!stages.contains('mid') && u.toNextM <= d.mid) {
-      stages..add('mid')..add('early');
+      stages
+        ..add('mid')
+        ..add('early');
       if (secondsAway < 15) return null;
       return _say(spokenPrompt(m, lang, distanceM: u.toNextM), now);
     }

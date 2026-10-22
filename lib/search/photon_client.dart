@@ -14,8 +14,8 @@ class PhotonClient {
   final _cache = <String, List<Place>>{};
 
   PhotonClient({http.Client? client, String? baseUrl})
-      : _http = client ?? http.Client(),
-        baseUrl = baseUrl ?? ArahConfig.photonUrl;
+    : _http = client ?? http.Client(),
+      baseUrl = baseUrl ?? ArahConfig.photonUrl;
 
   Future<List<Place>> search(String q, {Geo? near, String lang = 'en', int limit = 8, String? osmTag}) async {
     final key = '$q|$osmTag|${near?.lat.toStringAsFixed(2)}|${near?.lon.toStringAsFixed(2)}';
@@ -32,7 +32,10 @@ class PhotonClient {
       if (near != null) ...{'lat': '${near.lat}', 'lon': '${near.lon}', 'location_bias_scale': '0.3'},
     };
     final res = await _http
-        .get(Uri.parse('$baseUrl/api').replace(queryParameters: params), headers: {'User-Agent': ArahConfig.serverHeaders['User-Agent']!})
+        .get(
+          Uri.parse('$baseUrl/api').replace(queryParameters: params),
+          headers: {'User-Agent': ArahConfig.serverHeaders['User-Agent']!},
+        )
         .timeout(const Duration(seconds: 8));
     if (res.statusCode != 200) throw Exception('search HTTP ${res.statusCode}');
     final out = parse(jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>);
@@ -42,8 +45,10 @@ class PhotonClient {
 
   Future<Place?> reverse(Geo p) async {
     final res = await _http
-        .get(Uri.parse('$baseUrl/reverse').replace(queryParameters: {'lat': '${p.lat}', 'lon': '${p.lon}', 'limit': '1'}),
-            headers: {'User-Agent': ArahConfig.serverHeaders['User-Agent']!})
+        .get(
+          Uri.parse('$baseUrl/reverse').replace(queryParameters: {'lat': '${p.lat}', 'lon': '${p.lon}', 'limit': '1'}),
+          headers: {'User-Agent': ArahConfig.serverHeaders['User-Agent']!},
+        )
         .timeout(const Duration(seconds: 8));
     if (res.statusCode != 200) return null;
     final list = parse(jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>);
@@ -66,13 +71,15 @@ class PhotonClient {
         props['city'] as String?,
         props['state'] as String?,
       ].whereType<String>().where((s) => s.isNotEmpty && s != name).toSet().join(', ');
-      out.add(Place(
-        name: name,
-        kind: (props['osm_value'] as String?) ?? '',
-        context: context,
-        pos: Geo((coords[1] as num).toDouble(), (coords[0] as num).toDouble()),
-        source: 'online',
-      ));
+      out.add(
+        Place(
+          name: name,
+          kind: (props['osm_value'] as String?) ?? '',
+          context: context,
+          pos: Geo((coords[1] as num).toDouble(), (coords[0] as num).toDouble()),
+          source: 'online',
+        ),
+      );
     }
     return out;
   }

@@ -121,18 +121,18 @@ class OfflineRouter {
   }
 
   Maneuver _shift(Maneuver m, int off) => Maneuver(
-        turn: m.turn,
-        shapeIndex: m.shapeIndex + off,
-        street: m.street,
-        ref: m.ref,
-        exitNumber: m.exitNumber,
-        toward: m.toward,
-        roundaboutExit: m.roundaboutExit,
-        lengthM: m.lengthM,
-        timeS: m.timeS,
-        toll: m.toll,
-        lanes: m.lanes,
-      );
+    turn: m.turn,
+    shapeIndex: m.shapeIndex + off,
+    street: m.street,
+    ref: m.ref,
+    exitNumber: m.exitNumber,
+    toward: m.toward,
+    roundaboutExit: m.roundaboutExit,
+    lengthM: m.lengthM,
+    timeS: m.timeS,
+    toll: m.toll,
+    lanes: m.lanes,
+  );
 
   ArahRoute _route(EdgeSnap s, EdgeSnap d, RouteOptions o) {
     final n = g.nodeCount;
@@ -407,13 +407,15 @@ class TurnBuilder {
           j++;
         }
         final after = j < edges.length ? g.names(edges[j]) : nOut;
-        raw.add(Maneuver(
-          turn: Turn.roundaboutEnter,
-          shapeIndex: edgeStart[i],
-          street: after[0],
-          ref: after[1],
-          roundaboutExit: math.max(1, exits),
-        ));
+        raw.add(
+          Maneuver(
+            turn: Turn.roundaboutEnter,
+            shapeIndex: edgeStart[i],
+            street: after[0],
+            ref: after[1],
+            roundaboutExit: math.max(1, exits),
+          ),
+        );
         i = j + 1;
         continue;
       }
@@ -467,22 +469,22 @@ class TurnBuilder {
         continue; // the road just bends
       }
       // Slight bends at junctions where every other way is a sharp turn are just the road.
-      if ((turn == Turn.slightLeft || turn == Turn.slightRight) &&
-          !nameChanged &&
-          options.every((a) => (a - angle).abs() > 60)) {
+      if ((turn == Turn.slightLeft || turn == Turn.slightRight) && !nameChanged && options.every((a) => (a - angle).abs() > 60)) {
         i++;
         continue;
       }
 
       final dest = nOut[2];
-      raw.add(Maneuver(
-        turn: turn,
-        shapeIndex: edgeStart[i],
-        street: nOut[0],
-        ref: nOut[1],
-        toward: dest,
-        toll: g.has(eout, EdgeFlag.toll),
-      ));
+      raw.add(
+        Maneuver(
+          turn: turn,
+          shapeIndex: edgeStart[i],
+          street: nOut[0],
+          ref: nOut[1],
+          toward: dest,
+          toll: g.has(eout, EdgeFlag.toll),
+        ),
+      );
       i++;
     }
     raw.add(Maneuver(turn: Turn.destination, shapeIndex: pts.length - 1));
@@ -493,16 +495,18 @@ class TurnBuilder {
       final m = raw[k];
       final endIdx = k + 1 < raw.length ? raw[k + 1].shapeIndex : m.shapeIndex;
       final len = cum[endIdx] - cum[m.shapeIndex];
-      out.add(Maneuver(
-        turn: m.turn,
-        shapeIndex: m.shapeIndex,
-        street: m.street,
-        ref: m.ref,
-        toward: m.toward,
-        roundaboutExit: m.roundaboutExit,
-        lengthM: len,
-        toll: m.toll,
-      ));
+      out.add(
+        Maneuver(
+          turn: m.turn,
+          shapeIndex: m.shapeIndex,
+          street: m.street,
+          ref: m.ref,
+          toward: m.toward,
+          roundaboutExit: m.roundaboutExit,
+          lengthM: len,
+          toll: m.toll,
+        ),
+      );
     }
     return out;
   }

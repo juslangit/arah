@@ -180,13 +180,12 @@ class RouteOptions {
     this.avoidFerries = false,
   });
 
-  RouteOptions copyWith({TravelMode? mode, bool? avoidTolls, bool? avoidHighways, bool? avoidFerries}) =>
-      RouteOptions(
-        mode: mode ?? this.mode,
-        avoidTolls: avoidTolls ?? this.avoidTolls,
-        avoidHighways: avoidHighways ?? this.avoidHighways,
-        avoidFerries: avoidFerries ?? this.avoidFerries,
-      );
+  RouteOptions copyWith({TravelMode? mode, bool? avoidTolls, bool? avoidHighways, bool? avoidFerries}) => RouteOptions(
+    mode: mode ?? this.mode,
+    avoidTolls: avoidTolls ?? this.avoidTolls,
+    avoidHighways: avoidHighways ?? this.avoidHighways,
+    avoidFerries: avoidFerries ?? this.avoidFerries,
+  );
 }
 
 class RoutingException implements Exception {

@@ -82,31 +82,31 @@ class Report {
   bool faded(DateTime now) => now.difference(created) > expires.difference(created) * 0.5;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'kind': kind.name,
-        'sub': sub,
-        'lat': pos.lat,
-        'lon': pos.lon,
-        'heading': heading,
-        'created_at': created.toIso8601String(),
-        'expires_at': expires.toIso8601String(),
-        'yes': yes,
-        'no': no,
-        'mine': mine,
-      };
+    'id': id,
+    'kind': kind.name,
+    'sub': sub,
+    'lat': pos.lat,
+    'lon': pos.lon,
+    'heading': heading,
+    'created_at': created.toIso8601String(),
+    'expires_at': expires.toIso8601String(),
+    'yes': yes,
+    'no': no,
+    'mine': mine,
+  };
 
   factory Report.fromJson(Map<String, dynamic> j) => Report(
-        id: '${j['id']}',
-        kind: ReportKind.values.byName(j['kind'] as String),
-        sub: j['sub'] as String? ?? '',
-        pos: Geo((j['lat'] as num).toDouble(), (j['lon'] as num).toDouble()),
-        heading: (j['heading'] as num?)?.toDouble() ?? 0,
-        created: DateTime.parse(j['created_at'] as String).toLocal(),
-        expires: DateTime.parse(j['expires_at'] as String).toLocal(),
-        yes: (j['yes'] as num?)?.toInt() ?? 0,
-        no: (j['no'] as num?)?.toInt() ?? 0,
-        mine: j['mine'] == true,
-      );
+    id: '${j['id']}',
+    kind: ReportKind.values.byName(j['kind'] as String),
+    sub: j['sub'] as String? ?? '',
+    pos: Geo((j['lat'] as num).toDouble(), (j['lon'] as num).toDouble()),
+    heading: (j['heading'] as num?)?.toDouble() ?? 0,
+    created: DateTime.parse(j['created_at'] as String).toLocal(),
+    expires: DateTime.parse(j['expires_at'] as String).toLocal(),
+    yes: (j['yes'] as num?)?.toInt() ?? 0,
+    no: (j['no'] as num?)?.toInt() ?? 0,
+    mine: j['mine'] == true,
+  );
 }
 
 /// Applies a "still there?" answer the same way the server does.
@@ -185,13 +185,10 @@ class ReportsService extends ChangeNotifier {
     final now = DateTime.now();
     if (_client != null) {
       try {
-        final row = await _client!.rpc('create_report', params: {
-          'p_kind': kind.name,
-          'p_sub': sub,
-          'p_lat': pos.lat,
-          'p_lon': pos.lon,
-          'p_heading': heading,
-        });
+        final row = await _client!.rpc(
+          'create_report',
+          params: {'p_kind': kind.name, 'p_sub': sub, 'p_lat': pos.lat, 'p_lon': pos.lon, 'p_heading': heading},
+        );
         final r = Report.fromJson({...(row as Map<String, dynamic>), 'mine': true});
         reports.add(r);
         notifyListeners();

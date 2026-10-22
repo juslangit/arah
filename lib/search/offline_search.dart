@@ -96,11 +96,12 @@ class OfflineSearch {
         final out = [
           for (final r in rows)
             Place(
-                name: r['name'] as String,
-                kind: r['kind'] as String,
-                context: r['context'] as String,
-                pos: Geo(r['lat'] as double, r['lon'] as double),
-                source: 'offline'),
+              name: r['name'] as String,
+              kind: r['kind'] as String,
+              context: r['context'] as String,
+              pos: Geo(r['lat'] as double, r['lon'] as double),
+              source: 'offline',
+            ),
         ]..sort((a, b) => distanceM(near, a.pos).compareTo(distanceM(near, b.pos)));
         return out.take(limit).toList();
       }
@@ -111,10 +112,12 @@ class OfflineSearch {
   /// Nearest named thing to a point, for a dropped pin when offline.
   Place? nearest(Geo p) {
     final d = 0.003;
-    final rows = _db.select(
-      'SELECT name, kind, context, lat, lon FROM place WHERE lat BETWEEN ? AND ? AND lon BETWEEN ? AND ?',
-      [p.lat - d, p.lat + d, p.lon - d, p.lon + d],
-    );
+    final rows = _db.select('SELECT name, kind, context, lat, lon FROM place WHERE lat BETWEEN ? AND ? AND lon BETWEEN ? AND ?', [
+      p.lat - d,
+      p.lat + d,
+      p.lon - d,
+      p.lon + d,
+    ]);
     Place? best;
     var bd = double.infinity;
     for (final r in rows) {
@@ -122,7 +125,13 @@ class OfflineSearch {
       final dist = distanceM(p, pos);
       if (dist < bd) {
         bd = dist;
-        best = Place(name: r['name'] as String, kind: r['kind'] as String, context: r['context'] as String, pos: pos, source: 'offline');
+        best = Place(
+          name: r['name'] as String,
+          kind: r['kind'] as String,
+          context: r['context'] as String,
+          pos: pos,
+          source: 'offline',
+        );
       }
     }
     return best;

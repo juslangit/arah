@@ -68,6 +68,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
+    - assets/tolls.json
     - assets/styles/
     - assets/sprites/
     - assets/glyphs/Noto Sans Italic/

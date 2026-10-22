@@ -56,8 +56,13 @@ class SearchService {
   }
 
   /// Category search ("Stesen minyak"): by OSM tag online, by kind offline.
-  Future<SearchResult> category(String query, String osmTag, List<String> kinds,
-      {required Geo near, bool isOnline = true}) async {
+  Future<SearchResult> category(
+    String query,
+    String osmTag,
+    List<String> kinds, {
+    required Geo near,
+    bool isOnline = true,
+  }) async {
     if (isOnline) {
       try {
         return SearchResult(await online.search(query, near: near, osmTag: osmTag, limit: 15));

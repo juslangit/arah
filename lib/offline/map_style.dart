@@ -14,7 +14,15 @@ import 'packs.dart';
 class MapStyles {
   static const _fonts = ['Noto Sans Regular', 'Noto Sans Medium', 'Noto Sans Italic'];
   static const _ranges = [
-    '0-255', '256-511', '512-767', '768-1023', '2816-3071', '7680-7935', '8192-8447', '8448-8703', '12288-12543',
+    '0-255',
+    '256-511',
+    '512-767',
+    '768-1023',
+    '2816-3071',
+    '7680-7935',
+    '8192-8447',
+    '8448-8703',
+    '12288-12543',
     '65280-65535',
   ];
   static String? _assetsDir;
@@ -59,7 +67,8 @@ class MapStyles {
     }
     if (maps.isEmpty) return null;
     final dir = await _ensureAssets();
-    final template = jsonDecode(await rootBundle.loadString('assets/styles/${dark ? 'dark' : 'light'}.json')) as Map<String, dynamic>;
+    final template =
+        jsonDecode(await rootBundle.loadString('assets/styles/${dark ? 'dark' : 'light'}.json')) as Map<String, dynamic>;
     // Online, the full font set covers Chinese and Tamil labels too.
     template['glyphs'] = online
         ? 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf'
@@ -70,11 +79,7 @@ class MapStyles {
     final layers = <Map<String, dynamic>>[];
     for (var i = 0; i < maps.length; i++) {
       final id = 'pack$i';
-      sources[id] = {
-        'type': 'vector',
-        'url': 'pmtiles://file://${maps[i]}',
-        'attribution': '© OpenStreetMap · Protomaps',
-      };
+      sources[id] = {'type': 'vector', 'url': 'pmtiles://file://${maps[i]}', 'attribution': '© OpenStreetMap · Protomaps'};
     }
     // Background once, every other layer once per pack (packs don't overlap).
     for (final l in baseLayers) {

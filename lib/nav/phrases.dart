@@ -132,7 +132,9 @@ String spokenPrompt(Maneuver m, Lang l, {double? distanceM, Maneuver? then, doub
   final lead = distanceM == null ? '' : (ms ? 'Dalam ${spokenDistance(distanceM, l)},' : 'In ${spokenDistance(distanceM, l)},');
   var s = _join([lead, action(m, l), target(m, l)]);
   if (then != null) {
-    final gap = (thenGapM != null && thenGapM >= 50) ? (ms ? 'dalam ${spokenDistance(thenGapM, l)}' : 'in ${spokenDistance(thenGapM, l)}') : '';
+    final gap = (thenGapM != null && thenGapM >= 50)
+        ? (ms ? 'dalam ${spokenDistance(thenGapM, l)}' : 'in ${spokenDistance(thenGapM, l)}')
+        : '';
     s = '$s, ${_join([ms ? 'kemudian' : 'then', gap, action(then, l)])}';
   }
   return '${_cap(s)}.';
@@ -150,11 +152,9 @@ String arrivalSoon(Maneuver m, double d, Lang l) {
   final side = m.turn == Turn.destinationLeft
       ? (l == Lang.ms ? ' di sebelah kiri' : ' on the left')
       : m.turn == Turn.destinationRight
-          ? (l == Lang.ms ? ' di sebelah kanan' : ' on the right')
-          : '';
-  return l == Lang.ms
-      ? 'Destinasi$side dalam ${spokenDistance(d, l)}.'
-      : 'Your destination is$side in ${spokenDistance(d, l)}.';
+      ? (l == Lang.ms ? ' di sebelah kanan' : ' on the right')
+      : '';
+  return l == Lang.ms ? 'Destinasi$side dalam ${spokenDistance(d, l)}.' : 'Your destination is$side in ${spokenDistance(d, l)}.';
 }
 
 String arrived(Lang l) => l == Lang.ms ? 'Anda telah tiba.' : 'You have arrived.';

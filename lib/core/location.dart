@@ -31,12 +31,7 @@ class LocationService {
       intervalDuration: const Duration(seconds: 1),
       forceLocationManager: true,
       foregroundNotificationConfig: navigating
-          ? ForegroundNotificationConfig(
-              notificationTitle: title,
-              notificationText: text,
-              enableWakeLock: true,
-              setOngoing: true,
-            )
+          ? ForegroundNotificationConfig(notificationTitle: title, notificationText: text, enableWakeLock: true, setOngoing: true)
           : null,
     );
     _sub = Geolocator.getPositionStream(locationSettings: settings).listen((p) {
@@ -59,7 +54,11 @@ class LocationService {
       if (p != null) return last = Fix(Geo(p.latitude, p.longitude), accuracyM: p.accuracy, time: p.timestamp);
       // No cached fix: ask Android's network/GPS providers for one, briefly.
       final q = await Geolocator.getCurrentPosition(
-        locationSettings: AndroidSettings(accuracy: LocationAccuracy.high, forceLocationManager: true, timeLimit: const Duration(seconds: 20)),
+        locationSettings: AndroidSettings(
+          accuracy: LocationAccuracy.high,
+          forceLocationManager: true,
+          timeLimit: const Duration(seconds: 20),
+        ),
       );
       return last ??= Fix(Geo(q.latitude, q.longitude), accuracyM: q.accuracy, time: q.timestamp);
     } catch (_) {}

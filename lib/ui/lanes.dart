@@ -23,25 +23,28 @@ class LaneRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        margin: const EdgeInsets.only(top: 6),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(color: ArahColors.brandDark, borderRadius: BorderRadius.circular(12)),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          for (var i = 0; i < lanes.length; i++) ...[
-            if (i > 0) Container(width: 1, height: 30, color: Colors.white24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Icon(
-                laneIcon(lanes[i].directions),
-                size: 30,
-                color: lanes[i].active
-                    ? Colors.white
-                    : lanes[i].valid
-                        ? Colors.white70
-                        : Colors.white24,
-              ),
+    margin: const EdgeInsets.only(top: 6),
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+    decoration: BoxDecoration(color: ArahColors.brandDark, borderRadius: BorderRadius.circular(12)),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < lanes.length; i++) ...[
+          if (i > 0) Container(width: 1, height: 30, color: Colors.white24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Icon(
+              laneIcon(lanes[i].directions),
+              size: 30,
+              color: lanes[i].active
+                  ? Colors.white
+                  : lanes[i].valid
+                  ? Colors.white70
+                  : Colors.white24,
             ),
-          ],
-        ]),
-      );
+          ),
+        ],
+      ],
+    ),
+  );
 }

@@ -15,8 +15,8 @@ class ValhallaClient {
   DateTime _last = DateTime.fromMillisecondsSinceEpoch(0);
 
   ValhallaClient({http.Client? client, String? baseUrl})
-      : _http = client ?? http.Client(),
-        baseUrl = baseUrl ?? ArahConfig.valhallaUrl;
+    : _http = client ?? http.Client(),
+      baseUrl = baseUrl ?? ArahConfig.valhallaUrl;
 
   Map<String, dynamic> buildRequest(List<Geo> stops, RouteOptions o, {bool alternates = true, double? headingDeg}) {
     final costing = o.mode == TravelMode.motorcycle ? 'motorcycle' : 'auto';
@@ -38,7 +38,7 @@ class ValhallaClient {
           'use_tolls': o.avoidTolls ? 0.0 : 0.5,
           'use_highways': o.avoidHighways ? 0.0 : 1.0,
           'use_ferry': o.avoidFerries ? 0.0 : 0.5,
-        }
+        },
       },
       'directions_options': {'units': 'kilometers', 'language': 'en-GB'},
       'turn_lanes': true,

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../nav/phrases.dart';
+import 'geo.dart';
 import '../routing/route_model.dart';
 import '../search/place.dart';
 
@@ -87,8 +88,9 @@ class Settings extends ChangeNotifier {
 
   void clearRecents() => _savePlaces('recents', []);
 
-  bool _same(Place a, Place b) =>
-      a.name == b.name && (a.pos.lat - b.pos.lat).abs() < 1e-4 && (a.pos.lon - b.pos.lon).abs() < 1e-4;
+  /// Same name within 300 m is the same place (online and offline search can
+  /// put one mall's pin a little apart).
+  bool _same(Place a, Place b) => a.name == b.name && distanceM(a.pos, b.pos) < 300;
 
   Place? _place(String k) {
     final s = _p.getString(k);
@@ -98,8 +100,8 @@ class Settings extends ChangeNotifier {
   void _setPlace(String k, Place? v) => _set(() => v == null ? _p.remove(k) : _p.setString(k, jsonEncode(v.toJson())));
 
   List<Place> _places(String k) => [
-        for (final s in _p.getStringList(k) ?? const <String>[]) Place.fromJson(jsonDecode(s) as Map<String, dynamic>),
-      ];
+    for (final s in _p.getStringList(k) ?? const <String>[]) Place.fromJson(jsonDecode(s) as Map<String, dynamic>),
+  ];
 
   void _savePlaces(String k, List<Place> v) => _set(() => _p.setStringList(k, [for (final x in v) jsonEncode(x.toJson())]));
 

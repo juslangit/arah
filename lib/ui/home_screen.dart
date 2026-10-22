@@ -15,6 +15,7 @@ import '../core/settings.dart';
 import '../nav/nav_engine.dart';
 import '../offline/map_style.dart';
 import '../routing/route_model.dart';
+import '../routing/tolls.dart';
 import '../search/place.dart';
 import 'format.dart';
 import 'map_kit.dart';
@@ -41,9 +42,14 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _movedToFix = false;
   StreamSubscription? _fixSub;
 
-  Place? _place; // selected destination
-  final List<Place> _stops = []; // stops before the destination
+  Place? _place; // selected place (place card)
+  // Route preview ends, Google Maps-style: either can be changed or swapped.
+  // A Place with source 'me' means "your location".
+  Place? _from;
+  Place? _to;
+  final List<Place> _stops = []; // stops between start and end
   List<ArahRoute> _routes = [];
+  List<TollEstimate?> _tolls = [];
   int _sel = 0;
   bool _routing = false;
   String? _routeError;
@@ -144,7 +150,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _drawSelection() async {
     if (!_styleReady || _layers == null) return;
     await _layers!.showRoutes(_routes, _sel);
-    await _layers!.showPins([for (final s in _stops) (s.pos, 'arah-stop'), if (_place != null) (_place!.pos, 'arah-pin')]);
+    final end = _previewing ? _to : _place;
+    await _layers!.showPins([
+      if (_previewing && !_isMe(_from)) (_from!.pos, 'arah-start'),
+      for (final s in _stops) (s.pos, 'arah-stop'),
+      if (end != null && !_isMe(end)) (end.pos, 'arah-pin'),
+    ]);
   }
 
   // ---- actions ------------------------------------------------------------
@@ -164,6 +175,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void _select(Place p) {
     setState(() {
       _place = p;
+      _from = null;
+      _to = null;
       _routes = [];
       _stops.clear();
       _previewing = false;
@@ -176,6 +189,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void _clear() {
     setState(() {
       _place = null;
+      _from = null;
+      _to = null;
       _routes = [];
       _stops.clear();
       _previewing = false;
@@ -193,15 +208,23 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted && _place?.pos == g) setState(() => _place = named);
   }
 
+  Place _me() => Place(name: context.appRead.tr('Lokasi anda', 'Your location'), pos: context.appRead.here, source: 'me');
+  bool _isMe(Place? p) => p == null || p.source == 'me';
+
   Future<void> _directions() async {
     final app = context.appRead;
-    final dest = _place;
-    if (dest == null) return;
+    if (!_previewing) {
+      if (_place == null) return;
+      _from = _me();
+      _to = _place;
+    }
     final fix = app.location.last;
-    if (fix == null) {
+    if ((_isMe(_from) || _isMe(_to)) && fix == null) {
       _snack(app.tr('Menunggu GPS…', 'Waiting for GPS…'));
       return;
     }
+    final start = _isMe(_from) ? fix!.pos : _from!.pos;
+    final end = _isMe(_to) ? fix!.pos : _to!.pos;
     setState(() {
       _previewing = true;
       _routing = true;
@@ -209,14 +232,16 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     try {
       final r = await app.routing.route(
-        [fix.pos, ..._stops.map((s) => s.pos), dest.pos],
+        [start, ..._stops.map((s) => s.pos), end],
         app.settings.routeOptions,
-        headingDeg: fix.headingDeg,
+        headingDeg: _isMe(_from) ? fix!.headingDeg : null,
         offlineOnly: !app.online,
       );
       if (!mounted) return;
+      final t = app.tolls;
       setState(() {
         _routes = r.routes;
+        _tolls = [for (final rt in r.routes) t?.estimate(rt, app.settings.mode)];
         _sel = 0;
         _routing = false;
         _routeOffline = r.usedOffline;
@@ -246,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final p = await Navigator.push<Place>(
       context,
       MaterialPageRoute(
-        builder: (_) => SearchScreen(near: _place?.pos ?? app.here, hint: app.tr('Tambah hentian', 'Add a stop')),
+        builder: (_) => SearchScreen(near: _to?.pos ?? app.here, hint: app.tr('Tambah hentian', 'Add a stop')),
       ),
     );
     if (p == null || _stops.length >= 3) return;
@@ -254,14 +279,47 @@ class _HomeScreenState extends State<HomeScreen> {
     await _directions();
   }
 
+  /// Change the start (0) or the end (1) of the route.
+  Future<void> _editEnd(int which) async {
+    final app = context.appRead;
+    final current = which == 0 ? _from : _to;
+    final p = await Navigator.push<Place>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SearchScreen(
+          near: current?.pos ?? app.here,
+          hint: which == 0 ? app.tr('Pilih titik mula', 'Choose start') : app.tr('Pilih destinasi', 'Choose destination'),
+          offerMyLocation: true,
+        ),
+      ),
+    );
+    if (p == null) return;
+    setState(() => which == 0 ? _from = p : _to = p);
+    if (_isMe(_from) && _isMe(_to)) {
+      _snack(app.tr('Titik mula dan destinasi sama', 'Start and destination are the same'));
+      return;
+    }
+    await _directions();
+  }
+
+  Future<void> _swap() async {
+    setState(() {
+      final f = _from;
+      _from = _to;
+      _to = f;
+      _stops.setAll(0, _stops.reversed.toList());
+    });
+    await _directions();
+  }
+
   Future<void> _startNav() async {
     final app = context.appRead;
-    if (_routes.isEmpty || _place == null) return;
+    if (_routes.isEmpty || !_isMe(_from) || _isMe(_to)) return;
     final route = _routes[_sel];
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => NavScreen(route: route, destination: _place!, stops: List.of(_stops), style: _style!),
+        builder: (_) => NavScreen(route: route, destination: _to!, stops: List.of(_stops), style: _style!),
       ),
     );
     if (!mounted) return;
@@ -319,9 +377,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     final bottomPanel = _previewing
         ? _RoutePreview(
-            place: _place!,
+            from: _from ?? _me(),
+            to: _to ?? _me(),
+            canStart: _isMe(_from) && !_isMe(_to),
+            onEditFrom: () => _editEnd(0),
+            onEditTo: () => _editEnd(1),
+            onSwap: _swap,
             stops: _stops,
             routes: _routes,
+            tolls: _tolls,
             selected: _sel,
             loading: _routing,
             error: _routeError,
@@ -668,9 +732,12 @@ class _PlaceCard extends StatelessWidget {
 
 /// Route preview (§S4): mode, stops, up to three routes, start.
 class _RoutePreview extends StatelessWidget {
-  final Place place;
+  final Place from, to;
+  final bool canStart;
+  final VoidCallback onEditFrom, onEditTo, onSwap;
   final List<Place> stops;
   final List<ArahRoute> routes;
+  final List<TollEstimate?> tolls;
   final int selected;
   final bool loading;
   final String? error;
@@ -681,9 +748,15 @@ class _RoutePreview extends StatelessWidget {
   final ValueChanged<int> onRemoveStop;
 
   const _RoutePreview({
-    required this.place,
+    required this.from,
+    required this.to,
+    required this.canStart,
+    required this.onEditFrom,
+    required this.onEditTo,
+    required this.onSwap,
     required this.stops,
     required this.routes,
+    required this.tolls,
     required this.selected,
     required this.loading,
     required this.error,
@@ -740,10 +813,38 @@ class _RoutePreview extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          // Stops, then destination.
-          for (var i = 0; i < stops.length; i++)
-            _StopRow(icon: Icons.flag_outlined, text: stops[i].name, onRemove: () => onRemoveStop(i)),
-          _StopRow(icon: Icons.place, text: place.name),
+          // From, stops, to — each end can be changed; ⇅ swaps them.
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    _EndField(
+                      icon: Icons.trip_origin,
+                      color: ArahColors.route,
+                      label: context.tr('Dari', 'From'),
+                      text: from.name,
+                      onTap: onEditFrom,
+                    ),
+                    for (var i = 0; i < stops.length; i++)
+                      _StopRow(icon: Icons.flag_outlined, text: stops[i].name, onRemove: () => onRemoveStop(i)),
+                    _EndField(
+                      icon: Icons.place,
+                      color: ArahColors.warn,
+                      label: context.tr('Ke', 'To'),
+                      text: to.name,
+                      onTap: onEditTo,
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                tooltip: context.tr('Tukar titik mula dan destinasi', 'Swap start and destination'),
+                icon: const Icon(Icons.swap_vert, size: 30),
+                onPressed: onSwap,
+              ),
+            ],
+          ),
           if (onAddStop != null)
             Align(
               alignment: Alignment.centerLeft,
@@ -798,11 +899,25 @@ class _RoutePreview extends StatelessWidget {
                             fmtDuration(r.durationS, app.lang),
                             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: sel ? ArahColors.route : null),
                           ),
-                          Text(fmtKm(r.distanceM)),
+                          Row(
+                            children: [
+                              Text(fmtKm(r.distanceM)),
+                              if (i < tolls.length && tolls[i] != null && !tolls[i]!.isEmpty) ...[
+                                const SizedBox(width: 6),
+                                Text(
+                                  '${tolls[i]!.approximate ? '~' : ''}${fmtRm(tolls[i]!.total)}',
+                                  style: const TextStyle(fontWeight: FontWeight.w700, color: ArahColors.amber),
+                                ),
+                              ],
+                            ],
+                          ),
                           Row(
                             children: [
                               Text(tag, style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700)),
-                              if (r.hasToll) ...[const SizedBox(width: 6), const Icon(Icons.toll, size: 16)],
+                              if (r.hasToll && (i >= tolls.length || tolls[i] == null || tolls[i]!.isEmpty)) ...[
+                                const SizedBox(width: 6),
+                                const Icon(Icons.toll, size: 16),
+                              ],
                               if (r.hasFerry) ...[const SizedBox(width: 6), const Icon(Icons.directions_boat, size: 16)],
                             ],
                           ),
@@ -814,7 +929,7 @@ class _RoutePreview extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            _RouteInfo(route: routes[selected], offline: offline),
+            _RouteInfo(route: routes[selected], offline: offline, toll: selected < tolls.length ? tolls[selected] : null),
             const SizedBox(height: 10),
             Row(
               children: [
@@ -825,11 +940,19 @@ class _RoutePreview extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: FilledButton.icon(
-                    onPressed: onStart,
-                    icon: const Icon(Icons.navigation),
-                    label: Text(context.tr('Mula', 'Start')),
-                  ),
+                  // Like Google Maps: navigation starts from where you are; any
+                  // other start is a preview of the steps.
+                  child: canStart
+                      ? FilledButton.icon(
+                          onPressed: onStart,
+                          icon: const Icon(Icons.navigation),
+                          label: Text(context.tr('Mula', 'Start')),
+                        )
+                      : FilledButton.icon(
+                          onPressed: () => showStepsSheet(context, routes[selected]),
+                          icon: const Icon(Icons.visibility_outlined),
+                          label: Text(context.tr('Pratonton', 'Preview')),
+                        ),
                 ),
               ],
             ),
@@ -889,7 +1012,8 @@ class _RoutePreview extends StatelessWidget {
 class _RouteInfo extends StatelessWidget {
   final ArahRoute route;
   final bool offline;
-  const _RouteInfo({required this.route, required this.offline});
+  final TollEstimate? toll;
+  const _RouteInfo({required this.route, required this.offline, this.toll});
 
   @override
   Widget build(BuildContext context) {
@@ -906,12 +1030,89 @@ class _RouteInfo extends StatelessWidget {
     }
     final parts = <String>[
       '${context.tr('Tiba', 'Arrive')} ${fmtEta(route.durationS)}',
-      if (route.hasToll) context.tr('Ada tol', 'Has tolls'),
+      if (route.hasToll && (toll == null || toll!.isEmpty))
+        context.tr('Ada tol (harga tidak diketahui)', 'Has tolls (price unknown)'),
       if (route.hasFerry) context.tr('Ada feri', 'Has ferry'),
       for (final e in counts.entries) '${e.value} ${_kindName(context, e.key)}',
       if (offline) context.tr('Laluan luar talian', 'Offline route'),
     ];
-    return Text(parts.join(' · '), style: Theme.of(context).textTheme.bodyMedium);
+    final t = toll;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (t != null && !t.isEmpty)
+          InkWell(
+            onTap: () => _breakdown(context, t),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                children: [
+                  const Icon(Icons.toll, size: 20, color: ArahColors.amber),
+                  const SizedBox(width: 6),
+                  Text(
+                    '${context.tr('Tol', 'Tolls')} ${t.approximate ? '~' : ''}${fmtRm(t.total)}',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    context.app.settings.mode == TravelMode.motorcycle
+                        ? context.tr('motosikal', 'motorbike')
+                        : context.tr('kereta (Kelas 1)', 'car (Class 1)'),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const Icon(Icons.chevron_right, size: 18),
+                ],
+              ),
+            ),
+          ),
+        Text(parts.join(' · '), style: Theme.of(context).textTheme.bodyMedium),
+      ],
+    );
+  }
+
+  /// Plaza-by-plaza list, with where the prices came from.
+  void _breakdown(BuildContext context, TollEstimate t) {
+    final app = context.appRead;
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(app.tr('Anggaran tol', 'Toll estimate'), style: Theme.of(ctx).textTheme.titleLarge),
+              const SizedBox(height: 8),
+              for (final i in t.items)
+                ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.toll),
+                  title: Text(i.name),
+                  trailing: Text('${i.approximate ? '~' : ''}${fmtRm(i.amount)}', style: const TextStyle(fontSize: 16)),
+                ),
+              const Divider(),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(app.tr('Jumlah', 'Total'), style: const TextStyle(fontWeight: FontWeight.w700)),
+                trailing: Text(
+                  '${t.approximate ? '~' : ''}${fmtRm(t.total)}',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
+              ),
+              Text(
+                app.tr(
+                  'Harga dari LLM dan pemegang konsesi (${app.tolls?.updated ?? '-'}). "~" ialah anggaran ikut jarak. Harga sebenar di plaza mungkin berbeza.',
+                  'Rates from LLM and the concessionaires (${app.tolls?.updated ?? '-'}). "~" is estimated by distance. The plaza may charge differently.',
+                ),
+                style: Theme.of(ctx).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   String _kindName(BuildContext c, String k) => switch (k) {
@@ -922,6 +1123,42 @@ class _RouteInfo extends StatelessWidget {
     'banjir' => c.tr('banjir', 'flood'),
     _ => c.tr('jalan ditutup', 'closure'),
   };
+}
+
+/// A tappable From / To field.
+class _EndField extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String label, text;
+  final VoidCallback onTap;
+  const _EndField({required this.icon, required this.color, required this.label, required this.text, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 3),
+    child: Material(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          child: Row(
+            children: [
+              Icon(icon, size: 20, color: color),
+              const SizedBox(width: 10),
+              Text('$label  ', style: Theme.of(context).textTheme.bodySmall),
+              Expanded(
+                child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
+              ),
+              const Icon(Icons.edit_outlined, size: 18),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 class _StopRow extends StatelessWidget {

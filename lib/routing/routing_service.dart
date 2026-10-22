@@ -27,8 +27,13 @@ class RoutingService {
 
   RoutingService(this.packs, {ValhallaClient? online}) : online = online ?? ValhallaClient();
 
-  Future<RouteResult> route(List<Geo> stops, RouteOptions o,
-      {double? headingDeg, bool alternates = true, bool offlineOnly = false}) async {
+  Future<RouteResult> route(
+    List<Geo> stops,
+    RouteOptions o, {
+    double? headingDeg,
+    bool alternates = true,
+    bool offlineOnly = false,
+  }) async {
     String? onlineError;
     if (!offlineOnly) {
       try {

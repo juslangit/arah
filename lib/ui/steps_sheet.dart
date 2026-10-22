@@ -27,10 +27,7 @@ Future<void> showStepsSheet(BuildContext context, ArahRoute route, {int fromInde
             leading: Icon(turnIcon(m), size: 32),
             title: Text(bannerText(m, lang)),
             subtitle: m.lengthM > 0 && !isArrival(m.turn)
-                ? Text([
-                    fmtKm(m.lengthM),
-                    if (m.toll) context.appRead.tr('Tol', 'Toll'),
-                  ].join(' · '))
+                ? Text([fmtKm(m.lengthM), if (m.toll) context.appRead.tr('Tol', 'Toll')].join(' · '))
                 : null,
           );
         },

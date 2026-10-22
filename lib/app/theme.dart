@@ -23,7 +23,11 @@ class ArahColors {
 }
 
 ThemeData arahTheme(Brightness b) {
-  final scheme = ColorScheme.fromSeed(seedColor: ArahColors.brand, brightness: b, primary: b == Brightness.light ? ArahColors.brand : const Color(0xFF6FD3AE));
+  final scheme = ColorScheme.fromSeed(
+    seedColor: ArahColors.brand,
+    brightness: b,
+    primary: b == Brightness.light ? ArahColors.brand : const Color(0xFF6FD3AE),
+  );
   return ThemeData(
     colorScheme: scheme,
     useMaterial3: true,

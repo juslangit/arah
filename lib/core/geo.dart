@@ -25,15 +25,15 @@ double _deg(double r) => r * 180 / math.pi;
 double distanceM(Geo a, Geo b) {
   final dLat = _rad(b.lat - a.lat);
   final dLon = _rad(b.lon - a.lon);
-  final h = math.pow(math.sin(dLat / 2), 2) +
-      math.cos(_rad(a.lat)) * math.cos(_rad(b.lat)) * math.pow(math.sin(dLon / 2), 2);
+  final h = math.pow(math.sin(dLat / 2), 2) + math.cos(_rad(a.lat)) * math.cos(_rad(b.lat)) * math.pow(math.sin(dLon / 2), 2);
   return 2 * earthRadiusM * math.asin(math.min(1, math.sqrt(h)));
 }
 
 /// Initial bearing from a to b, degrees clockwise from north, 0..360.
 double bearingDeg(Geo a, Geo b) {
   final y = math.sin(_rad(b.lon - a.lon)) * math.cos(_rad(b.lat));
-  final x = math.cos(_rad(a.lat)) * math.sin(_rad(b.lat)) -
+  final x =
+      math.cos(_rad(a.lat)) * math.sin(_rad(b.lat)) -
       math.sin(_rad(a.lat)) * math.cos(_rad(b.lat)) * math.cos(_rad(b.lon - a.lon));
   return (_deg(math.atan2(y, x)) + 360) % 360;
 }

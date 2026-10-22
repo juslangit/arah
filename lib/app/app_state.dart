@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../core/geo.dart';
 import '../core/location.dart';
@@ -14,6 +15,7 @@ import '../nav/speech.dart';
 import '../offline/packs.dart';
 import '../reports/reports.dart';
 import '../routing/routing_service.dart';
+import '../routing/tolls.dart';
 import '../search/search_service.dart';
 
 class AppState extends ChangeNotifier {
@@ -29,6 +31,9 @@ class AppState extends ChangeNotifier {
   StreamSubscription<List<ConnectivityResult>>? _net;
   bool onWifi = false;
 
+  /// Toll prices (assets/tolls.json); null if the table failed to load.
+  TollData? tolls;
+
   AppState._(this.settings, this.packs, this.routing, this.search, this.reports) {
     settings.addListener(notifyListeners);
     packs.addListener(notifyListeners);
@@ -40,6 +45,9 @@ class AppState extends ChangeNotifier {
     final reports = await ReportsService.create();
     final s = AppState._(settings, packs, RoutingService(packs), SearchService(packs), reports);
     await s._watchNetwork();
+    try {
+      s.tolls = TollData.parse(await rootBundle.loadString('assets/tolls.json'));
+    } catch (_) {}
     unawaited(packs.refreshCatalog());
     unawaited(s.speech.init(settings.lang, volume: settings.voiceVolume));
     return s;
