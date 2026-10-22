@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 import '../config.dart';
@@ -101,6 +102,154 @@ class MapStyles {
     }
     template['sources'] = sources;
     template['layers'] = layers;
-    return jsonEncode(template);
+    return jsonEncode(palestine(template));
+  }
+
+  static final _online = <bool, String>{};
+
+  /// OpenFreeMap's style, fetched and patched with [palestine]. Falls back to
+  /// the plain URL only if the style can't be fetched (then nothing loads anyway).
+  static Future<String> onlineStyle({bool dark = false}) async {
+    final cached = _online[dark];
+    if (cached != null) return cached;
+    final url = dark ? ArahConfig.onlineDarkStyleUrl : ArahConfig.onlineStyleUrl;
+    try {
+      final res = await http
+          .get(Uri.parse(url), headers: ArahConfig.serverHeaders)
+          .timeout(const Duration(seconds: 10));
+      if (res.statusCode != 200) return url;
+      final style = palestine(jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>);
+      return _online[dark] = jsonEncode(style);
+    } catch (_) {
+      return url;
+    }
+  }
+
+  /// Malaysia does not recognise Israel: the map shows the whole of it as
+  /// Palestine. Israel's country label (iso IL) reads "Palestine", the separate
+  /// "Palestinian Territories" label (PS) is hidden so there is one, and the
+  /// lines between Israel and the West Bank / Gaza are not drawn. Those are the
+  /// country borders with ISR on one side and no country on the other (the
+  /// tiles give Palestine no code); borders with Jordan, Egypt, Lebanon and
+  /// Syria stay.
+  static Map<String, dynamic> palestine(Map<String, dynamic> style) {
+    const isIsrael = [
+      'any',
+      [
+        '==',
+        ['get', 'iso_a2'],
+        'IL',
+      ],
+      [
+        '==',
+        ['get', 'name:en'],
+        'Israel',
+      ],
+      [
+        '==',
+        ['get', 'name_en'],
+        'Israel',
+      ],
+    ];
+    const isPalestine = [
+      'any',
+      [
+        '==',
+        ['get', 'iso_a2'],
+        'PS',
+      ],
+      [
+        '==',
+        ['get', 'name:en'],
+        'Palestinian Territories',
+      ],
+      [
+        '==',
+        ['get', 'name_en'],
+        'Palestinian Territories',
+      ],
+    ];
+    const side = ['ISR', 'PSE', ''];
+    final innerLine = [
+      'all',
+      [
+        '==',
+        [
+          'to-number',
+          ['get', 'admin_level'],
+        ],
+        2,
+      ],
+      [
+        'in',
+        [
+          'coalesce',
+          ['get', 'adm0_l'],
+          '',
+        ],
+        ['literal', side],
+      ],
+      [
+        'in',
+        [
+          'coalesce',
+          ['get', 'adm0_r'],
+          '',
+        ],
+        ['literal', side],
+      ],
+      [
+        'any',
+        [
+          'in',
+          [
+            'coalesce',
+            ['get', 'adm0_l'],
+            '',
+          ],
+          [
+            'literal',
+            ['ISR', 'PSE'],
+          ],
+        ],
+        [
+          'in',
+          [
+            'coalesce',
+            ['get', 'adm0_r'],
+            '',
+          ],
+          [
+            'literal',
+            ['ISR', 'PSE'],
+          ],
+        ],
+      ],
+    ];
+    Object? and(Object? filter, Object extra) => filter == null ? extra : ['all', filter, extra];
+
+    for (final l in (style['layers'] as List).cast<Map<String, dynamic>>()) {
+      final layer = l['source-layer'];
+      final filter = l['filter'];
+      // Legacy filters (Protomaps style: ["==", "kind", "country"]) can't be
+      // mixed with expressions, so they get the legacy form.
+      final legacy = filter is List && filter.length > 1 && filter[1] is String;
+      if ((layer == 'place' || layer == 'places') && l['type'] == 'symbol' && '${l['id']}'.contains('countr')) {
+        final layout = (l['layout'] ??= <String, dynamic>{}) as Map<String, dynamic>;
+        final text = layout['text-field'];
+        if (text != null) layout['text-field'] = ['case', isIsrael, 'Palestine', text];
+        l['filter'] = legacy
+            ? [
+                'all',
+                filter,
+                ['!=', 'name:en', 'Palestinian Territories'],
+                ['!=', 'iso_a2', 'PS'],
+              ]
+            : and(filter, ['!', isPalestine]);
+      } else if (layer == 'boundary' && l['type'] == 'line' && !legacy) {
+        l['filter'] = and(filter, ['!', innerLine]);
+      }
+    }
+    return style;
   }
 }

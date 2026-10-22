@@ -12,6 +12,7 @@ class ArahConfig {
 
   /// Online map style (OpenStreetMap data, OpenMapTiles schema).
   static const onlineStyleUrl = 'https://tiles.openfreemap.org/styles/liberty';
+  static const onlineDarkStyleUrl = 'https://tiles.openfreemap.org/styles/dark';
 
   /// Offline packs (map + search + roads) are published as GitHub release
   /// assets of the public data repo.

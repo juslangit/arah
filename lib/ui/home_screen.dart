@@ -9,7 +9,6 @@ import 'package:maplibre_gl/maplibre_gl.dart';
 
 import '../app/app_state.dart';
 import '../app/theme.dart';
-import '../config.dart';
 import '../core/geo.dart';
 import '../core/settings.dart';
 import '../nav/nav_engine.dart';
@@ -102,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (key == _styleKey) return;
     _styleKey = key;
     final offline = await MapStyles.offlineStyle(app.packs, dark: _dark, online: app.online);
-    final style = offline ?? (_dark ? 'https://tiles.openfreemap.org/styles/dark' : ArahConfig.onlineStyleUrl);
+    final style = offline ?? await MapStyles.onlineStyle(dark: _dark);
     if (!mounted) return;
     setState(() {
       _style = style;
