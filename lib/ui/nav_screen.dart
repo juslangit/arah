@@ -824,7 +824,12 @@ class _EtaBar extends StatelessWidget {
                   children: [
                     Text(
                       fmtEta(remainingS),
-                      style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w800, color: ArahColors.brand, height: 1.1),
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w800,
+                        color: Theme.of(context).colorScheme.primary,
+                        height: 1.1,
+                      ),
                     ),
                     Text('${fmtDuration(remainingS, lang)} · ${fmtKm(remainingM)}', style: const TextStyle(fontSize: 16)),
                   ],

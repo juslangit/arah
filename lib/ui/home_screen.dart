@@ -314,12 +314,50 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _startNav() async {
     final app = context.appRead;
-    if (_routes.isEmpty || !_isMe(_from) || _isMe(_to)) return;
-    final route = _routes[_sel];
+    if (_routes.isEmpty) return;
+    var route = _routes[_sel];
+    var stops = List.of(_stops);
+    final fix = app.location.last;
+    final dest = _isMe(_to)
+        ? (fix == null ? null : Place(name: app.tr('Lokasi anda', 'Your location'), pos: fix.pos, source: 'pin'))
+        : _to;
+    if (dest == null) {
+      _snack(app.tr('Menunggu GPS…', 'Waiting for GPS…'));
+      return;
+    }
+    // Starting somewhere else: drive to that start first, then carry on —
+    // the chosen start becomes the first stop.
+    if (!_isMe(_from)) {
+      if (fix == null) {
+        _snack(app.tr('Menunggu GPS…', 'Waiting for GPS…'));
+        return;
+      }
+      setState(() => _routing = true);
+      try {
+        final r = await app.routing.route(
+          [fix.pos, _from!.pos, ..._stops.map((s) => s.pos), dest.pos],
+          app.settings.routeOptions,
+          headingDeg: fix.headingDeg,
+          alternates: false,
+          offlineOnly: !app.online,
+        );
+        route = r.routes.first;
+        stops = [_from!, ..._stops];
+      } on RoutingException {
+        if (mounted) {
+          setState(() => _routing = false);
+          _snack(app.tr('Tiada laluan ke titik mula', 'No route to the start point'));
+        }
+        return;
+      }
+      if (!mounted) return;
+      setState(() => _routing = false);
+      _snack(app.tr('Arah akan bawa anda ke ${_from!.name} dahulu', 'Arah will take you to ${_from!.name} first'));
+    }
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => NavScreen(route: route, destination: _to!, stops: List.of(_stops), style: _style!),
+        builder: (_) => NavScreen(route: route, destination: dest, stops: stops, style: _style!),
       ),
     );
     if (!mounted) return;
@@ -379,7 +417,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ? _RoutePreview(
             from: _from ?? _me(),
             to: _to ?? _me(),
-            canStart: _isMe(_from) && !_isMe(_to),
             onEditFrom: () => _editEnd(0),
             onEditTo: () => _editEnd(1),
             onSwap: _swap,
@@ -733,7 +770,6 @@ class _PlaceCard extends StatelessWidget {
 /// Route preview (§S4): mode, stops, up to three routes, start.
 class _RoutePreview extends StatelessWidget {
   final Place from, to;
-  final bool canStart;
   final VoidCallback onEditFrom, onEditTo, onSwap;
   final List<Place> stops;
   final List<ArahRoute> routes;
@@ -750,7 +786,6 @@ class _RoutePreview extends StatelessWidget {
   const _RoutePreview({
     required this.from,
     required this.to,
-    required this.canStart,
     required this.onEditFrom,
     required this.onEditTo,
     required this.onSwap,
@@ -881,7 +916,11 @@ class _RoutePreview extends StatelessWidget {
                   final r = routes[i];
                   final sel = i == selected;
                   final extra = r.durationS - fastest;
-                  final tag = i == 0 || extra < 60 ? context.tr('Terpantas', 'Fastest') : '+${(extra / 60).round()} min';
+                  final tag = i == 0
+                      ? context.tr('Terpantas', 'Fastest')
+                      : extra < 60
+                      ? context.tr('Hampir sama', 'About the same')
+                      : '+${(extra / 60).round()} min';
                   return InkWell(
                     borderRadius: BorderRadius.circular(14),
                     onTap: () => onSelect(i),
@@ -940,19 +979,12 @@ class _RoutePreview extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  // Like Google Maps: navigation starts from where you are; any
-                  // other start is a preview of the steps.
-                  child: canStart
-                      ? FilledButton.icon(
-                          onPressed: onStart,
-                          icon: const Icon(Icons.navigation),
-                          label: Text(context.tr('Mula', 'Start')),
-                        )
-                      : FilledButton.icon(
-                          onPressed: () => showStepsSheet(context, routes[selected]),
-                          icon: const Icon(Icons.visibility_outlined),
-                          label: Text(context.tr('Pratonton', 'Preview')),
-                        ),
+                  // Always Start: from somewhere else, Arah guides you to that start first.
+                  child: FilledButton.icon(
+                    onPressed: onStart,
+                    icon: const Icon(Icons.navigation),
+                    label: Text(context.tr('Mula', 'Start')),
+                  ),
                 ),
               ],
             ),

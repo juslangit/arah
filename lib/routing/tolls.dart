@@ -128,8 +128,7 @@ class TollData {
     if (pts.length < 2) return const TollEstimate([]);
     final box = Bounds.of(pts);
     const pad = 0.002;
-    bool near(Geo g) =>
-        g.lat > box.south - pad && g.lat < box.north + pad && g.lon > box.west - pad && g.lon < box.east + pad;
+    bool near(Geo g) => g.lat > box.south - pad && g.lat < box.north + pad && g.lon > box.west - pad && g.lon < box.east + pad;
     double headingAt(int i) {
       final j = i.clamp(0, pts.length - 2);
       return bearingDeg(pts[j], pts[j + 1]);
