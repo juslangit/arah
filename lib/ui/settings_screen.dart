@@ -32,6 +32,13 @@ class SettingsScreen extends StatelessWidget {
           trailing: const Icon(Icons.chevron_right),
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OfflineScreen())),
         ),
+        SwitchListTile(
+          secondary: const Icon(Icons.cloud_off),
+          title: Text(context.tr('Uji mod luar talian', 'Test offline mode')),
+          subtitle: Text(context.tr('Guna peta, carian dan laluan dari telefon sahaja', 'Use only the map, search and routes on the phone')),
+          value: s.forceOffline,
+          onChanged: (v) => s.forceOffline = v,
+        ),
         header(context.tr('Bahasa & suara', 'Language & voice')),
         ListTile(
           title: Text(context.tr('Bahasa', 'Language')),

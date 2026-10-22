@@ -221,6 +221,7 @@ class _NavScreenState extends State<NavScreen> {
         app.settings.routeOptions,
         headingDeg: fix.headingDeg,
         alternates: false,
+        offlineOnly: !app.online,
       );
       if (!mounted) return;
       setState(() => _setRoute(r.routes.first));

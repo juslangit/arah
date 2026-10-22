@@ -58,6 +58,10 @@ class Settings extends ChangeNotifier {
   bool get wifiOnlyDownloads => _p.getBool('wifiOnly') ?? true;
   set wifiOnlyDownloads(bool v) => _set(() => _p.setBool('wifiOnly', v));
 
+  /// Pretend there's no internet, to check offline maps before a trip.
+  bool get forceOffline => _p.getBool('forceOffline') ?? false;
+  set forceOffline(bool v) => _set(() => _p.setBool('forceOffline', v));
+
   Place? get home => _place('home');
   set home(Place? v) => _setPlace('home', v);
   Place? get work => _place('work');

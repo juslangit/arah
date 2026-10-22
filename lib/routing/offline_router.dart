@@ -360,6 +360,13 @@ class TurnBuilder {
     return bearingDeg(sh[i], sh[n - 1]);
   }
 
+  /// How important a road is: 0 motorway … 9 track. Links sit just below
+  /// the road they serve. Used so a driveway never causes a "keep left".
+  double _rank(int e) {
+    const base = [0.0, 1, 2, 3, 4, 5, 6, 8, 7, 9, 0.5, 1.5, 2.5, 3.5, 4.5, 5];
+    return base[g.roadClass(e)].toDouble();
+  }
+
   Turn _byAngle(double a) {
     final x = a.abs();
     final right = a > 0;
@@ -415,11 +422,14 @@ class TurnBuilder {
         continue;
       }
 
-      // Other ways we could have gone from this junction (not back where we came from).
+      // Other ways we could have gone from this junction (not back where we
+      // came from), ignoring roads much less important than ours.
       final cameFrom = g.source(ein);
       final options = <double>[];
+      final outRank = _rank(eout);
       for (var x = g.firstEdge[node]; x < g.firstEdge[node + 1]; x++) {
         if (x == eout || g.edgeTarget[x] == cameFrom || !allowed(x, o)) continue;
+        if (_rank(x) > outRank + 1.5 && _rank(x) >= 7) continue; // service roads, tracks
         options.add(angleDiff(_inBearing(ein), _outBearing(x)));
       }
       final clsIn = g.roadClass(ein), clsOut = g.roadClass(eout);
@@ -438,8 +448,14 @@ class TurnBuilder {
           }
         }
       } else if (turn == Turn.straight) {
-        // A fork where another branch is also nearly straight: keep left/right.
+        // A fork where another branch is also nearly straight: keep left/right —
+        // unless we simply stay on the same, more important road.
         final rival = options.where((a) => a.abs() < 40).toList();
+        final staysOnRoad = !nameChanged && _rank(eout) <= _rank(ein) + 0.5;
+        if (rival.isNotEmpty && staysOnRoad && RoadClass.isLink(clsOut) == RoadClass.isLink(clsIn)) {
+          i++;
+          continue;
+        }
         if (rival.isNotEmpty) {
           turn = rival.first > angle ? Turn.stayLeft : Turn.stayRight;
         } else if (options.isEmpty || !nameChanged) {

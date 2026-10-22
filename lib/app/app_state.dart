@@ -24,7 +24,8 @@ class AppState extends ChangeNotifier {
   final ReportsService reports;
   final LocationService location = LocationService();
   final Speech speech = Speech();
-  bool online = true;
+  bool _netOnline = true;
+  bool get online => _netOnline && !settings.forceOffline;
   StreamSubscription<List<ConnectivityResult>>? _net;
   bool onWifi = false;
 
@@ -47,7 +48,7 @@ class AppState extends ChangeNotifier {
   Future<void> _watchNetwork() async {
     void apply(List<ConnectivityResult> r) {
       final was = online;
-      online = r.any((x) => x != ConnectivityResult.none);
+      _netOnline = r.any((x) => x != ConnectivityResult.none);
       onWifi = r.contains(ConnectivityResult.wifi) || r.contains(ConnectivityResult.ethernet);
       if (was != online) notifyListeners();
     }

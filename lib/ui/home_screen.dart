@@ -212,6 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
         [fix.pos, ..._stops.map((s) => s.pos), dest.pos],
         app.settings.routeOptions,
         headingDeg: fix.headingDeg,
+        offlineOnly: !app.online,
       );
       if (!mounted) return;
       setState(() {
