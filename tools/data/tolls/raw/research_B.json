@@ -1,0 +1,1131 @@
+{
+ "generated": "2026-10-22",
+ "plazas": [
+  {
+   "id": "gce-bukit-jelutong",
+   "name": "Plaza Tol Bukit Jelutong",
+   "highway": "E35 GCE",
+   "lat": 3.1234,
+   "lon": 101.52845,
+   "osm_names": [
+    "Plaza Tol Bukit Jelutong (Arah Selatan)",
+    "Plaza Tol Bukit Jelutong (Arah Utara)",
+    "Lorong Tol Berlapis GCE Bukit Jelutong"
+   ],
+   "car": 1.75,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.prolintas.com.my/gce/",
+   "source_date": "rates last updated 2022-10-19 (page read 2026-10-22)",
+   "confidence": "high",
+   "note": "Open system, charged at each GCE plaza crossed. Prolintas site lists RM1.75 (rate cut 20 Oct 2022 from RM1.90; OSM charge tag 1.90 is outdated). No class-0 row in the Prolintas table; motorcycles not charged (GCE has dedicated motorcycle lanes). 'Lorong Tol Berlapis' is the fishbone booth extension of the same plaza (northbound link). Mainline plaza, booths on both carriageways in OSM."
+  },
+  {
+   "id": "gce-elmina",
+   "name": "Plaza Tol Elmina",
+   "highway": "E35 GCE",
+   "lat": 3.20365,
+   "lon": 101.50727,
+   "osm_names": [
+    "Plaza Tol Elmina (Arah Selatan)",
+    "Plaza Tol Elmina (Arah Utara)"
+   ],
+   "car": 1.75,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.prolintas.com.my/gce/",
+   "source_date": "rates last updated 2022-10-19 (page read 2026-10-22)",
+   "confidence": "high",
+   "note": "Open system, charged at each GCE plaza crossed. Prolintas site lists RM1.75 (rate cut 20 Oct 2022 from RM1.90; OSM charge tag 1.90 is outdated). No class-0 row in the Prolintas table; motorcycles not charged (GCE has dedicated motorcycle lanes). Prolintas lists north- and southbound lanes."
+  },
+  {
+   "id": "gce-lagong",
+   "name": "Plaza Tol Lagong",
+   "highway": "E35 GCE",
+   "lat": 3.26218,
+   "lon": 101.53915,
+   "osm_names": [
+    "Plaza Tol Lagong (Arah Selatan)",
+    "Plaza Tol Lagong (Arah Utara)"
+   ],
+   "car": 1.75,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.prolintas.com.my/gce/",
+   "source_date": "rates last updated 2022-10-19 (page read 2026-10-22)",
+   "confidence": "high",
+   "note": "Open system, charged at each GCE plaza crossed. Prolintas site lists RM1.75 (rate cut 20 Oct 2022 from RM1.90; OSM charge tag 1.90 is outdated). No class-0 row in the Prolintas table; motorcycles not charged (GCE has dedicated motorcycle lanes). Prolintas lists north- and southbound lanes. Note: 'Plaza Tol Rawang Selatan' (OSM, E35 tag) is NOT a GCE plaza - it is the PLUS NSE closed-system gate at the GCE/NSE junction; GCE has exactly 3 plazas."
+  },
+  {
+   "id": "lksa-seri-muda",
+   "name": "Plaza Tol Seri Muda",
+   "highway": "E13 LKSA",
+   "lat": 3.02517,
+   "lon": 101.53034,
+   "osm_names": [
+    "Plaza Tol Seri Muda (Arah Selatan)",
+    "Plaza Tol Seri Muda (Arah Utara)"
+   ],
+   "car": 1.56,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.prolintas.com.my/lksa/",
+   "source_date": "rates last updated 2022-10-19 (page read 2026-10-22)",
+   "confidence": "high",
+   "note": "Open system mainline plaza; Prolintas lists TnG lanes for both City Centre and Kota Kemuning bounds. OSM tag 1.70 is pre-Oct-2022. Motorcycles not charged."
+  },
+  {
+   "id": "lksa-alam-impian",
+   "name": "Plaza Tol Alam Impian",
+   "highway": "E13 LKSA",
+   "lat": 3.02841,
+   "lon": 101.52248,
+   "osm_names": [
+    "Plaza Tol LKSA Alam Impian (Arah Barat)",
+    "Plaza Tol LKSA Alam Impian (Arah Timur)"
+   ],
+   "car": 0.83,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.prolintas.com.my/lksa/",
+   "source_date": "rates last updated 2022-10-19 (page read 2026-10-22)",
+   "confidence": "high",
+   "note": "Ramp plaza at Exit 1303 (OSM booths on both the exit and the entry link); Prolintas lists lanes for both Alam Impian and City Centre bounds. OSM tag 0.90 is pre-Oct-2022. Motorcycles not charged."
+  },
+  {
+   "id": "akleh-datuk-keramat",
+   "name": "Plaza Tol Jalan Datuk Keramat",
+   "highway": "E12 AKLEH",
+   "lat": 3.16544,
+   "lon": 101.72144,
+   "osm_names": [
+    "Plaza Tol Dato' Keramat"
+   ],
+   "car": 2.13,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.prolintas.com.my/akleh/",
+   "source_date": "rates last updated 2022-10-19 (page read 2026-10-22)",
+   "confidence": "high",
+   "note": "AKLEH's only toll plaza (19 lanes); OSM has booths on both carriageways (bearings ~114 and ~293), so both directions pay. Motorcycles not charged."
+  },
+  {
+   "id": "dash-denai-alam",
+   "name": "Plaza Tol Denai Alam",
+   "highway": "E31 DASH",
+   "lat": 3.14875,
+   "lon": 101.50145,
+   "osm_names": [
+    "Plaza Tol Denai Alam"
+   ],
+   "car": 2.3,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.prolintas.com.my/dash/",
+   "source_date": "page updated 2024-05-20 (read 2026-10-22)",
+   "confidence": "high",
+   "note": "DASH (opened toll 2022-12-01) has 3 plazas, each RM2.30 Class 1 (Prolintas page 'last updated 20 May 2024', same rate as at toll start). Motorcycles: not listed; treat as 0. Mainline plaza; OSM booth nodes on both carriageways (bearings ~81/263) -> both directions.",
+   "plaza_list_source": "https://www.freemalaysiatoday.com/category/nation/2022/11/30/toll-charges-to-begin-from-midnight-on-dash"
+  },
+  {
+   "id": "dash-rrim-kwasa",
+   "name": "Plaza Tol RRIM (Kwasa Damansara)",
+   "highway": "E31 DASH",
+   "lat": 3.15003,
+   "lon": 101.56429,
+   "osm_names": [
+    "Plaza Tol RRIM (Kwasa Damansara)"
+   ],
+   "car": 2.3,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.prolintas.com.my/dash/",
+   "source_date": "page updated 2024-05-20 (read 2026-10-22)",
+   "confidence": "medium",
+   "note": "DASH (opened toll 2022-12-01) has 3 plazas, each RM2.30 Class 1 (Prolintas page 'last updated 20 May 2024', same rate as at toll start). Motorcycles: not listed; treat as 0. Ramp-type plaza: OSM booth nodes sit on two motorway_link ramps (bearings ~137/~317), so it charges traffic using the RRIM ramps, not DASH through-traffic. Direction coverage inferred from OSM, not from an official statement.",
+   "plaza_list_source": "https://www.freemalaysiatoday.com/category/nation/2022/11/30/toll-charges-to-begin-from-midnight-on-dash"
+  },
+  {
+   "id": "dash-kota-damansara",
+   "name": "Plaza Tol Kota Damansara (DASH)",
+   "highway": "E31 DASH",
+   "lat": 3.15747,
+   "lon": 101.59658,
+   "osm_names": [
+    "Plaza Tol Kota Damansara (DASH)"
+   ],
+   "car": 2.3,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.prolintas.com.my/dash/",
+   "source_date": "page updated 2024-05-20 (read 2026-10-22)",
+   "confidence": "high",
+   "note": "DASH (opened toll 2022-12-01) has 3 plazas, each RM2.30 Class 1 (Prolintas page 'last updated 20 May 2024', same rate as at toll start). Motorcycles: not listed; treat as 0. Mainline plaza, OSM booth nodes on both carriageways (~76/~256). Do not confuse with OSM 'Plaza Tol Kota Damansara' (PLUS/NKVE, Persiaran Kenanga).",
+   "plaza_list_source": "https://www.freemalaysiatoday.com/category/nation/2022/11/30/toll-charges-to-begin-from-midnight-on-dash"
+  },
+  {
+   "id": "latar-ijok",
+   "name": "Plaza Tol Ijok",
+   "highway": "E25 LATAR",
+   "lat": 3.29053,
+   "lon": 101.39303,
+   "osm_names": [
+    "Plaza Tol Ijok (Arah Barat)",
+    "Plaza Tol Ijok (Arah Timur)"
+   ],
+   "car": 2.5,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.latar.com.my/toll-rates",
+   "source_date": "official rate image read 2026-10-22",
+   "confidence": "high",
+   "note": "Mainline plaza, booths on both carriageways. LATAR is open-system; rates frozen for 2026 (govt list of 10 highways). Motorcycles free (class 0 'Free' per Wikipedia rate table; not shown on the official image).",
+   "freeze_source": "https://paultan.org/bm/2025/12/19/kerajaan-kata-tiada-kenaikan-kadar-tol-untuk-10-lebuhraya-pada-2026-mex-duke-lpt2-latar/"
+  },
+  {
+   "id": "latar-kuang-barat",
+   "name": "Plaza Tol Kuang Barat",
+   "highway": "E25 LATAR",
+   "lat": 3.27158,
+   "lon": 101.47619,
+   "osm_names": [
+    "Plaza Tol Kuang Barat"
+   ],
+   "car": 2.5,
+   "moto": 0,
+   "both_directions": false,
+   "charged_heading_deg": 261,
+   "source": "https://www.latar.com.my/toll-rates",
+   "source_date": "official rate image read 2026-10-22",
+   "confidence": "medium",
+   "note": "Official table groups 'Ijok, Kuang, Templer' at RM2.50. Kuang West is a WESTBOUND-ONLY mainline plaza (Wikipedia interchange list; OSM booth on the westbound carriageway, bearing ~261). LATAR is open-system; rates frozen for 2026 (govt list of 10 highways). Motorcycles free (class 0 'Free' per Wikipedia rate table; not shown on the official image)."
+  },
+  {
+   "id": "latar-kuang-timur",
+   "name": "Plaza Tol Kuang Timur",
+   "highway": "E25 LATAR",
+   "lat": 3.27064,
+   "lon": 101.53043,
+   "osm_names": [
+    "Plaza Tol Kuang Timur"
+   ],
+   "car": 2.5,
+   "moto": 0,
+   "both_directions": false,
+   "charged_heading_deg": 79,
+   "source": "https://www.latar.com.my/toll-rates",
+   "source_date": "official rate image read 2026-10-22",
+   "confidence": "medium",
+   "note": "EASTBOUND-ONLY mainline plaza (Wikipedia; OSM booth on eastbound carriageway, bearing ~79). Official table says 'Kuang' = RM2.50; the OSM charge tag (RM1.30) conflicts and is treated as wrong. LATAR is open-system; rates frozen for 2026 (govt list of 10 highways). Motorcycles free (class 0 'Free' per Wikipedia rate table; not shown on the official image)."
+  },
+  {
+   "id": "latar-kundang-barat",
+   "name": "Plaza Tol Kundang Barat",
+   "highway": "E25 LATAR",
+   "lat": 3.26964,
+   "lon": 101.51838,
+   "osm_names": [
+    "Plaza Tol Kundang Barat"
+   ],
+   "car": 1.3,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.latar.com.my/toll-rates",
+   "source_date": "official rate image read 2026-10-22",
+   "confidence": "high",
+   "note": "Ramp plaza at Kundang interchange (Exit 2505). Wikipedia's rate table says 'Kundang (both directions)'; OSM has a booth node only on one ramp (bearing ~278) - assume entry and exit lanes both pay. LATAR is open-system; rates frozen for 2026 (govt list of 10 highways). Motorcycles free (class 0 'Free' per Wikipedia rate table; not shown on the official image)."
+  },
+  {
+   "id": "latar-kundang-timur",
+   "name": "Plaza Tol Kundang Timur",
+   "highway": "E25 LATAR",
+   "lat": 3.27159,
+   "lon": 101.50829,
+   "osm_names": [
+    "Plaza Tol Kundang Timur"
+   ],
+   "car": 1.3,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.latar.com.my/toll-rates",
+   "source_date": "official rate image read 2026-10-22",
+   "confidence": "high",
+   "note": "Ramp plaza at the other half of the Kundang interchange (OSM booth on ramp bearing ~88). Same caveat as Kundang Barat. LATAR is open-system; rates frozen for 2026 (govt list of 10 highways). Motorcycles free (class 0 'Free' per Wikipedia rate table; not shown on the official image)."
+  },
+  {
+   "id": "latar-templer",
+   "name": "Plaza Tol Taman Rimba Templer",
+   "highway": "E25 LATAR",
+   "lat": 3.28845,
+   "lon": 101.58203,
+   "osm_names": [
+    "Plaza Tol Taman Rimba Templer (Arah Barat)",
+    "Plaza Tol Taman Rimba Templer (Arah Timur)"
+   ],
+   "car": 2.5,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.latar.com.my/toll-rates",
+   "source_date": "official rate image read 2026-10-22",
+   "confidence": "high",
+   "note": "Mainline plaza, booths on both carriageways. LATAR is open-system; rates frozen for 2026 (govt list of 10 highways). Motorcycles free (class 0 'Free' per Wikipedia rate table; not shown on the official image).",
+   "freeze_source": "https://paultan.org/bm/2025/12/19/kerajaan-kata-tiada-kenaikan-kadar-tol-untuk-10-lebuhraya-pada-2026-mex-duke-lpt2-latar/"
+  },
+  {
+   "id": "latar-eco-grandeur",
+   "name": "Plaza Tol Eco Grandeur",
+   "highway": "E25 LATAR",
+   "lat": 3.28174,
+   "lon": 101.42462,
+   "osm_names": [
+    "Plaza Tol Eco Grandeur"
+   ],
+   "car": 1.15,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.latar.com.my/kutipan-tol-di-plaza-tol-eco-grandeur-lebuhraya-latar-berkuat-kuasa-mulai-7-ogos-2026",
+   "source_date": "2026-08-06 (collection from 2026-08-07 00:01)",
+   "confidence": "high",
+   "note": "NEW: Exit 2502 opened 2025-11-11 toll-free; toll collection began 2026-08-07. 10 lanes, 5 per direction (ramp plaza, OSM booths on both ramps). Motorcycles not listed (assume free). LATAR is open-system; rates frozen for 2026 (govt list of 10 highways). Motorcycles free (class 0 'Free' per Wikipedia rate table; not shown on the official image).",
+   "toll_start": "2026-08-07"
+  },
+  {
+   "id": "nnksb-kapar-mainline",
+   "name": "Plaza Tol Kapar (NNKSB mainline)",
+   "highway": "E30 NNKSB",
+   "lat": 3.07518,
+   "lon": 101.422,
+   "osm_names": [
+    "Plaza Tol Kapar"
+   ],
+   "car": 2.7,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://grandsepadu.com.my/about/",
+   "source_date": "official page read 2026-10-22",
+   "confidence": "high",
+   "note": "Mainline barrier plaza near Kapar I/C; OSM booths on both carriageways (~26/~205). NNKSB (Grand Sepadu) is open-system; rates frozen for 2026. Motorcycles free (Wikipedia rate table class 0 'Free'; official page lists classes 1-5 only).",
+   "freeze_source": "https://paultan.org/bm/2025/12/19/kerajaan-kata-tiada-kenaikan-kadar-tol-untuk-10-lebuhraya-pada-2026-mex-duke-lpt2-latar/"
+  },
+  {
+   "id": "nnksb-kapar-laluan-barat",
+   "name": "Plaza Tol Kapar Laluan Barat (ramp)",
+   "highway": "E30 NNKSB",
+   "lat": 3.06838,
+   "lon": 101.42076,
+   "osm_names": [
+    "Plaza Tol Kapar (Arah Barat)"
+   ],
+   "car": 1.4,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://grandsepadu.com.my/about/",
+   "source_date": "official page read 2026-10-22",
+   "confidence": "medium",
+   "note": "Ramp plaza. Official rate depends on movement: RM1.40 'Kapar to Bukit Raja' (entering towards Bukit Raja), RM1.60 'Pelabuhan Klang to Kapar' (exiting after coming from Port Klang). OSM operator tag 'Grand Sepadu' confirms this is the old Kapar ramp plaza. Which OSM ramp node maps to which movement is not verified. NNKSB (Grand Sepadu) is open-system; rates frozen for 2026. Motorcycles free (Wikipedia rate table class 0 'Free'; official page lists classes 1-5 only).",
+   "car_alt": {
+    "from_port_klang_exiting_at_kapar": 1.6,
+    "kapar_entering_towards_bukit_raja": 1.4
+   }
+  },
+  {
+   "id": "nnksb-kapar-laluan-timur",
+   "name": "Plaza Tol Kapar Laluan Timur (ramp)",
+   "highway": "E30 NNKSB",
+   "lat": 3.07031,
+   "lon": 101.41639,
+   "osm_names": [
+    "Plaza Tol Kapar (Timur)"
+   ],
+   "car": 1.4,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://grandsepadu.com.my/about/",
+   "source_date": "official page read 2026-10-22",
+   "confidence": "medium",
+   "note": "Ramp plaza; same two movement rates as Laluan Barat (RM1.40 Kapar->Bukit Raja, RM1.60 Pelabuhan Klang->Kapar). OSM booth nodes on two ramps (~23/~201). NNKSB (Grand Sepadu) is open-system; rates frozen for 2026. Motorcycles free (Wikipedia rate table class 0 'Free'; official page lists classes 1-5 only).",
+   "car_alt": {
+    "from_port_klang_exiting_at_kapar": 1.6,
+    "kapar_entering_towards_bukit_raja": 1.4
+   }
+  },
+  {
+   "id": "nnksb-bukit-raja",
+   "name": "Plaza Tol Bukit Raja (NNKSB)",
+   "highway": "E30 NNKSB",
+   "lat": 3.07149,
+   "lon": 101.46473,
+   "osm_names": [
+    "Plaza Tol Bukit Raja"
+   ],
+   "car": 0.6,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://grandsepadu.com.my/about/",
+   "source_date": "official page read 2026-10-22",
+   "confidence": "low",
+   "note": "Rate is official (RM0.60 Class 1), but location is NOT verified: the only OSM candidate 'Plaza Tol Bukit Raja' is tagged operator PLUS and refs E1;E30, i.e. it may be the NKVE (PLUS) closed-system terminal plaza. Do not double-charge: check on the map before using. NNKSB (Grand Sepadu) is open-system; rates frozen for 2026. Motorcycles free (Wikipedia rate table class 0 'Free'; official page lists classes 1-5 only)."
+  },
+  {
+   "id": "klk-gombak",
+   "name": "Plaza Tol Gombak",
+   "highway": "E8 KL-Karak",
+   "lat": 3.24207,
+   "lon": 101.72716,
+   "osm_names": [
+    "Plaza Tol Gombak (Arah Barat)",
+    "Plaza Tol Gombak (Arah Timur)"
+   ],
+   "car": 6.0,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.afaprime.com/wp-content/toll_rate/klk.php",
+   "source_date": "official AFA Prime calculator queried 2026-10-22",
+   "confidence": "high",
+   "note": "Barrier plaza, OSM booths on both carriageways (~78 eastbound, ~270 westbound) - charged both directions. KL-Karak is open system, rates unchanged since 2015-10-15. Motorcycles free (Wikipedia class 0). Concessionaire ANIH Berhad is now AFA Prime Berhad; the old anihberhad.com domain now redirects to an unrelated Indonesian site - do not use it."
+  },
+  {
+   "id": "klk-bentong",
+   "name": "Plaza Tol Bentong",
+   "highway": "E8 KL-Karak",
+   "lat": 3.46967,
+   "lon": 101.90494,
+   "osm_names": [
+    "Plaza Tol Bentong (Arah Barat)",
+    "Plaza Tol Bentong (Arah Timur)"
+   ],
+   "car": 3.5,
+   "moto": 0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://www.afaprime.com/wp-content/toll_rate/klk.php",
+   "source_date": "official AFA Prime calculator queried 2026-10-22",
+   "confidence": "high",
+   "note": "Barrier plaza, OSM booths on both carriageways (~23 and ~200) - charged both directions. KL-Karak is open system, rates unchanged since 2015-10-15. Motorcycles free (Wikipedia class 0). Concessionaire ANIH Berhad is now AFA Prime Berhad; the old anihberhad.com domain now redirects to an unrelated Indonesian site - do not use it."
+  },
+  {
+   "id": "genting-sempah-entry",
+   "name": "Genting Highlands Entry (Genting Sempah)",
+   "highway": "Jalan Genting Highlands (private)",
+   "lat": 3.36284,
+   "lon": 101.77506,
+   "osm_names": [
+    "Genting Highlands Entry"
+   ],
+   "car": 5.0,
+   "moto": 0,
+   "both_directions": false,
+   "charged_heading_deg": 52,
+   "source": "https://www.freemalaysiatoday.com/category/nation/2026/05/25/car-owners-to-pay-rm5-for-using-genting-highlands-road-from-thursday",
+   "source_date": "2026-05-25 (effective 2026-05-28)",
+   "confidence": "high",
+   "note": "Real, charging. Charged only when entering (uphill). OSM booth on the one-way uphill carriageway, bearing ~45-59. Private road (Jalan Genting Highlands) operated by Lingkaran Cekap Sdn Bhd (LCSB); road charge started 2026-05-28 after a no-charge trial from 2026-04-02. Class 1 RM5.00 per ENTRY; motorcycles, emergency vehicles and listed public servants exempt; registered residents (from 2026-06-28) pay 10% less. Not an LLM-gazetted highway toll.",
+   "charge_start": "2026-05-28"
+  },
+  {
+   "id": "genting-gohtong-entry",
+   "name": "Gohtong Jaya Entry",
+   "highway": "Jalan Genting Highlands (private)",
+   "lat": 3.39886,
+   "lon": 101.77001,
+   "osm_names": [
+    "Gohtong Jaya Entry"
+   ],
+   "car": 5.0,
+   "moto": 0,
+   "both_directions": false,
+   "charged_heading_deg": 163,
+   "source": "https://www.freemalaysiatoday.com/category/nation/2026/05/25/car-owners-to-pay-rm5-for-using-genting-highlands-road-from-thursday",
+   "source_date": "2026-05-25 (effective 2026-05-28)",
+   "confidence": "medium",
+   "note": "Real, charging at the Gohtong Jaya roundabout entry. Entry-only; heading taken from the OSM one-way way through the booth (~160-167) and not independently verified. Private road (Jalan Genting Highlands) operated by Lingkaran Cekap Sdn Bhd (LCSB); road charge started 2026-05-28 after a no-charge trial from 2026-04-02. Class 1 RM5.00 per ENTRY; motorcycles, emergency vehicles and listed public servants exempt; registered residents (from 2026-06-28) pay 10% less. Not an LLM-gazetted highway toll.",
+   "charge_start": "2026-05-28"
+  }
+ ],
+ "closed": [
+  {
+   "id": "skve-wce-south",
+   "name": "SKVE + WCE Sections 1-2 (integrated closed system)",
+   "highways": [
+    "E26 SKVE",
+    "E32 WCE"
+   ],
+   "gates": [
+    {
+     "id": "ah",
+     "name": "Ayer Hitam (SKVE)",
+     "lat": 2.97649,
+     "lon": 101.6518,
+     "osm_names": [
+      "Tol Plaza Ayer Hitam"
+     ]
+    },
+    {
+     "id": "ssp",
+     "name": "SKVE Saujana Putra",
+     "lat": 2.94802,
+     "lon": 101.58203,
+     "osm_names": [
+      "Plaza Tol SKVE Saujana Putra"
+     ]
+    },
+    {
+     "id": "tpg",
+     "name": "Teluk Panglima Garang (SKVE)",
+     "lat": 2.89546,
+     "lon": 101.48521,
+     "osm_names": [
+      "Plaza Tol Teluk Panglima Garang"
+     ]
+    },
+    {
+     "id": "pi",
+     "name": "Pulau Indah (SKVE)",
+     "lat": 2.90487,
+     "lon": 101.33997,
+     "osm_names": [
+      "Plaza Tol Pulau Indah"
+     ]
+    },
+    {
+     "id": "btg",
+     "name": "Banting (WCE)",
+     "lat": 2.86689,
+     "lon": 101.5595,
+     "osm_names": [
+      "Banting (WCE)"
+     ]
+    },
+    {
+     "id": "sae",
+     "name": "SAE (WCE, at KESAS junction)",
+     "lat": 2.98612,
+     "lon": 101.49178,
+     "osm_names": [
+      "Plaza Tol SAE/KESAS"
+     ]
+    }
+   ],
+   "pairs": [
+    {
+     "from": "ssp",
+     "to": "ah",
+     "car": 2.4,
+     "moto": 0,
+     "source": "https://paultan.org/2015/10/15/south-klang-valley-expressway-skve-toll-rates-up/",
+     "confidence": "medium",
+     "note": "2015-10-15 SKVE rate; no later SKVE change found, SKVE rates frozen 2025/2026; Wikipedia's 'up to RM8.10' agrees"
+    },
+    {
+     "from": "tpg",
+     "to": "ah",
+     "car": 4.5,
+     "moto": 0,
+     "source": "https://paultan.org/2015/10/15/south-klang-valley-expressway-skve-toll-rates-up/",
+     "confidence": "medium",
+     "note": "2015-10-15 SKVE rate; no later SKVE change found, SKVE rates frozen 2025/2026; Wikipedia's 'up to RM8.10' agrees"
+    },
+    {
+     "from": "pi",
+     "to": "ah",
+     "car": 8.1,
+     "moto": 0,
+     "source": "https://paultan.org/2015/10/15/south-klang-valley-expressway-skve-toll-rates-up/",
+     "confidence": "medium",
+     "note": "2015-10-15 SKVE rate; no later SKVE change found, SKVE rates frozen 2025/2026; Wikipedia's 'up to RM8.10' agrees"
+    },
+    {
+     "from": "tpg",
+     "to": "ssp",
+     "car": 2.7,
+     "moto": 0,
+     "source": "https://paultan.org/2015/10/15/south-klang-valley-expressway-skve-toll-rates-up/",
+     "confidence": "medium",
+     "note": "2015-10-15 SKVE rate; no later SKVE change found, SKVE rates frozen 2025/2026; Wikipedia's 'up to RM8.10' agrees"
+    },
+    {
+     "from": "pi",
+     "to": "ssp",
+     "car": 6.3,
+     "moto": 0,
+     "source": "https://paultan.org/2015/10/15/south-klang-valley-expressway-skve-toll-rates-up/",
+     "confidence": "medium",
+     "note": "2015-10-15 SKVE rate; no later SKVE change found, SKVE rates frozen 2025/2026; Wikipedia's 'up to RM8.10' agrees"
+    },
+    {
+     "from": "tpg",
+     "to": "pi",
+     "car": 4.2,
+     "moto": 0,
+     "source": "https://paultan.org/2015/10/15/south-klang-valley-expressway-skve-toll-rates-up/",
+     "confidence": "medium",
+     "note": "2015-10-15 SKVE rate; no later SKVE change found, SKVE rates frozen 2025/2026; Wikipedia's 'up to RM8.10' agrees"
+    },
+    {
+     "from": "btg",
+     "to": "ah",
+     "car": 6.26,
+     "moto": 0,
+     "source": "https://wce.com.my/toll-rates/",
+     "confidence": "high",
+     "note": "official WCE fare table (Banting plaza); includes SKVE portion"
+    },
+    {
+     "from": "btg",
+     "to": "ssp",
+     "car": 4.45,
+     "moto": 0,
+     "source": "https://wce.com.my/toll-rates/",
+     "confidence": "high",
+     "note": "official WCE fare table (Banting plaza); includes SKVE portion"
+    },
+    {
+     "from": "btg",
+     "to": "tpg",
+     "car": 3.41,
+     "moto": 0,
+     "source": "https://wce.com.my/toll-rates/",
+     "confidence": "high",
+     "note": "official WCE fare table (Banting plaza); includes SKVE portion"
+    },
+    {
+     "from": "btg",
+     "to": "pi",
+     "car": 6.88,
+     "moto": 0,
+     "source": "https://wce.com.my/toll-rates/",
+     "confidence": "high",
+     "note": "official WCE fare table (Banting plaza); includes SKVE portion"
+    },
+    {
+     "from": "btg",
+     "to": "sae",
+     "car": 3.53,
+     "moto": 0,
+     "source": "https://wce.com.my/toll-rates/",
+     "confidence": "high",
+     "note": "official WCE fare table (Banting plaza); includes SKVE portion"
+    },
+    {
+     "from": "sae",
+     "to": "ah",
+     "car": 5.51,
+     "moto": 0,
+     "source": "https://wce.com.my/toll-rates/",
+     "confidence": "high",
+     "note": "official WCE fare table (SAE plaza); includes SKVE portion"
+    },
+    {
+     "from": "sae",
+     "to": "ssp",
+     "car": 3.7,
+     "moto": 0,
+     "source": "https://wce.com.my/toll-rates/",
+     "confidence": "high",
+     "note": "official WCE fare table (SAE plaza); includes SKVE portion"
+    },
+    {
+     "from": "sae",
+     "to": "tpg",
+     "car": 2.66,
+     "moto": 0,
+     "source": "https://wce.com.my/toll-rates/",
+     "confidence": "high",
+     "note": "official WCE fare table (SAE plaza); includes SKVE portion"
+    },
+    {
+     "from": "sae",
+     "to": "pi",
+     "car": 6.13,
+     "moto": 0,
+     "source": "https://wce.com.my/toll-rates/",
+     "confidence": "high",
+     "note": "official WCE fare table (SAE plaza); includes SKVE portion"
+    }
+   ],
+   "symmetric": true,
+   "source": "https://wce.com.my/toll-rates/",
+   "source_secondary": [
+    "https://paultan.org/2015/10/15/south-klang-valley-expressway-skve-toll-rates-up/",
+    "https://www.llm.gov.my/announcement/announcement_detail/27014",
+    "https://paultan.org/bm/2024/09/28/wce-kutipan-tol-di-seksyen-1-banting-skve-dilaksanakan-mulai-12-01-t-malam-pada-30-sept-2024/"
+   ],
+   "confidence": "high for WCE pairs, medium for SKVE-only pairs",
+   "note": "Closed system: take ticket/tap at entry gate, pay at exit gate; WCE says fares are the same in both directions. WCE S1 (Banting-SKVE) tolled from 2024-09-30; S2 (SKVE-SAE) tolled from 2025-06-13; both integrated with SKVE at Tanjung Dua Belas I/C (no gate there). LLM notice 2024-08-30 confirms AH->Banting = SKVE RM3.92 + WCE RM2.34 = RM6.26. SKVE east section from Ayer Hitam plaza to UNITEN (section 1A) is toll-free; no SKVE gate exists east of Ayer Hitam. 'Plaza Tol Bandar Saujana Putra' (OSM, PLUS) is an ELITE gate, NOT SKVE. Wikipedia lists a 'Pulau Carey' (PCY) toll booth on SKVE - not in any official fare table found, unverified. Motorcycles free on SKVE (Wikipedia); WCE motorcycle status not stated officially (assumed free). OSM '(unnamed 3.01,101.49)' booths sit on a highway=construction way = future WCE Section 3 plaza (S3 opening expected Q1 2027), no fare yet. Rates frozen for 2026 for SKVE."
+  },
+  {
+   "id": "wce-klang",
+   "name": "WCE Sections 5-6 (Bandar Bukit Raja - Assam Jawa)",
+   "highways": [
+    "E32 WCE"
+   ],
+   "gates": [
+    {
+     "id": "bbs",
+     "name": "Bandar Bukit Raja Selatan (WCE)",
+     "lat": 3.0941,
+     "lon": 101.43747,
+     "osm_names": [
+      "Plaza Tol NNKSB2"
+     ]
+    },
+    {
+     "id": "bbu",
+     "name": "Bandar Bukit Raja Utara (WCE)",
+     "lat": 3.13029,
+     "lon": 101.39795,
+     "osm_names": [
+      "Bandar Bukit Raja Utara"
+     ]
+    },
+    {
+     "id": "ajw",
+     "name": "Assam Jawa (WCE)",
+     "lat": 3.31338,
+     "lon": 101.3738,
+     "osm_names": [
+      "WCE Assam Jawa Toll Plaza (Inbound)",
+      "WCE Assam Jawa Toll Plaza (Outbound)"
+     ]
+    }
+   ],
+   "pairs": [
+    {
+     "from": "bbs",
+     "to": "bbu",
+     "car": 1.5,
+     "moto": 0
+    },
+    {
+     "from": "bbs",
+     "to": "ajw",
+     "car": 5.05,
+     "moto": 0
+    },
+    {
+     "from": "bbu",
+     "to": "ajw",
+     "car": 4.12,
+     "moto": 0
+    }
+   ],
+   "symmetric": true,
+   "source": "https://wce.com.my/toll-rates/",
+   "confidence": "high (fares); medium (BBS gate location)",
+   "note": "Official WCE fare table/image. Assam Jawa tolled since 2024-01-03 (Section 6 opened 2023-11-21). BBS gate matched to OSM 'Plaza Tol NNKSB2': its booth nodes are on ramps right next to the OSM junction node 'Bandar Bukit Raja Selatan' (exit 3207) - name in OSM is misleading. WCE Section 4 (NKVE/FHR2 - NNKSB) was reported to open 2026-03-18 but WCE's own FAQ still lists it as under construction; no Section 4 gate/fare appears in WCE's fare data. Assam Jawa plaza is tagged E25 in OSM because WCE meets the LATAR alignment there. Section 7 (Assam Jawa - Hutan Melintang/Tanjong Karang) not open."
+  },
+  {
+   "id": "wce-teluk-intan",
+   "name": "WCE Section 8 (Hutan Melintang - Teluk Intan)",
+   "highways": [
+    "E32 WCE"
+   ],
+   "gates": [
+    {
+     "id": "hmt",
+     "name": "Hutan Melintang (WCE)",
+     "lat": 3.82422,
+     "lon": 101.00056,
+     "osm_names": [
+      "Plaza Tol Hutan Melintang"
+     ]
+    },
+    {
+     "id": "tli",
+     "name": "Teluk Intan (WCE)",
+     "lat": 3.94159,
+     "lon": 100.99392,
+     "osm_names": [
+      "Plaza Tol Teluk Intan"
+     ]
+    }
+   ],
+   "pairs": [
+    {
+     "from": "hmt",
+     "to": "tli",
+     "car": 2.9,
+     "moto": 0
+    }
+   ],
+   "symmetric": true,
+   "source": "https://wce.com.my/toll-rates/",
+   "confidence": "high",
+   "note": "Official WCE fare data. Section opened 2019-05-31."
+  },
+  {
+   "id": "wce-perak-north",
+   "name": "WCE Sections 9-11 (Kg Lekir - Taiping Selatan)",
+   "highways": [
+    "E32 WCE"
+   ],
+   "gates": [
+    {
+     "id": "lkr",
+     "name": "Kg Lekir (WCE)",
+     "lat": 4.14366,
+     "lon": 100.7684,
+     "osm_names": [
+      "Plaza Tol Lekir"
+     ]
+    },
+    {
+     "id": "stw",
+     "name": "Sitiawan (WCE)",
+     "lat": 4.1817,
+     "lon": 100.73662,
+     "osm_names": [
+      "Plaza Tol Sitiawan"
+     ]
+    },
+    {
+     "id": "stu",
+     "name": "Sitiawan Utara (WCE)",
+     "lat": 4.24796,
+     "lon": 100.72958,
+     "osm_names": [
+      "Plaza Tol Sitiawan Utara"
+     ]
+    },
+    {
+     "id": "ckc",
+     "name": "Changkat Cermin (WCE)",
+     "lat": 4.3431,
+     "lon": 100.80199,
+     "osm_names": [
+      "Plaza Tol Changkat Cermin"
+     ]
+    },
+    {
+     "id": "brs",
+     "name": "Beruas (WCE)",
+     "lat": 4.49618,
+     "lon": 100.79634,
+     "osm_names": [
+      "Beruas Toll Beruas"
+     ]
+    },
+    {
+     "id": "trg",
+     "name": "Trong (WCE)",
+     "lat": 4.69781,
+     "lon": 100.72377,
+     "osm_names": [
+      "Plaza Tol Trong"
+     ]
+    },
+    {
+     "id": "tps",
+     "name": "Taiping Selatan (WCE)",
+     "lat": 4.76672,
+     "lon": 100.72638,
+     "osm_names": [
+      "Plaza Tol Taiping Selatan"
+     ]
+    }
+   ],
+   "pairs": [
+    {
+     "from": "lkr",
+     "to": "stw",
+     "car": 2.0,
+     "moto": 0
+    },
+    {
+     "from": "lkr",
+     "to": "stu",
+     "car": 2.8,
+     "moto": 0
+    },
+    {
+     "from": "lkr",
+     "to": "ckc",
+     "car": 4.7,
+     "moto": 0
+    },
+    {
+     "from": "lkr",
+     "to": "brs",
+     "car": 7.9,
+     "moto": 0
+    },
+    {
+     "from": "lkr",
+     "to": "trg",
+     "car": 12.53,
+     "moto": 0
+    },
+    {
+     "from": "lkr",
+     "to": "tps",
+     "car": 13.12,
+     "moto": 0
+    },
+    {
+     "from": "stw",
+     "to": "stu",
+     "car": 2.2,
+     "moto": 0
+    },
+    {
+     "from": "stw",
+     "to": "ckc",
+     "car": 4.2,
+     "moto": 0
+    },
+    {
+     "from": "stw",
+     "to": "brs",
+     "car": 7.3,
+     "moto": 0
+    },
+    {
+     "from": "stw",
+     "to": "trg",
+     "car": 11.55,
+     "moto": 0
+    },
+    {
+     "from": "stw",
+     "to": "tps",
+     "car": 12.95,
+     "moto": 0
+    },
+    {
+     "from": "stu",
+     "to": "ckc",
+     "car": 2.7,
+     "moto": 0
+    },
+    {
+     "from": "stu",
+     "to": "brs",
+     "car": 5.8,
+     "moto": 0
+    },
+    {
+     "from": "stu",
+     "to": "trg",
+     "car": 10.04,
+     "moto": 0
+    },
+    {
+     "from": "stu",
+     "to": "tps",
+     "car": 11.44,
+     "moto": 0
+    },
+    {
+     "from": "ckc",
+     "to": "brs",
+     "car": 3.6,
+     "moto": 0
+    },
+    {
+     "from": "ckc",
+     "to": "trg",
+     "car": 7.87,
+     "moto": 0
+    },
+    {
+     "from": "ckc",
+     "to": "tps",
+     "car": 9.3,
+     "moto": 0
+    },
+    {
+     "from": "brs",
+     "to": "trg",
+     "car": 4.69,
+     "moto": 0
+    },
+    {
+     "from": "brs",
+     "to": "tps",
+     "car": 6.06,
+     "moto": 0
+    },
+    {
+     "from": "trg",
+     "to": "tps",
+     "car": 1.88,
+     "moto": 0
+    }
+   ],
+   "symmetric": true,
+   "source": "https://wce.com.my/toll-rates/",
+   "confidence": "high",
+   "note": "Official WCE fare data embedded in wce.com.my/toll-rates (fareData object). Sections 9-10 opened 2019-09-23, Section 11 (Beruas-Taiping Selatan) 2024-03-12. Note Kg Lekir and Sitiawan/Taiping pairs are not distance-linear (e.g. Trong->Taiping Selatan RM1.88) - use the table, not interpolation."
+  },
+  {
+   "id": "lpt1",
+   "name": "East Coast Expressway Phase 1 (LPT1) - Karak entry",
+   "highways": [
+    "E8 LPT1"
+   ],
+   "gates": [
+    {
+     "id": "karak",
+     "name": "Karak (LPT1)",
+     "lat": 3.44376,
+     "lon": 102.02751,
+     "osm_names": [
+      "Plaza Tol Karak (Arah Barat)",
+      "Plaza Tol Karak (Arah Timur)"
+     ]
+    },
+    {
+     "id": "lanchang",
+     "name": "Lanchang",
+     "lat": 3.52311,
+     "lon": 102.17351,
+     "osm_names": [
+      "Plaza Tol Lanchang"
+     ]
+    },
+    {
+     "id": "temerloh",
+     "name": "Temerloh",
+     "lat": 3.50441,
+     "lon": 102.4041,
+     "osm_names": [
+      "Plaza Tol Temerloh"
+     ]
+    },
+    {
+     "id": "chenor",
+     "name": "Chenor",
+     "lat": 3.54069,
+     "lon": 102.51212,
+     "osm_names": [
+      "Plaza Tol Chenor"
+     ]
+    },
+    {
+     "id": "maran",
+     "name": "Maran",
+     "lat": 3.60443,
+     "lon": 102.78783,
+     "osm_names": [
+      "Plaza Tol Maran"
+     ]
+    },
+    {
+     "id": "srijaya",
+     "name": "Sri Jaya",
+     "lat": 3.67764,
+     "lon": 102.88594,
+     "osm_names": [
+      "Plaza Tol Sri Jaya"
+     ]
+    },
+    {
+     "id": "gambang",
+     "name": "Gambang",
+     "lat": 3.7381,
+     "lon": 103.11597,
+     "osm_names": [
+      "Plaza Tol Gambang"
+     ]
+    },
+    {
+     "id": "kuantan",
+     "name": "Kuantan",
+     "lat": 3.87021,
+     "lon": 103.24198,
+     "osm_names": [
+      "Plaza Tol Kuantan"
+     ]
+    },
+    {
+     "id": "jabor",
+     "name": "Jabor",
+     "lat": 3.94548,
+     "lon": 103.31756,
+     "osm_names": [
+      "Jabor Toll Plaza"
+     ]
+    }
+   ],
+   "pairs": [
+    {
+     "from": "karak",
+     "to": "lanchang",
+     "car": 2.8,
+     "moto": 0
+    },
+    {
+     "from": "karak",
+     "to": "temerloh",
+     "car": 6.0,
+     "moto": 0
+    },
+    {
+     "from": "karak",
+     "to": "chenor",
+     "car": 7.7,
+     "moto": 0
+    },
+    {
+     "from": "karak",
+     "to": "maran",
+     "car": 11.7,
+     "moto": 0
+    },
+    {
+     "from": "karak",
+     "to": "srijaya",
+     "car": 13.4,
+     "moto": 0
+    },
+    {
+     "from": "karak",
+     "to": "gambang",
+     "car": 16.9,
+     "moto": 0
+    },
+    {
+     "from": "karak",
+     "to": "kuantan",
+     "car": 19.6,
+     "moto": 0
+    },
+    {
+     "from": "karak",
+     "to": "jabor",
+     "car": 21.0,
+     "moto": 0
+    },
+    {
+     "from": "lanchang",
+     "to": "temerloh",
+     "car": 3.4,
+     "moto": 0
+    }
+   ],
+   "symmetric": true,
+   "source": "https://www.afaprime.com/wp-content/toll_rate/lpt.php",
+   "confidence": "high",
+   "note": "Queried from AFA Prime (ex-ANIH) official calculator 2026-10-22, Class 1. Only pairs from Karak (plus Lanchang-Temerloh) fetched. Bug warning: the sibling ece.php calculator returned Lanchang->Karak = RM6.00 while lpt.php returns RM2.80; RM2.80 used. Karak is the LPT1 west gate right after the KL-Karak (open) section."
+  }
+ ]
+}

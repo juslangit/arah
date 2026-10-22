@@ -1,0 +1,716 @@
+{
+ "plazas": [
+  {
+   "id": "penang_bridge",
+   "name": "Plaza Tol Jambatan Pulau Pinang (Perai)",
+   "highway": "E36 Penang Bridge",
+   "lat": 5.35829,
+   "lon": 100.3937,
+   "osm_names": [
+    "Plaza Tol Jambatan Pulau Pinang (A)",
+    "Plaza Tol Jambatan Pulau Pinang (B)"
+   ],
+   "car": 5.74,
+   "moto": 0.0,
+   "both_directions": false,
+   "charged_heading_deg": 265,
+   "source": "https://en.wikipedia.org/wiki/Penang_Bridge ; PLUS API JPP (car 5.74, motorcycle class 0.00, queried 2026-10-22) ; https://www.mof.gov.my/portal/arkib/media/2018/dis/Siaran%20Media_%20Pembekuan_Kenaikan_%20Kadar_Tol.pdf",
+   "source_date": "2020-02-01 (rate) / 2026-10-22 (API check)",
+   "confidence": "high",
+   "note": "Charged only mainland->island (westbound). Motorcycle toll (was RM1.40) abolished 2019-01-01 (MOF 2018-12-27 release). OSM '(unnamed 5.36,100.39)' (4 booths, 5.35674,100.39297) sits on the same plaza and is probably part of it."
+  },
+  {
+   "id": "penang_2nd_bridge_jk2pp",
+   "name": "Plaza Tol Jambatan Kedua (JK2PP, Batu Kawan collector lanes)",
+   "highway": "E28 Sultan Abdul Halim Mu'adzam Shah Bridge",
+   "lat": 5.22937,
+   "lon": 100.43652,
+   "osm_names": [
+    "Plaza Tol Jambatan Sultan Abdul Halim Mu'adzam Shah"
+   ],
+   "car": 5.74,
+   "moto": 0.0,
+   "both_directions": false,
+   "charged_heading_deg": 270,
+   "source": "https://www.jambatankedua.com.my/public/ (Class 1 RM5.74, fetched 2026-10-22) ; https://en.wikipedia.org/wiki/Sultan_Abdul_Halim_Muadzam_Shah_Bridge ; https://www.sinarharian.com.my/article/51607 (RM8.50->RM7.00, 2020-01-01) ; https://www.mof.gov.my/portal/arkib/media/2018/dis/Siaran%20Media_%20Pembekuan_Kenaikan_%20Kadar_Tol.pdf",
+   "source_date": "2026-10-22 (JKSB site)",
+   "confidence": "high",
+   "note": "Bridge toll is charged one way only, mainland->island (westbound). History: RM8.50 -> RM7.00 (2020-01-01) -> RM5.74 (18% cut, 2020-02-01). In the 2026 rate-freeze list (no rise in 2026). No 20% Penang-resident discount on this bridge. Through (express-lane) traffic from the NSE pays the SAME RM5.74 bridge toll at Bandar Cassia Plaza A instead of here, so charge it once per westbound crossing, at whichever plaza the route passes. Motorcycles (was RM1.70) free since 2019-01-01. 50% festive discounts occur (e.g. CNY 2026-02-14/15) - ignore."
+  },
+  {
+   "id": "bandar_cassia_link",
+   "name": "Plaza Tol Bandar Cassia (Penang 2nd Bridge integrated plaza, link-road component)",
+   "highway": "E28 2nd Penang Bridge link road",
+   "lat": 5.23341,
+   "lon": 100.45343,
+   "osm_names": [
+    "Plaza Tol Bandar Cassia (A)",
+    "Plaza Tol Bandar Cassia (B)",
+    "Plaza Tol Bandar Cassia (C)"
+   ],
+   "car": 0.6,
+   "moto": 0.0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://en.wikipedia.org/wiki/Sultan_Abdul_Halim_Muadzam_Shah_Bridge (fare table 'since 1 February 2020', citing PLUS open-system fare table)",
+   "source_date": "2020-02-01",
+   "confidence": "medium",
+   "note": "Link-road toll RM0.60 is collected in both directions together with the PLUS closed-system fare (westbound at Plaza A/B, eastbound on exit). Westbound Plaza A ALSO collects the RM5.74 bridge toll. The PLUS API code is BCS (exit Plaza A) / BKW (Plaza B); BCS-BCS returned empty, so use PLUS pair fares for NSE<->Bandar Cassia trips and do not double-count the 0.60."
+  },
+  {
+   "id": "tanjung_kupang",
+   "name": "Plaza Tol Tanjung Kupang (Second Link)",
+   "highway": "E3 Second Link Expressway (LINKEDUA)",
+   "lat": 1.38211,
+   "lon": 103.59358,
+   "osm_names": [
+    "Plaza Tol Tanjung Kupang"
+   ],
+   "car": 6.14,
+   "moto": 0.0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "PLUS API TTK=6.14 (2026-10-22) ; https://en.wikipedia.org/wiki/Second_Link_Expressway (P.U.(A) 50/2023: expressway 1.80 + bridge 4.34) ; https://paultan.org/2023/02/28/no-more-off-peak-toll-rates-at-second-link-tg-kupang-toll-from-march-1-move-failed-to-increase-traffic/ ; https://www.mof.gov.my/portal/arkib/media/2018/dis/Siaran%20Media_%20Pembekuan_Kenaikan_%20Kadar_Tol.pdf",
+   "source_date": "2023-03-01",
+   "confidence": "medium",
+   "note": "Car 6.14 confirmed (off-peak rate ended 2023-03-01). Motorcycle toll (was RM1.10) abolished 2019-01-01. DIRECTION NOT VERIFIED from an official source: a 2017 traveller report (littledayout.com) paid at Tanjung Kupang both entering and leaving Malaysia, Wikipedia's Second Link article labels it 'heading into Malaysia'. Both-directions chosen as the safer (over-estimating) default. The 2023 gazette table also lists a 'Sultan Abu Bakar Complex' (CIQ) toll of RM8.68 for cars (MOF 2018 'Plaza Tol CIQ' RM10.60 x0.82); which traffic pays it is unclear and it is not in the OSM data - not included."
+  },
+  {
+   "id": "bsi",
+   "name": "Plaza Tol Bangunan Sultan Iskandar (Causeway CIQ, PLUS component)",
+   "highway": "E2/Johor Causeway approach (PLUS)",
+   "lat": 1.46511,
+   "lon": 103.76598,
+   "osm_names": [
+    "Tol Bangunan Sultan Iskandar"
+   ],
+   "car": 2.37,
+   "moto": 0.0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "PLUS API BSI=2.37 (2026-10-22) ; https://www.mof.gov.my/portal/arkib/media/2018/dis/Siaran%20Media_%20Pembekuan_Kenaikan_%20Kadar_Tol.pdf (RM2.90 in 2018, x0.82 = 2.37) ; https://paultan.org/2018/01/02/toll-collection-ends-at-batu-tiga-and-sungai-rasau-in-selangor-bukit-kayu-hitam-in-kedah-and-edl-in-johor/",
+   "source_date": "2020-02-01",
+   "confidence": "medium",
+   "note": "Only the PLUS toll remains; the EDL toll collected at the same building ended 2018-01-01 for all vehicles (not a Malaysian-vehicles-only change). No later abolition found (2026 Hari Raya discount reports still list BSI as a charging plaza). Motorcycles: no toll found (sgmytaxi lists '-'). Direction: believed charged both entering and leaving (the 2014 cross-border toll dispute involved both directions), but not confirmed by an official page - medium/low."
+  },
+  {
+   "id": "kubang_semang",
+   "name": "Kubang Semang Toll Plaza (BKE)",
+   "highway": "E15 Butterworth-Kulim Expressway",
+   "lat": 5.39849,
+   "lon": 100.42505,
+   "osm_names": [
+    "Kubang Semang Toll Plaza"
+   ],
+   "car": 1.31,
+   "moto": 0.0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "PLUS API KSG=1.31, KSG<->LUN=2.62 (2026-10-22) ; https://en.wikipedia.org/wiki/Butterworth%E2%80%93Kulim_Expressway ; https://www.plus.com.my/our-expressways/ (dedicated motorcycle lane)",
+   "source_date": "2020-02-01",
+   "confidence": "high",
+   "note": "Open system, both directions. Motorcycles free (separate motorcycle lane). Concession was extended to 2038 (parliament reply 2016); PLUS still operating BKE in Oct 2026, so the June-2026 end date on Wikipedia is stale."
+  },
+  {
+   "id": "lunas",
+   "name": "Plaza Tol Lunas (BKE)",
+   "highway": "E15 Butterworth-Kulim Expressway",
+   "lat": 5.417,
+   "lon": 100.53087,
+   "osm_names": [
+    "Plaza Tol Lunas"
+   ],
+   "car": 1.31,
+   "moto": 0.0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "PLUS API LUN=1.31 (2026-10-22)",
+   "source_date": "2020-02-01",
+   "confidence": "high",
+   "note": "Open system, both directions; a through trip pays both BKE plazas (RM2.62)."
+  },
+  {
+   "id": "borr_perai",
+   "name": "Perai Toll Plaza (BORR)",
+   "highway": "E17 Butterworth Outer Ring Road",
+   "lat": 5.38572,
+   "lon": 100.38535,
+   "osm_names": [
+    "Perai Toll Plaza"
+   ],
+   "car": 1.5,
+   "moto": 0.0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://llb.com.my/tambang-tol (official LLB fare page, fetched 2026-10-22) ; https://en.wikipedia.org/wiki/Butterworth_Outer_Ring_Road",
+   "source_date": "2015-10-15 (rate, P.U.(A) 238/2015) / 2026-10-22 (site)",
+   "confidence": "high",
+   "note": "Class 1 per official LLB page. Motorcycles free (Wikipedia; LLB page lists no motorcycle class). Open system; both directions assumed (OSM has 2 booths/carriageways; no source states one-way) - direction medium. BORR is on the 2026 rate-freeze list."
+  },
+  {
+   "id": "borr_bagan_ajam",
+   "name": "Plaza Tol Bagan Ajam (BORR)",
+   "highway": "E17 Butterworth Outer Ring Road",
+   "lat": 5.43155,
+   "lon": 100.37683,
+   "osm_names": [
+    "Plaza Tol Bagan Ajam"
+   ],
+   "car": 1.5,
+   "moto": 0.0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://llb.com.my/tambang-tol (official LLB fare page, fetched 2026-10-22) ; https://en.wikipedia.org/wiki/Butterworth_Outer_Ring_Road",
+   "source_date": "2015-10-15 (rate, P.U.(A) 238/2015) / 2026-10-22 (site)",
+   "confidence": "high",
+   "note": "Class 1 per official LLB page. Motorcycles free (Wikipedia; LLB page lists no motorcycle class). Open system; both directions assumed (OSM has 2 booths/carriageways; no source states one-way) - direction medium. BORR is on the 2026 rate-freeze list."
+  },
+  {
+   "id": "borr_sungai_nyior",
+   "name": "Plaza Tol Sungai Nyior (BORR)",
+   "highway": "E17 Butterworth Outer Ring Road",
+   "lat": 5.4057,
+   "lon": 100.38176,
+   "osm_names": [
+    "Plaza Tol Sungai Nyior"
+   ],
+   "car": 1.2,
+   "moto": 0.0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://llb.com.my/tambang-tol (official LLB fare page, fetched 2026-10-22) ; https://en.wikipedia.org/wiki/Butterworth_Outer_Ring_Road",
+   "source_date": "2015-10-15 (rate, P.U.(A) 238/2015) / 2026-10-22 (site)",
+   "confidence": "high",
+   "note": "Class 1 per official LLB page. Motorcycles free (Wikipedia; LLB page lists no motorcycle class). Open system; both directions assumed (OSM has 2 booths/carriageways; no source states one-way) - direction medium. BORR is on the 2026 rate-freeze list."
+  },
+  {
+   "id": "klk_gombak",
+   "name": "Plaza Tol Gombak (KL-Karak)",
+   "highway": "E8 Kuala Lumpur-Karak Expressway",
+   "lat": 3.24207,
+   "lon": 101.72716,
+   "osm_names": [
+    "Plaza Tol Gombak (Arah Timur)",
+    "Plaza Tol Gombak (Arah Barat)"
+   ],
+   "car": 6.0,
+   "moto": 0.0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "https://en.wikipedia.org/wiki/Kuala_Lumpur%E2%80%93Karak_Expressway (rates since 2015-10-15) ; https://afa.group/kenaikan-kadar-tol-bergantung-kepada-kerajaan/ (AFA PRIME, 2024-11-29: Gombak+Bentong = RM9.50) ; https://www.motorist.my/article/2829/ (updated 2026-05-22)",
+   "source_date": "2015-10-15 (rate) / 2024-11-29 (operator confirm)",
+   "confidence": "high",
+   "note": "Open barrier plaza on mainline, both directions. Motorcycles free. Concessionaire is now AFA PRIME Berhad (formerly ANIH; anihberhad.com is a hijacked spam domain - do not use)."
+  },
+  {
+   "id": "klk_bentong",
+   "name": "Plaza Tol Bentong (KL-Karak)",
+   "highway": "E8 Kuala Lumpur-Karak Expressway",
+   "lat": 3.46967,
+   "lon": 101.90494,
+   "osm_names": [
+    "Plaza Tol Bentong (Arah Barat)",
+    "Plaza Tol Bentong (Arah Timur)"
+   ],
+   "car": 3.5,
+   "moto": 0.0,
+   "both_directions": true,
+   "charged_heading_deg": null,
+   "source": "Same as Gombak",
+   "source_date": "2015-10-15 / 2024-11-29",
+   "confidence": "high",
+   "note": "Open barrier plaza on mainline, both directions. Motorcycles free."
+  }
+ ],
+ "closed": [
+  {
+   "id": "sde_e22",
+   "name": "Senai-Desaru Expressway (closed system)",
+   "highways": [
+    "E22"
+   ],
+   "gates": [
+    {
+     "id": "senai",
+     "name": "Senai",
+     "lat": 1.60325,
+     "lon": 103.6747,
+     "osm_names": [
+      "Plaza Tol Senai"
+     ]
+    },
+    {
+     "id": "ulu_tiram",
+     "name": "Ulu Tiram",
+     "lat": 1.58625,
+     "lon": 103.81197,
+     "osm_names": [
+      "Ulu Tiram Toll Plaza"
+     ]
+    },
+    {
+     "id": "cahaya_baru",
+     "name": "Cahaya Baru",
+     "lat": 1.51605,
+     "lon": 103.96498,
+     "osm_names": [
+      "Cahaya Baru Toll Plaza"
+     ]
+    },
+    {
+     "id": "penawar",
+     "name": "Penawar",
+     "lat": 1.57775,
+     "lon": 104.19123,
+     "osm_names": [
+      "Penawar Toll Plaza"
+     ]
+    }
+   ],
+   "pairs": [
+    {
+     "from": "senai",
+     "to": "ulu_tiram",
+     "car": 4.5,
+     "moto": 0.0
+    },
+    {
+     "from": "senai",
+     "to": "cahaya_baru",
+     "car": 9.2,
+     "moto": 0.0
+    },
+    {
+     "from": "senai",
+     "to": "penawar",
+     "car": 13.5,
+     "moto": 0.0
+    },
+    {
+     "from": "ulu_tiram",
+     "to": "cahaya_baru",
+     "car": 5.6,
+     "moto": 0.0
+    },
+    {
+     "from": "ulu_tiram",
+     "to": "penawar",
+     "car": 9.9,
+     "moto": 0.0
+    },
+    {
+     "from": "cahaya_baru",
+     "to": "penawar",
+     "car": 7.2,
+     "moto": 0.0
+    }
+   ],
+   "source": "https://www.sde22.com/toll-fare (official 'Closed System Toll Fares' image, fetched 2026-10-22; site (c) 2025) ; https://en.wikipedia.org/wiki/Senai%E2%80%93Desaru_Expressway",
+   "confidence": "high",
+   "note": "Open and operating; fares symmetric (table lists both directions identically). Motorcycles free. SDE is on the 2026 rate-freeze list. 'Ulu Tiram Toll Plaza' (OSM operator 'SNI') is the SDE Ulu Tiram interchange plaza next to the SDEB HQ (KM22, 1.585075,103.813333). Senai Town I/C (west of Senai plaza) and the Pasir Gudang Link beyond Cahaya Baru plaza have no further plazas in the fare table. Cahaya Baru-Penawar section is being widened (contract 2024, due 2027)."
+  },
+  {
+   "id": "ece_lpt1_lpt2",
+   "name": "East Coast Expressway LPT1 (Karak-Jabor, AFA PRIME) + LPT2 (Jabor-Kuala Terengganu, LPT2 Sdn Bhd / PLUS) - integrated closed system",
+   "highways": [
+    "E8"
+   ],
+   "gates": [
+    {
+     "id": "karak",
+     "name": "Karak",
+     "lat": 3.44376,
+     "lon": 102.02751,
+     "osm_names": [
+      "Plaza Tol Karak (Arah Timur)",
+      "Plaza Tol Karak (Arah Barat)"
+     ]
+    },
+    {
+     "id": "lanchang",
+     "name": "Lanchang",
+     "lat": 3.52311,
+     "lon": 102.17351,
+     "osm_names": [
+      "Plaza Tol Lanchang"
+     ]
+    },
+    {
+     "id": "temerloh",
+     "name": "Temerloh",
+     "lat": 3.50441,
+     "lon": 102.4041,
+     "osm_names": [
+      "Plaza Tol Temerloh"
+     ]
+    },
+    {
+     "id": "chenor",
+     "name": "Chenor",
+     "lat": 3.54069,
+     "lon": 102.51212,
+     "osm_names": [
+      "Plaza Tol Chenor"
+     ]
+    },
+    {
+     "id": "maran",
+     "name": "Maran",
+     "lat": 3.60443,
+     "lon": 102.78783,
+     "osm_names": [
+      "Plaza Tol Maran"
+     ]
+    },
+    {
+     "id": "sri_jaya",
+     "name": "Sri Jaya",
+     "lat": 3.67764,
+     "lon": 102.88594,
+     "osm_names": [
+      "Plaza Tol Sri Jaya"
+     ]
+    },
+    {
+     "id": "gambang",
+     "name": "Gambang",
+     "lat": 3.7381,
+     "lon": 103.11597,
+     "osm_names": [
+      "Plaza Tol Gambang"
+     ]
+    },
+    {
+     "id": "kuantan",
+     "name": "Kuantan",
+     "lat": 3.87021,
+     "lon": 103.24198,
+     "osm_names": [
+      "Plaza Tol Kuantan"
+     ]
+    },
+    {
+     "id": "jabor",
+     "name": "Jabor",
+     "lat": 3.94548,
+     "lon": 103.31756,
+     "osm_names": [
+      "Jabor Toll Plaza"
+     ]
+    },
+    {
+     "id": "cheneh",
+     "name": "Cheneh",
+     "lat": 4.12721,
+     "lon": 103.26679,
+     "osm_names": [
+      "Plaza Tol Cheneh"
+     ]
+    },
+    {
+     "id": "cukai",
+     "name": "Cukai (Chukai)",
+     "lat": 4.24017,
+     "lon": 103.30444,
+     "osm_names": [
+      "Plaza Tol Cukai"
+     ]
+    },
+    {
+     "id": "kijal",
+     "name": "Kijal",
+     "lat": 4.37642,
+     "lon": 103.3627,
+     "osm_names": [
+      "Plaza Tol Kijal"
+     ]
+    },
+    {
+     "id": "kerteh",
+     "name": "Kerteh",
+     "lat": 4.48146,
+     "lon": 103.40798,
+     "osm_names": [
+      "Plaza Tol Kerteh"
+     ]
+    },
+    {
+     "id": "paka",
+     "name": "Paka",
+     "lat": 4.59157,
+     "lon": 103.34728,
+     "osm_names": [
+      "Plaza Tol Paka"
+     ]
+    },
+    {
+     "id": "dungun",
+     "name": "Dungun",
+     "lat": 4.74191,
+     "lon": 103.32863,
+     "osm_names": [
+      "Plaza Tol Dungun"
+     ]
+    },
+    {
+     "id": "bukit_besi",
+     "name": "Bukit Besi",
+     "lat": 4.80143,
+     "lon": 103.19573,
+     "osm_names": [
+      "Plaza Tol Bukit Besi"
+     ]
+    },
+    {
+     "id": "ajil",
+     "name": "Ajil",
+     "lat": 5.08757,
+     "lon": 103.07393,
+     "osm_names": [
+      "Plaza Tol Ajil"
+     ]
+    },
+    {
+     "id": "telemung",
+     "name": "Telemung",
+     "lat": 5.2392,
+     "lon": 102.99918,
+     "osm_names": [
+      "Plaza Tol Telemung"
+     ]
+    },
+    {
+     "id": "kuala_terengganu",
+     "name": "Kuala Terengganu",
+     "lat": 5.33669,
+     "lon": 103.02154,
+     "osm_names": [
+      "Plaza Tol Kuala Terengganu"
+     ]
+    }
+   ],
+   "pairs": [
+    {
+     "from": "karak",
+     "to": "lanchang",
+     "car": 2.8,
+     "moto": 0.0
+    },
+    {
+     "from": "karak",
+     "to": "temerloh",
+     "car": 6.0,
+     "moto": 0.0
+    },
+    {
+     "from": "karak",
+     "to": "chenor",
+     "car": 7.7,
+     "moto": 0.0
+    },
+    {
+     "from": "karak",
+     "to": "maran",
+     "car": 11.7,
+     "moto": 0.0
+    },
+    {
+     "from": "karak",
+     "to": "gambang",
+     "car": 16.9,
+     "moto": 0.0
+    },
+    {
+     "from": "karak",
+     "to": "kuantan",
+     "car": 19.6,
+     "moto": 0.0
+    },
+    {
+     "from": "karak",
+     "to": "jabor",
+     "car": 21.0,
+     "moto": 0.0
+    },
+    {
+     "from": "lanchang",
+     "to": "temerloh",
+     "car": 3.4,
+     "moto": 0.0
+    },
+    {
+     "from": "lanchang",
+     "to": "chenor",
+     "car": 5.2,
+     "moto": 0.0
+    },
+    {
+     "from": "lanchang",
+     "to": "maran",
+     "car": 9.2,
+     "moto": 0.0
+    },
+    {
+     "from": "lanchang",
+     "to": "gambang",
+     "car": 14.3,
+     "moto": 0.0
+    },
+    {
+     "from": "temerloh",
+     "to": "chenor",
+     "car": 2.0,
+     "moto": 0.0
+    },
+    {
+     "from": "temerloh",
+     "to": "maran",
+     "car": 6.0,
+     "moto": 0.0
+    },
+    {
+     "from": "temerloh",
+     "to": "gambang",
+     "car": 11.1,
+     "moto": 0.0
+    },
+    {
+     "from": "chenor",
+     "to": "maran",
+     "car": 4.4,
+     "moto": 0.0
+    },
+    {
+     "from": "chenor",
+     "to": "gambang",
+     "car": 9.5,
+     "moto": 0.0
+    },
+    {
+     "from": "sri_jaya",
+     "to": "gambang",
+     "car": 3.8,
+     "moto": 0.0
+    },
+    {
+     "from": "karak",
+     "to": "kuala_terengganu",
+     "car": 39.24,
+     "moto": 0.0
+    },
+    {
+     "from": "jabor",
+     "to": "kuala_terengganu",
+     "car": 18.24,
+     "moto": 0.0
+    },
+    {
+     "from": "cheneh",
+     "to": "kuala_terengganu",
+     "car": 16.15,
+     "moto": 0.0
+    }
+   ],
+   "source": "Karak-Kuantan 19.60: https://afa.group/kenaikan-kadar-tol-bergantung-kepada-kerajaan/ (concessionaire, 2024-11-29) + https://www.motorist.my/article/2829/ (2026-05-22). Other LPT1 pairs: hargatariif.my 2024 table (site now offline; seen only via search snippets) and hargakosmy.com (Karak-Gambang 16.90, 2025-12-31), said to match the 2014 ANIH brochure. Karak-Kuala Terengganu 39.24: motorist.my 2026. Jabor-KT 18.24 = 39.24 - 21.00 (derived; also = 2016 rate 12 sen/km x 0.82 cut). Cheneh-KT 16.15 = 2016 RM19.70 (Bernama/BH 2016-07) x 0.82 (derived). 18% cut on LPT2 from 2020-02-01: https://mof.gov.my/portal/ms/berita/siaran-media/diskaun-18-tol-plus-bermula-tengah-malam-ini",
+   "confidence": "low",
+   "note": "Closed (ticket/TnG) system; entry at Karak, exit anywhere up to Kuala Terengganu; pairs assumed symmetric. Motorcycles free (separate free entry/exit lanes). Pair fares are from non-official aggregators (LPT1 rate frozen at 12 sen/km since 2018; no increase found up to Oct 2026) - treat as medium for Karak-Kuantan, low for the rest. LPT2 pairs other than those listed NOT verified: LPT2 Class 1 rate is 12 sen/km x 0.82 = ~9.84 sen/km of tollable distance since 2020-02-01, but plaza-pair km are not published, so no per-pair numbers are given. LPT2 is on the 2026 rate-freeze list. Wikipedia's RM43.27 Karak-KT and calculatormalaysia's RM41.90 are pre-2020 figures. OSM '(unnamed 4.06,103.31)' (4.06376,103.31396) between Jabor and Cheneh is probably the Kuantan Port (Pelabuhan Kuantan, exit 837) interchange plaza - no fare found. Gombak/Bentong (KLK) are separate open plazas - see plazas list."
+  }
+ ],
+ "abolished": [
+  {
+   "name": "Bukit Kayu Hitam toll plaza (PLUS NSE, Kedah border)",
+   "lat": null,
+   "lon": null,
+   "osm_names": [],
+   "abolished": "2018-01-01",
+   "source": "https://paultan.org/2018/01/02/toll-collection-ends-at-batu-tiga-and-sungai-rasau-in-selangor-bukit-kayu-hitam-in-kedah-and-edl-in-johor/ ; https://www.nst.com.my/news/nation/2017/10/295804/ ; plaza demolished and road handed to JKR Kedah (https://en.wikipedia.org/wiki/North%E2%80%93South_Expressway_Northern_Route)"
+  },
+  {
+   "name": "EDL (Eastern Dispersal Link) toll at Bangunan Sultan Iskandar - EDL component only; PLUS RM2.37 still charged",
+   "lat": 1.46511,
+   "lon": 103.76598,
+   "osm_names": [
+    "Tol Bangunan Sultan Iskandar"
+   ],
+   "abolished": "2018-01-01",
+   "source": "https://www.klik.com.my/item/story/6158374/plaza-tol-bangunan-sultan-iskandar-dimansuhkan (Harian Metro 2018-01-02) ; paultan 2018-01-02 (above)"
+  },
+  {
+   "name": "ASEAN Bridge / Batang Baram bridge toll (Kuala Baram, Miri) - abolished for Malaysian-registered vehicles; RM10 for foreign (Brunei) vehicles may still apply",
+   "lat": 4.5726,
+   "lon": 114.07403,
+   "osm_names": [
+    "Plaza Tol Batang Baram"
+   ],
+   "abolished": "2015-06-01",
+   "source": "https://www.theborneopost.com/2015/05/18/toll-on-asean-bridge-abolished/ ; https://www.theborneopost.com/2016/01/01/sarawak-toll-free-from-today/"
+  },
+  {
+   "name": "Lanang Bridge toll (Sibu, Sarawak) - not in OSM data",
+   "lat": null,
+   "lon": null,
+   "osm_names": [],
+   "abolished": "2015-05 (late May; exact day not verified)",
+   "source": "https://www.theborneopost.com/2016/01/01/sarawak-toll-free-from-today/"
+  },
+  {
+   "name": "Tun Salahuddin Bridge toll (Kuching, Sarawak) - last Sarawak toll; not in OSM data",
+   "lat": null,
+   "lon": null,
+   "osm_names": [],
+   "abolished": "2016-01-01",
+   "source": "https://www.theborneopost.com/2016/01/01/sarawak-toll-free-from-today/"
+  },
+  {
+   "name": "Motorcycle tolls at Penang Bridge, Second Penang Bridge and Second Link (Tanjung Kupang) - cars still pay",
+   "lat": null,
+   "lon": null,
+   "osm_names": [],
+   "abolished": "2019-01-01",
+   "source": "https://www.mof.gov.my/portal/arkib/media/2018/dis/Siaran%20Media_%20Pembekuan_Kenaikan_%20Kadar_Tol.pdf"
+  }
+ ],
+ "notes": {
+  "not_road_tolls": [
+   {
+    "osm_name": "(unnamed 1.54,103.8)",
+    "lat": 1.54331,
+    "lon": 103.80205,
+    "verdict": "Not a highway toll: single booth on Jalan Dedap 4, Taman Johor Jaya (Nominatim reverse); no tolled road there. Likely a car-park/estate guard booth. Pasir Gudang Highway (FT17) has no toll plaza in any source found.",
+    "confidence": "medium"
+   },
+   {
+    "osm_name": "(unnamed 6.67,100.2)",
+    "lat": 6.66749,
+    "lon": 100.20081,
+    "verdict": "Wang Kelian, Perlis (Thai border, pedestrian way) - not a road toll.",
+    "confidence": "medium"
+   },
+   {
+    "osm_name": "Timpohon Gate",
+    "lat": 6.0297,
+    "lon": 116.54707,
+    "verdict": "Kinabalu Park summit-trail gate, not a road toll.",
+    "confidence": "high"
+   },
+   {
+    "osm_name": "Butterworth Ferry Terminal Toll Booth",
+    "lat": 5.39333,
+    "lon": 100.36567,
+    "verdict": "Penang ferry fare booth, not a road toll (ferry fare is out of scope).",
+    "confidence": "medium"
+   },
+   {
+    "osm_name": "Penyel Camping Reception",
+    "lat": 4.92901,
+    "lon": 101.32307,
+    "verdict": "Campsite fee, not a road toll.",
+    "confidence": "high"
+   }
+  ],
+  "sabah_sarawak": "No road toll plaza is collecting in Sabah or Sarawak as of 2026-10-22 as far as found: Sarawak abolished its three bridge tolls in 2015 (Lanang, ASEAN/Batang Baram for Malaysian vehicles) and at midnight 2015-12-31 (Tun Salahuddin); the Pan Borneo Highway is toll-free by federal policy (Utusan 2019-01). No Sabah toll road was found.",
+  "rate_freeze_2026": "Govt froze 2026 rates on 10 highways incl. SDE, LPT2, LLB/BORR, Sultan Abdul Halim Mu'adzam Shah Bridge, GRANDSAGA, LATAR, NNKSB, SKVE, DUKE, MEX (paultan.org/bm/2025/12/19/...).",
+  "plus_api_motorcycles": "PLUS API class index differs per plaza: for JPP, class 0 = motorcycle (0.00), 1 = car (5.74), 4 = 9.84 (Penang Bridge class 3A). Other plazas return empty for class 0."
+ },
+ "generated": "2026-10-22"
+}

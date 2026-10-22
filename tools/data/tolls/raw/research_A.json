@@ -1,0 +1,1033 @@
+[
+ {
+  "id": "ldp-penchala",
+  "name": "Plaza Tol Penchala",
+  "highway": "E11 LDP",
+  "lat": 3.17763,
+  "lon": 101.61929,
+  "osm_names": [
+   "Plaza Tol Penchala (Arah Selatan)",
+   "Plaza Tol Penchala (Arah Utara)"
+  ],
+  "car": 2.1,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://litrak.com.my/our-highways/litrak/toll-fares/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "Open system, RM2.10 Class 1 at each of the 4 LDP plazas; OSM has booths on both carriageways. Motorcycles (Class 0) free. ALR (Amanat Lebuhraya Rakyat) took over from Gamuda/Litrak in 2022; rates frozen until end of concession (The Star 2024-04-03). No standing off-peak discount found (2019 congestion-charge plan was never implemented)."
+ },
+ {
+  "id": "ldp-petaling-jaya",
+  "name": "Plaza Tol Petaling Jaya",
+  "highway": "E11 LDP",
+  "lat": 3.06055,
+  "lon": 101.61372,
+  "osm_names": [
+   "Plaza Tol Petaling Jaya (A)",
+   "Plaza Tol Petaling Jaya (B)",
+   "Plaza Tol Petaling Jaya (Arah Utara)"
+  ],
+  "car": 2.1,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://litrak.com.my/our-highways/litrak/toll-fares/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "Open system, RM2.10 Class 1 at each of the 4 LDP plazas; OSM has booths on both carriageways. Motorcycles (Class 0) free. ALR (Amanat Lebuhraya Rakyat) took over from Gamuda/Litrak in 2022; rates frozen until end of concession (The Star 2024-04-03). No standing off-peak discount found (2019 congestion-charge plan was never implemented)."
+ },
+ {
+  "id": "ldp-puchong-barat",
+  "name": "Plaza Tol Puchong Barat",
+  "highway": "E11 LDP",
+  "lat": 3.0209,
+  "lon": 101.60224,
+  "osm_names": [
+   "Plaza Tol Puchong Barat (Arah Barat)",
+   "Plaza Tol Puchong Barat (Arah Timur)"
+  ],
+  "car": 2.1,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://litrak.com.my/our-highways/litrak/toll-fares/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "Open system, RM2.10 Class 1 at each of the 4 LDP plazas; OSM has booths on both carriageways. Motorcycles (Class 0) free. ALR (Amanat Lebuhraya Rakyat) took over from Gamuda/Litrak in 2022; rates frozen until end of concession (The Star 2024-04-03). No standing off-peak discount found (2019 congestion-charge plan was never implemented)."
+ },
+ {
+  "id": "ldp-puchong-selatan",
+  "name": "Plaza Tol Puchong Selatan",
+  "highway": "E11 LDP",
+  "lat": 2.98133,
+  "lon": 101.6363,
+  "osm_names": [
+   "Plaza Tol Puchong Selatan (Arah Selatan)",
+   "Plaza Tol Puchong Selatan (Arah Utara)"
+  ],
+  "car": 2.1,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://litrak.com.my/our-highways/litrak/toll-fares/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "Open system, RM2.10 Class 1 at each of the 4 LDP plazas; OSM has booths on both carriageways. Motorcycles (Class 0) free. ALR (Amanat Lebuhraya Rakyat) took over from Gamuda/Litrak in 2022; rates frozen until end of concession (The Star 2024-04-03). No standing off-peak discount found (2019 congestion-charge plan was never implemented)."
+ },
+ {
+  "id": "sprint-damansara",
+  "name": "Plaza Tol Damansara (SPRINT Damansara Link)",
+  "highway": "E23 SPRINT",
+  "lat": 3.12998,
+  "lon": 101.64029,
+  "osm_names": [
+   "Plaza Tol Damansara (A)",
+   "Plaza Tol Damansara (B)"
+  ],
+  "car": 2.0,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://litrak.com.my/our-highways/sprint/toll-fares/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "Damansara Link plaza near Section 17; Plaza A = TTDI-bound, Plaza B = NKVE-bound (both pay). NOT the OSM 'Plaza Tol Damansara' at 3.134,101.604 (operator PLUS) which is the NKVE closed-system plaza. ALR (Amanat Lebuhraya Rakyat) took over from Gamuda/Litrak in 2022; rates frozen until end of concession (The Star 2024-04-03). No standing off-peak discount found (2019 congestion-charge plan was never implemented)."
+ },
+ {
+  "id": "sprint-pantai",
+  "name": "Plaza Tol Pantai (SPRINT Kerinchi Link)",
+  "highway": "E23 SPRINT",
+  "lat": 3.13018,
+  "lon": 101.66161,
+  "osm_names": [
+   "Plaza Tol Pantai (A)",
+   "Plaza Tol Pantai (B)"
+  ],
+  "car": 2.5,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://litrak.com.my/our-highways/sprint/toll-fares/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "Kerinchi Link; Wikipedia: both bounds, separated plazas A/B. Motorcycles free. ALR (Amanat Lebuhraya Rakyat) took over from Gamuda/Litrak in 2022; rates frozen until end of concession (The Star 2024-04-03). No standing off-peak discount found (2019 congestion-charge plan was never implemented)."
+ },
+ {
+  "id": "sprint-bukit-kiara",
+  "name": "Plaza Tol Bukit Kiara (SPRINT Penchala Link)",
+  "highway": "E23 SPRINT",
+  "lat": 3.16428,
+  "lon": 101.64296,
+  "osm_names": [
+   "Plaza Tol Bukit Kiara"
+  ],
+  "car": 3.0,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://litrak.com.my/our-highways/sprint/toll-fares/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "Penchala Link; OSM booths on both carriageways. Motorcycles free. ALR (Amanat Lebuhraya Rakyat) took over from Gamuda/Litrak in 2022; rates frozen until end of concession (The Star 2024-04-03). No standing off-peak discount found (2019 congestion-charge plan was never implemented)."
+ },
+ {
+  "id": "kesas-awan-besar-timur",
+  "name": "Plaza Tol Awan Besar (Timur)",
+  "highway": "E5 KESAS",
+  "lat": 3.0664,
+  "lon": 101.6649,
+  "osm_names": [
+   "Plaza Tol Awan Besar (Arah Timur)"
+  ],
+  "car": 2.0,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 88,
+  "source": "https://kesas.com.my/toll-lane/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "KESAS lists Awan Besar East (KM47.5) and Awan Besar West (KM49.2) as separate plazas; this one is on the eastbound (KL-bound) carriageway only per OSM. Motorcycles free. ALR (Amanat Lebuhraya Rakyat) took over from Gamuda/Litrak in 2022; rates frozen until end of concession (The Star 2024-04-03). No standing off-peak discount found (2019 congestion-charge plan was never implemented)."
+ },
+ {
+  "id": "kesas-awan-besar-barat",
+  "name": "Plaza Tol Awan Besar (Barat)",
+  "highway": "E5 KESAS",
+  "lat": 3.06359,
+  "lon": 101.67929,
+  "osm_names": [
+   "Plaza Tol Awan Besar (Atah Barat)"
+  ],
+  "car": 2.0,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 275,
+  "source": "https://kesas.com.my/toll-lane/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "Westbound (Shah Alam/Klang-bound) only per OSM; pair of Awan Besar Timur ~1.6 km east. OSM name has typo 'Atah'. ALR (Amanat Lebuhraya Rakyat) took over from Gamuda/Litrak in 2022; rates frozen until end of concession (The Star 2024-04-03). No standing off-peak discount found (2019 congestion-charge plan was never implemented)."
+ },
+ {
+  "id": "kesas-sunway",
+  "name": "Plaza Tol Sunway",
+  "highway": "E5 KESAS",
+  "lat": 3.05871,
+  "lon": 101.60828,
+  "osm_names": [
+   "Plaza Tol Sunway (Arah Barat)",
+   "Plaza Tol Sunway (Arah Timur)"
+  ],
+  "car": 2.0,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://kesas.com.my/toll-lane/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "KM40.5; both carriageways. ALR (Amanat Lebuhraya Rakyat) took over from Gamuda/Litrak in 2022; rates frozen until end of concession (The Star 2024-04-03). No standing off-peak discount found (2019 congestion-charge plan was never implemented)."
+ },
+ {
+  "id": "kesas-kemuning",
+  "name": "Plaza Tol Kemuning",
+  "highway": "E5 KESAS",
+  "lat": 2.99733,
+  "lon": 101.52211,
+  "osm_names": [
+   "Plaza Tol Kemuning (Arah Barat)",
+   "Plaza Tol Kemuning (Arah Timur)"
+  ],
+  "car": 2.0,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://kesas.com.my/toll-lane/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "KM27.2; both carriageways. ALR (Amanat Lebuhraya Rakyat) took over from Gamuda/Litrak in 2022; rates frozen until end of concession (The Star 2024-04-03). No standing off-peak discount found (2019 congestion-charge plan was never implemented)."
+ },
+ {
+  "id": "smart-tunnel",
+  "name": "Plaza Tol SMART (Sungai Besi)",
+  "highway": "E38 SMART",
+  "lat": 3.10759,
+  "lon": 101.70149,
+  "osm_names": [
+   "Plaza Toll SMART Sungai Besi"
+  ],
+  "car": 3.0,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://paultan.org/2025/08/14/terowong-smart-tawar-pas-perjalanan-tanpa-had-rm68-sebulan-mulai-16-ogos-hingga-16-september",
+  "source_date": "2025-08-14",
+  "confidence": "medium",
+  "note": "RM3.00 derived: ALR's Aug-2025 pass article says 44 trips/month = RM132 standard toll (=RM3.00/trip); RM3.00 has been the Class 1 rate since 2015-10-15 and ALR rates are frozen. Not on smarttunnel.com.my. OSM booths on both directions (northbound into city and southbound out). Motorcycles are prohibited in the tunnel (cars/taxis only). ALR (Amanat Lebuhraya Rakyat) took over from Gamuda/Litrak in 2022; rates frozen until end of concession (The Star 2024-04-03). No standing off-peak discount found (2019 congestion-charge plan was never implemented)."
+ },
+ {
+  "id": "grandsaga-batu-9",
+  "name": "Plaza Tol Batu 9 (Cheras)",
+  "highway": "E7 Cheras-Kajang (Grand Saga)",
+  "lat": 3.07459,
+  "lon": 101.76051,
+  "osm_names": [
+   "Plaza Tol Batu 9 (A)",
+   "Plaza Tol Batu 9 (B)"
+  ],
+  "car": 1.3,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 135,
+  "source": "https://grandsaga.com.my/about-cheras-kajang-highway/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "NOT abolished. Only the KL-bound side was abolished on 2012-03-02; plaza still charges Kajang-bound (southeast-bound) traffic. Motorcycles free. 2026 rates frozen (LLM/BH 2025-12)."
+ },
+ {
+  "id": "grandsaga-batu-11",
+  "name": "Plaza Tol Batu 11 (Cheras)",
+  "highway": "E7 Cheras-Kajang (Grand Saga)",
+  "lat": 3.04819,
+  "lon": 101.77598,
+  "osm_names": [
+   "Plaza Tol Batu 11"
+  ],
+  "car": 1.3,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 0,
+  "source": "https://grandsaga.com.my/about-cheras-kajang-highway/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "NOT abolished. Only the Kajang-bound side was abolished on 2012-03-02; plaza still charges KL-bound (northbound) traffic. Motorcycles free."
+ },
+ {
+  "id": "grandsaga-batu-9-klbound",
+  "name": "Plaza Tol Batu 9 (KL-bound side)",
+  "highway": "E7 Cheras-Kajang (Grand Saga)",
+  "lat": 3.07459,
+  "lon": 101.76051,
+  "osm_names": [
+   "Plaza Tol Batu 9 (A)",
+   "Plaza Tol Batu 9 (B)"
+  ],
+  "car": 0,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 315,
+  "source": "https://en.wikipedia.org/wiki/Cheras%E2%80%93Kajang_Expressway",
+  "source_date": "2012-03-02",
+  "confidence": "medium",
+  "note": "Direction-only abolition record: KL-bound Batu 9 and Kajang-bound Batu 11 collection abolished 2012-03-02 (Wikipedia, uncited; consistent with Grand Saga listing Batu 9 as Kajang-bound only and Batu 11 as KL-bound only). Do not charge this direction.",
+  "abolished": "2012-03-02"
+ },
+ {
+  "id": "grandsaga-batu-11-kajangbound",
+  "name": "Plaza Tol Batu 11 (Kajang-bound side)",
+  "highway": "E7 Cheras-Kajang (Grand Saga)",
+  "lat": 3.04819,
+  "lon": 101.77598,
+  "osm_names": [
+   "Plaza Tol Batu 11"
+  ],
+  "car": 0,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 180,
+  "source": "https://en.wikipedia.org/wiki/Cheras%E2%80%93Kajang_Expressway",
+  "source_date": "2012-03-02",
+  "confidence": "medium",
+  "note": "Direction-only abolition record (see Batu 9 KL-bound).",
+  "abolished": "2012-03-02"
+ },
+ {
+  "id": "akleh-dato-keramat",
+  "name": "Plaza Tol Dato' Keramat",
+  "highway": "E12 AKLEH",
+  "lat": 3.16544,
+  "lon": 101.72144,
+  "osm_names": [
+   "Plaza Tol Dato' Keramat"
+  ],
+  "car": 2.13,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.prolintas.com.my/akleh/",
+  "source_date": "2022-10-19 (page live 2026)",
+  "confidence": "high",
+  "note": "Prolintas cut Class 1 from RM2.50 to RM2.13 on 2022-10-20. Charged both bounds (OSM booths both ways; Prolintas lists lanes 'both bounds'). AKLEH has only this one plaza. Motorcycles are not permitted on AKLEH (elevated); toll 0 anyway."
+ },
+ {
+  "id": "suke-alam-damai",
+  "name": "Plaza Tol Alam Damai",
+  "highway": "E19 SUKE",
+  "lat": 3.07414,
+  "lon": 101.73983,
+  "osm_names": [
+   "Plaza Tol Alam Damai (A1)",
+   "Plaza Tol Alam Damai (A2)",
+   "Plaza Tol Alam Damai (A3)",
+   "Alam Damai Toll Plaza B1",
+   "Alam Damai Toll Plaza B2",
+   "Alam Damai Toll Plaza B3"
+  ],
+  "car": 2.3,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.prolintas.com.my/suke/",
+  "source_date": "2024-05-20 (page live 2026)",
+  "confidence": "high",
+  "note": "SUKE: RM2.30 Class 1 at each of its 3 plazas (RM6.90 end to end). Alam Damai collection began 2023-06-30. Open system, both directions (OSM booths both carriageways; Alam Damai A=mainline, B=ramps). Motorcycles free."
+ },
+ {
+  "id": "suke-bukit-teratai",
+  "name": "Plaza Tol Bukit Teratai",
+  "highway": "E19 SUKE",
+  "lat": 3.10052,
+  "lon": 101.76064,
+  "osm_names": [
+   "Plaza Tol Bukit Teratai"
+  ],
+  "car": 2.3,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.prolintas.com.my/suke/",
+  "source_date": "2024-05-20 (page live 2026)",
+  "confidence": "high",
+  "note": "SUKE: RM2.30 Class 1 at each of its 3 plazas (RM6.90 end to end). Alam Damai collection began 2023-06-30. Open system, both directions (OSM booths both carriageways; Alam Damai A=mainline, B=ramps). Motorcycles free."
+ },
+ {
+  "id": "suke-ampang",
+  "name": "Plaza Tol Ampang (SUKE)",
+  "highway": "E19 SUKE",
+  "lat": 3.14624,
+  "lon": 101.76816,
+  "osm_names": [
+   "Plaza Tol Ampang (A)",
+   "Plaza Tol Ampang (B)"
+  ],
+  "car": 2.3,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.prolintas.com.my/suke/",
+  "source_date": "2024-05-20 (page live 2026)",
+  "confidence": "high",
+  "note": "SUKE: RM2.30 Class 1 at each of its 3 plazas (RM6.90 end to end). Alam Damai collection began 2023-06-30. Open system, both directions (OSM booths both carriageways; Alam Damai A=mainline, B=ramps). Motorcycles free."
+ },
+ {
+  "id": "silk-sungai-balak",
+  "name": "Plaza Tol Sungai Balak",
+  "highway": "E18 SILK",
+  "lat": 3.00779,
+  "lon": 101.77016,
+  "osm_names": [
+   "Plaza Tol Sungai Balak (Arah Selatan)",
+   "Plaza Tol Sungai Balak (Arah Utara)"
+  ],
+  "car": 1.66,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.prolintas.com.my/kajang-silk/",
+  "source_date": "2022-10-19 (page live 2026)",
+  "confidence": "high",
+  "note": "Prolintas cut Class 1 from RM1.80 to RM1.66 on 2022-10-20 (OSM charge tag RM1.80 is outdated). Both directions (Prolintas lists lanes in both bounds). Motorcycles free."
+ },
+ {
+  "id": "silk-sungai-ramal",
+  "name": "Plaza Tol Sungai Ramal",
+  "highway": "E18 SILK",
+  "lat": 2.97987,
+  "lon": 101.77289,
+  "osm_names": [
+   "Plaza Tol Sg Ramal (B)",
+   "Plaza Tol Sg Ramal (T)"
+  ],
+  "car": 1.66,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.prolintas.com.my/kajang-silk/",
+  "source_date": "2022-10-19 (page live 2026)",
+  "confidence": "high",
+  "note": "Prolintas cut Class 1 from RM1.80 to RM1.66 on 2022-10-20 (OSM charge tag RM1.80 is outdated). Both directions (Prolintas lists lanes in both bounds). Motorcycles free."
+ },
+ {
+  "id": "silk-bukit-kajang",
+  "name": "Plaza Tol Bukit Kajang",
+  "highway": "E18 SILK",
+  "lat": 2.97559,
+  "lon": 101.81495,
+  "osm_names": [
+   "Plaza Tol Bukit Kajang (Arah Barat)",
+   "Plaza Tol Bukit Kajang (Arah Timur)"
+  ],
+  "car": 1.66,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.prolintas.com.my/kajang-silk/",
+  "source_date": "2022-10-19 (page live 2026)",
+  "confidence": "high",
+  "note": "Prolintas cut Class 1 from RM1.80 to RM1.66 on 2022-10-20 (OSM charge tag RM1.80 is outdated). Both directions (Prolintas lists lanes in both bounds). Motorcycles free."
+ },
+ {
+  "id": "silk-sungai-long",
+  "name": "Plaza Tol Sungai Long (SILK)",
+  "highway": "E18 SILK",
+  "lat": 3.02786,
+  "lon": 101.81034,
+  "osm_names": [
+   "Plaza Tol Sg Long (Arah Barat)",
+   "Plaza Tol Sg Long (Arah Timur)"
+  ],
+  "car": 1.66,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.prolintas.com.my/kajang-silk/",
+  "source_date": "2022-10-19 (page live 2026)",
+  "confidence": "high",
+  "note": "Prolintas cut Class 1 from RM1.80 to RM1.66 on 2022-10-20 (OSM charge tag RM1.80 is outdated). Both directions (Prolintas lists lanes in both bounds). Motorcycles free."
+ },
+ {
+  "id": "mex-salak-selatan",
+  "name": "Plaza Tol Salak Selatan",
+  "highway": "E20 MEX",
+  "lat": 3.11062,
+  "lon": 101.71189,
+  "osm_names": [
+   "Plaza Tol Salak Selatan"
+  ],
+  "car": 2.0,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.mex.com.my/features-and-facilities/toll-operations/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "Open system, both directions. MEX rates frozen for 2026 (LLM). Motorcycles free."
+ },
+ {
+  "id": "mex-seri-kembangan",
+  "name": "Plaza Tol Seri Kembangan (MEX)",
+  "highway": "E20 MEX",
+  "lat": 3.01711,
+  "lon": 101.68356,
+  "osm_names": [
+   "Plaza Tol MEX Seri Kembangan"
+  ],
+  "car": 2.2,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.mex.com.my/features-and-facilities/toll-operations/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "Ramp plaza at Seri Kembangan interchange (both ramps). Motorcycles free."
+ },
+ {
+  "id": "mex-putrajaya",
+  "name": "Plaza Tol Putrajaya (MEX)",
+  "highway": "E20 MEX",
+  "lat": 2.9501,
+  "lon": 101.65169,
+  "osm_names": [
+   "Plaza Tol Putrajaya"
+  ],
+  "car": 3.5,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.mex.com.my/features-and-facilities/toll-operations/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "'Putrajaya Utama' mainline plaza on MEX (the OSM entry with roads E20 at 2.9501,101.65169), both directions. NOT the other OSM 'Plaza Tol Putrajaya' at 2.925,101.613 (E6, PLUS ELITE closed system)."
+ },
+ {
+  "id": "duke-batu",
+  "name": "Plaza Tol Batu",
+  "highway": "E33 DUKE",
+  "lat": 3.19215,
+  "lon": 101.67519,
+  "osm_names": [
+   "Plaza Tol Batu"
+  ],
+  "car": 2.5,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 269,
+  "source": "https://www.duke.com.my/page/143/Toll-Fare/",
+  "source_date": "2017-11-23 rate (2026 freeze)",
+  "confidence": "medium",
+  "note": "Rate high confidence (DUKE RM2.50 since 2017-11-23; DUKE in LLM 2026 freeze list). Direction from OSM booths (westbound carriageway only) and Wikipedia junction list ('Westbound')."
+ },
+ {
+  "id": "duke-batu-tambahan",
+  "name": "Plaza Tol Batu Tambahan",
+  "highway": "E33 DUKE",
+  "lat": 3.19262,
+  "lon": 101.67428,
+  "osm_names": [
+   "Plaza Tol Batu Tambahan"
+  ],
+  "car": 2.5,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 84,
+  "source": "https://www.duke.com.my/page/143/Toll-Fare/",
+  "source_date": "2017-11-23 rate",
+  "confidence": "low",
+  "note": "Ramp plaza at Jalan Ipoh ramp, eastbound (OSM one booth on eastbound link; Wikipedia 'Eastbound'). Rate assumed equal to DUKE flat rate (DUKE publishes one rate table); not individually confirmed."
+ },
+ {
+  "id": "duke-ayer-panas",
+  "name": "Plaza Tol Ayer Panas",
+  "highway": "E33 DUKE",
+  "lat": 3.18584,
+  "lon": 101.71333,
+  "osm_names": [
+   "Plaza Tol Ayer Panas"
+  ],
+  "car": 2.5,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 92,
+  "source": "https://www.duke.com.my/page/143/Toll-Fare/",
+  "source_date": "2017-11-23 rate",
+  "confidence": "medium",
+  "note": "Eastbound only per OSM booths and Wikipedia junction list."
+ },
+ {
+  "id": "duke-sentul-pasar",
+  "name": "Plaza Tol Sentul Pasar",
+  "highway": "E33 DUKE (Karak Link / Tun Razak Link)",
+  "lat": 3.19608,
+  "lon": 101.69975,
+  "osm_names": [
+   "Plaza Tol Sentul Pasar"
+  ],
+  "car": 2.5,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.duke.com.my/page/143/Toll-Fare/",
+  "source_date": "2017-11-23 rate",
+  "confidence": "medium",
+  "note": "Sentul / Sentul Tambahan plazas around Sentul Pasar I/C (Wikipedia: Sentul Tambahan on Tun Razak Link is southbound). OSM booths both directions. Direction details uncertain."
+ },
+ {
+  "id": "duke-segambut",
+  "name": "Plaza Tol Segambut",
+  "highway": "E33 DUKE Phase 2 (Sri Damansara Link)",
+  "lat": 3.19042,
+  "lon": 101.65573,
+  "osm_names": [
+   "Plaza Tol Segambut",
+   "Segambut Toll Plaza"
+  ],
+  "car": 2.5,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.duke.com.my/page/192/Toll-Fare/",
+  "source_date": "2017-11-23 rate",
+  "confidence": "medium",
+  "note": "Two OSM entries ~50 m apart = mainline + ramp booths; both directions. DUKE Phase 2 toll page shows the same RM2.50 table. OSM charge tag RM2.50 agrees."
+ },
+ {
+  "id": "spe-chan-sow-lin",
+  "name": "Plaza Tol Chan Sow Lin",
+  "highway": "E39 SPE",
+  "lat": 3.12847,
+  "lon": 101.71699,
+  "osm_names": [
+   "Plaza Tol Chan Sow Lin"
+  ],
+  "car": 3.5,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://paultan.org/2023/12/08/setiawangsa-pantai-expressway-spe-toll-starts-rm3-50-at-chan-sow-lin-ampang-and-setiawangsa/",
+  "source_date": "2023-12-08",
+  "confidence": "high",
+  "note": "SPE tolling began 2023-12-03 after a free month. RM3.50 Class 1 at Chan Sow Lin, Ampang and Setiawangsa. Double-deck plaza, OSM booths both directions. Motorcycles free."
+ },
+ {
+  "id": "spe-setiawangsa",
+  "name": "Plaza Tol Setiawangsa",
+  "highway": "E39 SPE",
+  "lat": 3.18065,
+  "lon": 101.73793,
+  "osm_names": [
+   "Plaza Tol Setiawangsa (S)",
+   "Plaza Tol Setiawangsa (U)"
+  ],
+  "car": 3.5,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://paultan.org/2023/12/08/setiawangsa-pantai-expressway-spe-toll-starts-rm3-50-at-chan-sow-lin-ampang-and-setiawangsa/",
+  "source_date": "2023-12-08",
+  "confidence": "high",
+  "note": "Ramp plazas at Setiawangsa I/C, southbound (S) and northbound (U)."
+ },
+ {
+  "id": "spe-ampang",
+  "name": "Plaza Tol Ampang (SPE, unnamed in OSM)",
+  "highway": "E39 SPE",
+  "lat": 3.16415,
+  "lon": 101.73542,
+  "osm_names": [
+   "(unnamed 3.16,101.73)",
+   "(unnamed 3.16,101.74)"
+  ],
+  "car": 3.5,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://paultan.org/2023/12/08/setiawangsa-pantai-expressway-spe-toll-starts-rm3-50-at-chan-sow-lin-ampang-and-setiawangsa/",
+  "source_date": "2023-12-08",
+  "confidence": "low",
+  "note": "Paultan names an SPE 'Ampang' plaza at RM3.50. Best OSM match: two unnamed booths on ramps at the SPE/AKLEH/Jalan Jelatek junction (bearings 272 and 183). Location match is my inference, not confirmed."
+ },
+ {
+  "id": "spe-wangsa-maju",
+  "name": "Plaza Tol Wangsa Maju",
+  "highway": "E39 SPE",
+  "lat": 3.20238,
+  "lon": 101.73552,
+  "osm_names": [
+   "Plaza Tol Wangsa Maju"
+  ],
+  "car": 3.5,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://forum.lowyat.net/topic/5418351/all",
+  "source_date": "2023-12",
+  "confidence": "low",
+  "note": "Not in the official/news list of 3 SPE plazas, but multiple users report paying RM3.50 at Wangsa Maju (northern section opened before the rest). OSM booths both directions. Verify."
+ },
+ {
+  "id": "besraya-loke-yew",
+  "name": "Plaza Tol Loke Yew",
+  "highway": "E9 BESRAYA",
+  "lat": 3.12079,
+  "lon": 101.72471,
+  "osm_names": [
+   "Plaza Tol Loke Yew (Arah Barat)",
+   "Plaza Tol Loke Yew (Arah Timur)"
+  ],
+  "car": 1.85,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://ijmtolldiv.com/besraya-expressway/",
+  "source_date": "2022-10-19/2023-01-01 (page live 2026)",
+  "confidence": "high",
+  "note": "Class 1 cut RM2.00 -> RM1.85 on 2023-01-01 (OSM tag RM2.00 outdated). Both directions. Motorcycles free (dedicated motorcycle lanes)."
+ },
+ {
+  "id": "besraya-mines-selatan",
+  "name": "Plaza Tol Mines Selatan",
+  "highway": "E9 BESRAYA",
+  "lat": 3.04405,
+  "lon": 101.70842,
+  "osm_names": [
+   "Plaza Tol Mines Selatan"
+  ],
+  "car": 1.85,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 167,
+  "source": "https://ijmtolldiv.com/besraya-expressway/",
+  "source_date": "2023-01-01 (page live 2026)",
+  "confidence": "medium",
+  "note": "IJM lists one 'Mines' plaza at RM1.85; OSM shows it split into Mines Selatan (southbound carriageway only) and Mines Utara (northbound only) ~1.2 km apart. Direction from OSM geometry."
+ },
+ {
+  "id": "besraya-mines-utara",
+  "name": "Plaza Tol Mines Utara",
+  "highway": "E9 BESRAYA",
+  "lat": 3.05508,
+  "lon": 101.70729,
+  "osm_names": [
+   "Plaza Tol Mines Utara"
+  ],
+  "car": 1.85,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 3,
+  "source": "https://ijmtolldiv.com/besraya-expressway/",
+  "source_date": "2023-01-01 (page live 2026)",
+  "confidence": "medium",
+  "note": "Northbound half of the Mines plaza (see Mines Selatan)."
+ },
+ {
+  "id": "npe-pantai-dalam",
+  "name": "Plaza Tol Pantai Dalam",
+  "highway": "E10 NPE",
+  "lat": 3.09149,
+  "lon": 101.67048,
+  "osm_names": [
+   "Plaza Tol Pantai Dalam (B)",
+   "Plaza Tol Pantai Dalam (T)",
+   "Plaza Tol Pantai Dalam (U)"
+  ],
+  "car": 2.3,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://ijmtolldiv.com/new-pantai-expressway/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "high",
+  "note": "Mainline + ramp booths, both directions. Motorcycles free."
+ },
+ {
+  "id": "npe-pjs5",
+  "name": "Plaza Tol PJS 5",
+  "highway": "E10 NPE",
+  "lat": 3.07917,
+  "lon": 101.62338,
+  "osm_names": [
+   "Plaza Tol PJS 5"
+  ],
+  "car": 2.3,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 34,
+  "source": "https://ijmtolldiv.com/new-pantai-expressway/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "medium",
+  "note": "Rate high. Direction from OSM only: single booth on the NE-bound (KL-bound) carriageway; unverified whether the other direction pays."
+ },
+ {
+  "id": "npe-pjs2",
+  "name": "Plaza Tol PJS 2",
+  "highway": "E10 NPE",
+  "lat": 3.08396,
+  "lon": 101.63145,
+  "osm_names": [
+   "Plaza Tol PJS 2"
+  ],
+  "car": 1.0,
+  "moto": 0,
+  "both_directions": false,
+  "charged_heading_deg": 283,
+  "source": "https://ijmtolldiv.com/new-pantai-expressway/",
+  "source_date": "2026 (page live 2026-10-22)",
+  "confidence": "medium",
+  "note": "Rate high (RM1.00). Direction from OSM only: booths on westbound carriageway; unverified."
+ },
+ {
+  "id": "ekve-sungai-long",
+  "name": "Plaza Tol Sungai Long (EKVE)",
+  "highway": "E27 EKVE",
+  "lat": 3.05002,
+  "lon": 101.81526,
+  "osm_names": [
+   "Plaza Tol Sungai Long"
+  ],
+  "car": 6.08,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.ekve.com.my/",
+  "source_date": "2025-10-25",
+  "confidence": "high",
+  "note": "EKVE Section 1 (Sg Long-Ampang) is a CLOSED system: fare depends on entry+exit plaza. Collection began 2025-10-25. Class 1 matrix (RM): SgLong<->BdrMahkotaCheras 2.68, SgLong<->HuluLangat 3.45, SgLong<->Ampang 6.08, BMC<->HuluLangat 2.02, BMC<->Ampang 4.65, HuluLangat<->Ampang 3.67 (symmetric). 'car' = full-length Sg Long<->Ampang fare. This is the OSM 'Plaza Tol Sungai Long (E27)' mainline barrier at the south end; not the SILK Sg Long plaza.",
+  "closed_system": true
+ },
+ {
+  "id": "ekve-ampang",
+  "name": "Plaza Tol Ampang (EKVE)",
+  "highway": "E27 EKVE",
+  "lat": 3.15058,
+  "lon": 101.78861,
+  "osm_names": [
+   "Plaza Tol Ampang"
+  ],
+  "car": 6.08,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.ekve.com.my/",
+  "source_date": "2025-10-25",
+  "confidence": "medium",
+  "note": "EKVE Section 1 (Sg Long-Ampang) is a CLOSED system: fare depends on entry+exit plaza. Collection began 2025-10-25. Class 1 matrix (RM): SgLong<->BdrMahkotaCheras 2.68, SgLong<->HuluLangat 3.45, SgLong<->Ampang 6.08, BMC<->HuluLangat 2.02, BMC<->Ampang 4.65, HuluLangat<->Ampang 3.67 (symmetric). 'car' = full-length Sg Long<->Ampang fare. OSM 'Plaza Tol Ampang' at 3.15058,101.78861 sits on EKVE ramps (EKVE HQ address is 'Plaza Tol Ampang, Ampang Jaya'); match is by location.",
+  "closed_system": true
+ },
+ {
+  "id": "ekve-bandar-mahkota-cheras",
+  "name": "Plaza Tol Bandar Mahkota Cheras (EKVE, unnamed in OSM)",
+  "highway": "E27 EKVE",
+  "lat": 3.07102,
+  "lon": 101.80591,
+  "osm_names": [
+   "(unnamed 3.07,101.81)"
+  ],
+  "car": null,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.ekve.com.my/",
+  "source_date": "2025-10-25",
+  "confidence": "low",
+  "note": "EKVE Section 1 (Sg Long-Ampang) is a CLOSED system: fare depends on entry+exit plaza. Collection began 2025-10-25. Class 1 matrix (RM): SgLong<->BdrMahkotaCheras 2.68, SgLong<->HuluLangat 3.45, SgLong<->Ampang 6.08, BMC<->HuluLangat 2.02, BMC<->Ampang 4.65, HuluLangat<->Ampang 3.67 (symmetric). 'car' = full-length Sg Long<->Ampang fare. OSM match by location only (unnamed ramp booths).",
+  "closed_system": true
+ },
+ {
+  "id": "ekve-hulu-langat",
+  "name": "Plaza Tol Hulu Langat (EKVE, unnamed in OSM)",
+  "highway": "E27 EKVE",
+  "lat": 3.09347,
+  "lon": 101.80484,
+  "osm_names": [
+   "(unnamed 3.09,101.8)"
+  ],
+  "car": null,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.ekve.com.my/",
+  "source_date": "2025-10-25",
+  "confidence": "low",
+  "note": "EKVE Section 1 (Sg Long-Ampang) is a CLOSED system: fare depends on entry+exit plaza. Collection began 2025-10-25. Class 1 matrix (RM): SgLong<->BdrMahkotaCheras 2.68, SgLong<->HuluLangat 3.45, SgLong<->Ampang 6.08, BMC<->HuluLangat 2.02, BMC<->Ampang 4.65, HuluLangat<->Ampang 3.67 (symmetric). 'car' = full-length Sg Long<->Ampang fare. OSM match by location only (unnamed ramp booths next to E27).",
+  "closed_system": true
+ },
+ {
+  "id": "lekas-ampangan",
+  "name": "Plaza Tol Ampangan",
+  "highway": "E21 LEKAS",
+  "lat": 2.75979,
+  "lon": 101.96771,
+  "osm_names": [
+   "Plaza Tol Ampangan"
+  ],
+  "car": 2.3,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://en.wikipedia.org/wiki/Kajang%E2%80%93Seremban_Highway",
+  "source_date": "2023-01-01",
+  "confidence": "medium",
+  "note": "Open-system plaza, RM2.30 (unchanged in the 2023 cut per Bernama/The Vibes 2022-12-31). Both directions per OSM. LEKAS is a CLOSED system between Kajang Selatan and Setul (Class 1 RM0.1666/km since 2023-01-01, max RM5.50 Kajang Selatan<->Setul) plus the OPEN Ampangan plaza (RM2.30); full length RM7.80. No per-pair fare table found; IJM site does not publish LEKAS fares."
+ },
+ {
+  "id": "lekas-kajang-selatan",
+  "name": "Plaza Tol Kajang Selatan",
+  "highway": "E21 LEKAS",
+  "lat": 2.95737,
+  "lon": 101.82601,
+  "osm_names": [
+   "Plaza Tol Kajang Selatan"
+  ],
+  "car": 5.5,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://en.wikipedia.org/wiki/Kajang%E2%80%93Seremban_Highway",
+  "source_date": "2023-01-01",
+  "confidence": "medium",
+  "note": "Closed-system mainline barrier (north end). 'car' = max fare to Setul. LEKAS is a CLOSED system between Kajang Selatan and Setul (Class 1 RM0.1666/km since 2023-01-01, max RM5.50 Kajang Selatan<->Setul) plus the OPEN Ampangan plaza (RM2.30); full length RM7.80. No per-pair fare table found; IJM site does not publish LEKAS fares.",
+  "closed_system": true
+ },
+ {
+  "id": "lekas-setul",
+  "name": "Plaza Tol Setul",
+  "highway": "E21 LEKAS",
+  "lat": 2.77071,
+  "lon": 101.91576,
+  "osm_names": [
+   "Plaza Tol Setul"
+  ],
+  "car": 5.5,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://en.wikipedia.org/wiki/Kajang%E2%80%93Seremban_Highway",
+  "source_date": "2023-01-01",
+  "confidence": "medium",
+  "note": "Closed-system mainline barrier (south end). 'car' = max fare to Kajang Selatan. LEKAS is a CLOSED system between Kajang Selatan and Setul (Class 1 RM0.1666/km since 2023-01-01, max RM5.50 Kajang Selatan<->Setul) plus the OPEN Ampangan plaza (RM2.30); full length RM7.80. No per-pair fare table found; IJM site does not publish LEKAS fares.",
+  "closed_system": true
+ },
+ {
+  "id": "lekas-semenyih",
+  "name": "Plaza Tol Semenyih",
+  "highway": "E21 LEKAS",
+  "lat": 2.94072,
+  "lon": 101.82785,
+  "osm_names": [
+   "Plaza Tol Semenyih"
+  ],
+  "car": null,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://en.wikipedia.org/wiki/Kajang%E2%80%93Seremban_Highway",
+  "source_date": "2023-01-01",
+  "confidence": "low",
+  "note": "Closed-system ramp plaza on LEKAS (identified by location: ramp booths next to E21; IJM lists 7 LEKAS plazas). Fare depends on entry/exit at ~RM0.1666/km; per-pair fare not verified. LEKAS is a CLOSED system between Kajang Selatan and Setul (Class 1 RM0.1666/km since 2023-01-01, max RM5.50 Kajang Selatan<->Setul) plus the OPEN Ampangan plaza (RM2.30); full length RM7.80. No per-pair fare table found; IJM site does not publish LEKAS fares.",
+  "closed_system": true
+ },
+ {
+  "id": "lekas-eco-majestic",
+  "name": "Plaza Tol Eco Majestic",
+  "highway": "E21 LEKAS",
+  "lat": 2.8945,
+  "lon": 101.83222,
+  "osm_names": [
+   "Plaza Tol Eco Majestic"
+  ],
+  "car": null,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://en.wikipedia.org/wiki/Kajang%E2%80%93Seremban_Highway",
+  "source_date": "2023-01-01",
+  "confidence": "low",
+  "note": "Closed-system ramp plaza on LEKAS (identified by location: ramp booths next to E21; IJM lists 7 LEKAS plazas). Fare depends on entry/exit at ~RM0.1666/km; per-pair fare not verified. LEKAS is a CLOSED system between Kajang Selatan and Setul (Class 1 RM0.1666/km since 2023-01-01, max RM5.50 Kajang Selatan<->Setul) plus the OPEN Ampangan plaza (RM2.30); full length RM7.80. No per-pair fare table found; IJM site does not publish LEKAS fares.",
+  "closed_system": true
+ },
+ {
+  "id": "lekas-pajam",
+  "name": "Plaza Tol Pajam",
+  "highway": "E21 LEKAS",
+  "lat": 2.84054,
+  "lon": 101.83372,
+  "osm_names": [
+   "Tol Plaza Pajam"
+  ],
+  "car": null,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://en.wikipedia.org/wiki/Kajang%E2%80%93Seremban_Highway",
+  "source_date": "2023-01-01",
+  "confidence": "low",
+  "note": "Closed-system ramp plaza on LEKAS (identified by location: ramp booths next to E21; IJM lists 7 LEKAS plazas). Fare depends on entry/exit at ~RM0.1666/km; per-pair fare not verified. LEKAS is a CLOSED system between Kajang Selatan and Setul (Class 1 RM0.1666/km since 2023-01-01, max RM5.50 Kajang Selatan<->Setul) plus the OPEN Ampangan plaza (RM2.30); full length RM7.80. No per-pair fare table found; IJM site does not publish LEKAS fares.",
+  "closed_system": true
+ },
+ {
+  "id": "lekas-mantin",
+  "name": "Plaza Tol Mantin",
+  "highway": "E21 LEKAS",
+  "lat": 2.81273,
+  "lon": 101.90505,
+  "osm_names": [
+   "Plaza Tol Mantin"
+  ],
+  "car": null,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://en.wikipedia.org/wiki/Kajang%E2%80%93Seremban_Highway",
+  "source_date": "2023-01-01",
+  "confidence": "low",
+  "note": "Closed-system ramp plaza on LEKAS (identified by location: ramp booths next to E21; IJM lists 7 LEKAS plazas). Fare depends on entry/exit at ~RM0.1666/km; per-pair fare not verified. LEKAS is a CLOSED system between Kajang Selatan and Setul (Class 1 RM0.1666/km since 2023-01-01, max RM5.50 Kajang Selatan<->Setul) plus the OPEN Ampangan plaza (RM2.30); full length RM7.80. No per-pair fare table found; IJM site does not publish LEKAS fares.",
+  "closed_system": true
+ },
+ {
+  "id": "plus-upm",
+  "name": "Plaza Tol UPM",
+  "highway": "E2 PLUS (closed system)",
+  "lat": 3.00067,
+  "lon": 101.72767,
+  "osm_names": [
+   "Plaza Tol UPM"
+  ],
+  "car": null,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://www.malaymail.com/news/malaysia/2025/07/18/plus-road-diversion-at-sungai-besi-toll-to-upm-interchange-for-gantry-installation-tonight/184350",
+  "source_date": "2025",
+  "confidence": "medium",
+  "note": "PLUS North-South Expressway (E2) closed-system exit at UPM interchange KM309.7 (Malay Mail 2025-07-18). Not an open-system plaza; fare from PLUS distance table.",
+  "closed_system": true
+ },
+ {
+  "id": "plus-southville-city",
+  "name": "Plaza Tol Southville City",
+  "highway": "E2 PLUS (closed system)",
+  "lat": 2.90738,
+  "lon": 101.75948,
+  "osm_names": [
+   "Plaza Tol Southville City"
+  ],
+  "car": null,
+  "moto": 0,
+  "both_directions": true,
+  "charged_heading_deg": null,
+  "source": "https://en.wikipedia.org/wiki/Southville_City",
+  "source_date": "2025",
+  "confidence": "medium",
+  "note": "PLUS E2 closed-system plaza at Exit 212A Southville City interchange. Not priced here.",
+  "closed_system": true
+ }
+]

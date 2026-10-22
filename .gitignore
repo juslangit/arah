@@ -56,3 +56,4 @@ tools/data/.venv/
 tools/style/node_modules/
 .playwright-cli/
 docs/index.html
+__pycache__/
