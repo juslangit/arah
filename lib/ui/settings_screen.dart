@@ -1,4 +1,5 @@
 // Settings (app study §S10).
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../app/app_state.dart';
@@ -27,29 +28,32 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(title: Text(context.tr('Tetapan', 'Settings'))),
       body: ListView(
         children: [
-          ListTile(
-            leading: const Icon(Icons.download_for_offline),
-            title: Text(context.tr('Peta luar talian', 'Offline maps')),
-            subtitle: Text(
-              app.packs.installed.isEmpty
-                  ? context.tr('Tiada dimuat turun', 'None downloaded')
-                  : app.packs.installed.values.map((p) => app.tr(p.nameMs, p.nameEn)).join(', '),
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OfflineScreen())),
-          ),
-          SwitchListTile(
-            secondary: const Icon(Icons.cloud_off),
-            title: Text(context.tr('Uji mod luar talian', 'Test offline mode')),
-            subtitle: Text(
-              context.tr(
-                'Guna peta, carian dan laluan dari telefon sahaja',
-                'Use only the map, search and routes on the phone',
+          // The web app is online only: no packs to manage or test.
+          if (!kIsWeb) ...[
+            ListTile(
+              leading: const Icon(Icons.download_for_offline),
+              title: Text(context.tr('Peta luar talian', 'Offline maps')),
+              subtitle: Text(
+                app.packs.installed.isEmpty
+                    ? context.tr('Tiada dimuat turun', 'None downloaded')
+                    : app.packs.installed.values.map((p) => app.tr(p.nameMs, p.nameEn)).join(', '),
               ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OfflineScreen())),
             ),
-            value: s.forceOffline,
-            onChanged: (v) => s.forceOffline = v,
-          ),
+            SwitchListTile(
+              secondary: const Icon(Icons.cloud_off),
+              title: Text(context.tr('Uji mod luar talian', 'Test offline mode')),
+              subtitle: Text(
+                context.tr(
+                  'Guna peta, carian dan laluan dari telefon sahaja',
+                  'Use only the map, search and routes on the phone',
+                ),
+              ),
+              value: s.forceOffline,
+              onChanged: (v) => s.forceOffline = v,
+            ),
+          ],
           header(context.tr('Bahasa & suara', 'Language & voice')),
           ListTile(
             title: Text(context.tr('Bahasa', 'Language')),

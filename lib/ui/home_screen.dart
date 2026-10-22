@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:math' show Point;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
@@ -99,10 +100,11 @@ class _HomeScreenState extends State<HomeScreen> {
   /// installed packs, which only cover Malaysia, Singapore and Brunei.
   Future<void> _refreshStyle() async {
     final app = context.appRead;
-    final key = '${app.packs.installed.keys.join(',')}|$_dark|${app.online}';
+    final view = app.settings.mapView;
+    final key = '${app.packs.installed.keys.join(',')}|$_dark|${app.online}|${view.name}';
     if (key == _styleKey) return;
     _styleKey = key;
-    final online = app.online ? await MapStyles.onlineStyle(dark: _dark) : null;
+    final online = app.online ? await MapStyles.onlineStyle(dark: _dark, view: view) : null;
     final style =
         online ??
         await MapStyles.offlineStyle(app.packs, dark: _dark) ??
@@ -176,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (p != null) _select(p);
   }
 
-  void _select(Place p) {
+  Future<void> _select(Place p) async {
     setState(() {
       _place = p;
       _from = null;
@@ -187,6 +189,12 @@ class _HomeScreenState extends State<HomeScreen> {
       _routeError = null;
     });
     _drawSelection();
+    // Stop following the GPS first: a fix arriving mid-flight would pull the
+    // camera back towards you and leave it short of the place.
+    _following = false;
+    // In a browser the map is resized as the search screen closes, and the
+    // resize stops a camera flight part-way; start after it settles.
+    if (kIsWeb) await Future<void>.delayed(const Duration(milliseconds: 350));
     _map?.animateCamera(CameraUpdate.newLatLngZoom(ll(p.pos), 16));
   }
 
@@ -252,6 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _routeOffline = r.usedOffline;
       });
       await _drawSelection();
+      _following = false;
       _map?.animateCamera(fitPoints([for (final rt in _routes) ...rt.points], top: 120, bottom: 420));
     } on RoutingException catch (e) {
       if (!mounted) return;
@@ -322,6 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _startNav() async {
     final app = context.appRead;
     if (_routes.isEmpty) return;
+    app.speech.unlock();
     var route = _routes[_sel];
     var stops = List.of(_stops);
     final fix = app.location.last;
@@ -384,15 +394,12 @@ class _HomeScreenState extends State<HomeScreen> {
     await showReportSheet(context, fix.pos, fix.headingDeg ?? 0);
   }
 
-  void _cycleTheme() {
-    final s = context.appRead.settings;
-    s.theme = MapTheme.values[(s.theme.index + 1) % MapTheme.values.length];
-    _refreshStyle();
-    _snack(switch (s.theme) {
-      MapTheme.auto => context.appRead.tr('Tema peta: auto (gelap waktu malam)', 'Map theme: auto (dark at night)'),
-      MapTheme.light => context.appRead.tr('Tema peta: cerah', 'Map theme: light'),
-      MapTheme.dark => context.appRead.tr('Tema peta: gelap', 'Map theme: dark'),
-    });
+  /// Map type (standard / satellite / terrain) and theme, like Google Maps' layers sheet.
+  Future<void> _layersSheet() async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (ctx) => _LayersSheet(onChanged: _refreshStyle),
+    );
   }
 
   Future<void> _myLocation() async {
@@ -603,7 +610,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _fab(Icons.layers_outlined, context.tr('Tema peta', 'Map theme'), _cycleTheme, small: true),
+                    _fab(Icons.layers_outlined, context.tr('Jenis peta', 'Map type'), _layersSheet, small: true),
                     const SizedBox(height: 12),
                     _fab(Icons.report_gmailerrorred, context.tr('Lapor', 'Report'), _report, color: ArahColors.amber),
                     const SizedBox(height: 12),
@@ -618,7 +625,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           if (bottomPanel != null) Positioned(left: 0, right: 0, bottom: 0, child: bottomPanel),
-          if (app.packs.installed.isEmpty && bottomPanel == null)
+          if (!kIsWeb && app.packs.installed.isEmpty && bottomPanel == null)
             Positioned(
               left: 12,
               bottom: 32 + MediaQuery.of(context).padding.bottom,
@@ -1286,4 +1293,103 @@ class _Panel extends StatelessWidget {
       child: Padding(padding: const EdgeInsets.fromLTRB(16, 14, 16, 12), child: child),
     ),
   );
+}
+
+class _LayersSheet extends StatelessWidget {
+  final VoidCallback onChanged;
+  const _LayersSheet({required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final app = context.app;
+    final s = app.settings;
+    Widget tile(MapView v, IconData icon, String ms, String en) {
+      final on = s.mapView == v;
+      final scheme = Theme.of(context).colorScheme;
+      return Expanded(
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () {
+            s.mapView = v;
+            onChanged();
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Column(
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: on ? scheme.primaryContainer : scheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: on ? scheme.primary : Colors.transparent, width: 2.5),
+                  ),
+                  child: Icon(icon, size: 32, color: on ? scheme.primary : null),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  context.tr(ms, en),
+                  style: TextStyle(
+                    fontWeight: on ? FontWeight.w800 : FontWeight.w500,
+                    color: on ? scheme.primary : null,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(context.tr('Jenis peta', 'Map type'), style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                tile(MapView.standard, Icons.map_outlined, 'Biasa', 'Default'),
+                tile(MapView.satellite, Icons.satellite_alt_outlined, 'Satelit', 'Satellite'),
+                tile(MapView.terrain, Icons.terrain_outlined, 'Rupa bumi', 'Terrain'),
+              ],
+            ),
+            if (!app.online)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  context.tr(
+                    'Satelit dan rupa bumi perlukan internet; peta luar talian dipaparkan.',
+                    'Satellite and terrain need internet; showing the offline map.',
+                  ),
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            const SizedBox(height: 16),
+            Text(context.tr('Tema', 'Theme'), style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<MapTheme>(
+                segments: [
+                  ButtonSegment(value: MapTheme.auto, label: Text(context.tr('Auto', 'Auto'))),
+                  ButtonSegment(value: MapTheme.light, label: Text(context.tr('Cerah', 'Light'))),
+                  ButtonSegment(value: MapTheme.dark, label: Text(context.tr('Gelap', 'Dark'))),
+                ],
+                selected: {s.theme},
+                onSelectionChanged: (v) {
+                  s.theme = v.first;
+                  onChanged();
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

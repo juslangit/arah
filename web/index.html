@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Replaced by flutter build's --base-href. -->
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Maps, routes, tolls and turn-by-turn navigation for Malaysia. No Google.">
+  <meta name="theme-color" content="#0B6E4F">
+  <!-- Add to Home Screen: full screen, Arah's own name and icon. -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Arah">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="manifest" href="manifest.json">
+  <title>Arah</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #0B6E4F; }
+    #splash { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+    #splash img { width: 112px; height: 112px; border-radius: 26px; }
+    /* The browser map ignores the app's compass margins: keep it clear of the
+       search bar and the category chips. */
+    .maplibregl-ctrl-top-right { top: calc(env(safe-area-inset-top) + 118px) !important; }
+  </style>
+</head>
+<body>
+  <div id="splash"><img src="icons/Icon-192.png" alt="Arah"></div>
+  <script>
+    // Remove the splash once Flutter has drawn its first frame.
+    window.addEventListener('flutter-first-frame', () => document.getElementById('splash')?.remove());
+  </script>
+  <script>
+    // Arabic labels (Palestine, place names) need MapLibre's right-to-left
+    // text plugin in the browser; the phone apps have it built in. The map
+    // plugin publishes window.maplibregl once it has loaded the library.
+    (function rtl(tries) {
+      const m = window.maplibregl;
+      if (m && m.setRTLTextPlugin) {
+        try {
+          if (!m.getRTLTextPluginStatus || m.getRTLTextPluginStatus() === 'unavailable') {
+            Promise.resolve(m.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.3.0/dist/mapbox-gl-rtl-text.js', false)).catch(() => {});
+          }
+        } catch (e) {}
+      } else if (tries < 600) {
+        setTimeout(() => rtl(tries + 1), 50);
+      }
+    })(0);
+  </script>
+  <script>
+    // MapLibre opens the map credits expanded on load, over the bottom sheets.
+    // Start them folded into the (i) button, as on the phone apps; tapping it
+    // still shows them.
+    new MutationObserver(() => {
+      for (const el of document.querySelectorAll('.maplibregl-ctrl-attrib.maplibregl-compact-show:not([data-folded])')) {
+        el.dataset.folded = '1';
+        el.classList.remove('maplibregl-compact-show');
+        el.removeAttribute('open');
+      }
+    }).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

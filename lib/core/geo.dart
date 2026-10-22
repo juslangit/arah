@@ -86,7 +86,9 @@ List<Geo> decodePolyline(String s, {int precision = 6}) {
         result |= (b & 0x1f) << shift;
         shift += 5;
       } while (b >= 0x20);
-      final delta = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      // -(x + 1), not ~x: in a browser ~ is unsigned 32-bit and turns every
+      // negative step into a huge positive one.
+      final delta = (result & 1) != 0 ? -((result >> 1) + 1) : (result >> 1);
       if (k == 0) {
         lat += delta;
       } else {

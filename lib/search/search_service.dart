@@ -4,7 +4,7 @@ import 'dart:async';
 
 import '../core/geo.dart';
 import '../offline/packs.dart';
-import 'offline_search.dart';
+import 'offline_search.dart' if (dart.library.js_interop) 'offline_search_web.dart';
 import 'photon_client.dart';
 import 'place.dart';
 

@@ -12,6 +12,9 @@ import '../search/place.dart';
 
 enum MapTheme { auto, light, dark }
 
+/// Which basemap the online map draws (offline packs are always standard).
+enum MapView { standard, satellite, terrain }
+
 class Settings extends ChangeNotifier {
   final SharedPreferences _p;
   Settings._(this._p);
@@ -50,6 +53,8 @@ class Settings extends ChangeNotifier {
 
   MapTheme get theme => MapTheme.values[_p.getInt('theme') ?? 0];
   set theme(MapTheme v) => _set(() => _p.setInt('theme', v.index));
+  MapView get mapView => MapView.values[_p.getInt('mapView') ?? 0];
+  set mapView(MapView v) => _set(() => _p.setInt('mapView', v.index));
 
   /// Warn about fixed speed and red-light cameras ahead.
   bool get cameraAlerts => _p.getBool('cameraAlerts') ?? true;

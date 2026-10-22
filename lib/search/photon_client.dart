@@ -32,10 +32,7 @@ class PhotonClient {
       if (near != null) ...{'lat': '${near.lat}', 'lon': '${near.lon}', 'location_bias_scale': '0.3'},
     };
     final res = await _http
-        .get(
-          Uri.parse('$baseUrl/api').replace(queryParameters: params),
-          headers: {'User-Agent': ArahConfig.serverHeaders['User-Agent']!},
-        )
+        .get(Uri.parse('$baseUrl/api').replace(queryParameters: params), headers: ArahConfig.userAgent)
         .timeout(const Duration(seconds: 8));
     if (res.statusCode != 200) throw Exception('search HTTP ${res.statusCode}');
     final out = parse(jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>);
@@ -47,7 +44,7 @@ class PhotonClient {
     final res = await _http
         .get(
           Uri.parse('$baseUrl/reverse').replace(queryParameters: {'lat': '${p.lat}', 'lon': '${p.lon}', 'limit': '1'}),
-          headers: {'User-Agent': ArahConfig.serverHeaders['User-Agent']!},
+          headers: ArahConfig.userAgent,
         )
         .timeout(const Duration(seconds: 8));
     if (res.statusCode != 200) return null;

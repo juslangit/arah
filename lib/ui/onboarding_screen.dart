@@ -1,5 +1,6 @@
 // First run (app study §S0): language, location permission, offline map offer.
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:permission_handler/permission_handler.dart';
 
 import '../app/app_state.dart';
@@ -20,7 +21,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _askLocation() async {
     await context.appRead.location.ensurePermission();
     // Android 13+: the navigation notification needs this.
-    await Permission.notification.request();
+    if (!kIsWeb) await Permission.notification.request();
+    _afterLocation();
+  }
+
+  /// The web app has no offline maps, so it skips that page.
+  void _afterLocation() {
+    if (kIsWeb) return _finish();
     setState(() => _step = 2);
   }
 
@@ -65,7 +72,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         actions: [
           FilledButton(onPressed: _askLocation, child: Text(context.tr('Benarkan lokasi', 'Allow location'))),
           const SizedBox(height: 12),
-          TextButton(onPressed: () => setState(() => _step = 2), child: Text(context.tr('Nanti', 'Later'))),
+          TextButton(onPressed: _afterLocation, child: Text(context.tr('Nanti', 'Later'))),
         ],
       ),
       _ => _Page(

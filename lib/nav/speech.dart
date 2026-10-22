@@ -1,6 +1,7 @@
 // Speaks prompts with the phone's own text-to-speech engine. Malay voice
 // (ms-MY) when the phone has one, Indonesian as the closest fallback for
 // Malay text, English (en-GB) otherwise.
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_tts/flutter_tts.dart';
 
 import 'phrases.dart';
@@ -40,6 +41,12 @@ class Speech {
     if (!ready) return;
     if (interrupt) await _tts.stop();
     await _tts.speak(text);
+  }
+
+  /// Browsers (iPhone Safari above all) only let a page speak after it has
+  /// spoken during a tap: call this straight from the Start button.
+  void unlock() {
+    if (kIsWeb) _tts.speak(' ');
   }
 
   Future<void> setVolume(double v) => _tts.setVolume(v);

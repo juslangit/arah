@@ -1,6 +1,8 @@
 // Every outside server Arah talks to, in one place. Moving from the free
 // demo servers to Arah's own servers before a public launch means editing
 // this file only. None of these is a Google service.
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 class ArahConfig {
   static const appVersion = '0.1.0';
 
@@ -23,10 +25,14 @@ class ArahConfig {
   static const supabaseUrl = String.fromEnvironment('ARAH_SUPABASE_URL');
   static const supabaseAnonKey = String.fromEnvironment('ARAH_SUPABASE_ANON_KEY');
 
+  /// Browsers don't let a page set User-Agent (they send their own).
+  static Map<String, String> get userAgent =>
+      kIsWeb ? {} : {'User-Agent': 'Arah/$appVersion (github.com/juslangit/arah)'};
+
   /// FOSSGIS asks apps to identify themselves with X-Client-Id.
-  static const serverHeaders = {
+  static Map<String, String> get serverHeaders => {
     'Content-Type': 'application/json',
     'X-Client-Id': 'arah-navigation',
-    'User-Agent': 'Arah/$appVersion (github.com/juslangit/arah)',
+    ...userAgent,
   };
 }

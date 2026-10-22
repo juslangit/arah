@@ -3,6 +3,7 @@
 // foreground notification keeps GPS alive with the screen off.
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:geolocator/geolocator.dart';
 
 import '../nav/nav_engine.dart';
@@ -25,20 +26,23 @@ class LocationService {
   /// [navigating] turns on the foreground notification and 1 Hz updates.
   Future<void> start({bool navigating = false, String title = 'Arah', String text = ''}) async {
     await _sub?.cancel();
-    final settings = AndroidSettings(
-      accuracy: LocationAccuracy.bestForNavigation,
-      distanceFilter: 0,
-      intervalDuration: const Duration(seconds: 1),
-      forceLocationManager: true,
-      foregroundNotificationConfig: navigating
-          ? ForegroundNotificationConfig(
-              notificationTitle: title,
-              notificationText: text,
-              enableWakeLock: true,
-              setOngoing: true,
-            )
-          : null,
-    );
+    // In a browser, GPS only runs while the page is open and on screen.
+    final settings = kIsWeb
+        ? const LocationSettings(accuracy: LocationAccuracy.bestForNavigation)
+        : AndroidSettings(
+            accuracy: LocationAccuracy.bestForNavigation,
+            distanceFilter: 0,
+            intervalDuration: const Duration(seconds: 1),
+            forceLocationManager: true,
+            foregroundNotificationConfig: navigating
+                ? ForegroundNotificationConfig(
+                    notificationTitle: title,
+                    notificationText: text,
+                    enableWakeLock: true,
+                    setOngoing: true,
+                  )
+                : null,
+          );
     _sub = Geolocator.getPositionStream(locationSettings: settings).listen((p) {
       final f = Fix(
         Geo(p.latitude, p.longitude),
@@ -54,6 +58,16 @@ class LocationService {
 
   Future<Fix?> current() async {
     if (last != null) return last;
+    if (kIsWeb) {
+      try {
+        final q = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(accuracy: LocationAccuracy.high, timeLimit: Duration(seconds: 20)),
+        );
+        return last ??= Fix(Geo(q.latitude, q.longitude), accuracyM: q.accuracy, time: q.timestamp);
+      } catch (_) {
+        return null;
+      }
+    }
     try {
       final p = await Geolocator.getLastKnownPosition(forceAndroidLocationManager: true);
       if (p != null) return last = Fix(Geo(p.latitude, p.longitude), accuracyM: p.accuracy, time: p.timestamp);

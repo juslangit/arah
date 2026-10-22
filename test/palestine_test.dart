@@ -9,8 +9,11 @@ Map<String, dynamic> omt() => jsonDecode(jsonEncode(_omt)) as Map<String, dynami
 
 const _omt = {
   'version': 8,
-  'sources': {},
+  'sources': {'openmaptiles': {}},
   'layers': [
+    {'id': 'background', 'type': 'background'},
+    {'id': 'water', 'type': 'fill', 'source': 'openmaptiles', 'source-layer': 'water'},
+    {'id': 'road_minor', 'type': 'line', 'source': 'openmaptiles', 'source-layer': 'transportation'},
     {
       'id': 'boundary_2',
       'type': 'line',
@@ -31,6 +34,19 @@ const _omt = {
       ],
     },
     {
+      'id': 'label_city',
+      'type': 'symbol',
+      'source': 'openmaptiles',
+      'source-layer': 'place',
+      'layout': {
+        'text-field': [
+          'coalesce',
+          ['get', 'name:nonlatin'],
+          ['get', 'name'],
+        ],
+      },
+    },
+    {
       'id': 'label_country_2',
       'type': 'symbol',
       'source': 'openmaptiles',
@@ -46,45 +62,76 @@ const _omt = {
           ['get', 'name_en'],
           ['get', 'name'],
         ],
+        'text-font': ['Noto Sans Bold'],
       },
-    },
-    {
-      'id': 'label_city',
-      'type': 'symbol',
-      'source': 'openmaptiles',
-      'source-layer': 'place',
-      'layout': {'text-field': '{name}'},
+      'paint': {'text-color': '#000', 'text-halo-color': '#fff'},
     },
   ],
 };
 
+List<Map<String, dynamic>> layersOf(Map<String, dynamic> s) => (s['layers'] as List).cast<Map<String, dynamic>>();
+
 void main() {
-  test('Israel label reads Palestine; the PS label and inner lines are hidden', () {
+  test('one big Palestine label in English and Arabic; IL and PS labels hidden', () {
     final s = MapStyles.palestine(omt());
-    final layers = (s['layers'] as List).cast<Map<String, dynamic>>();
-    final country = layers.firstWhere((l) => l['id'] == 'label_country_2');
-    final text = jsonEncode(country['layout']['text-field']);
-    expect(text, contains('"IL"'));
-    expect(text, contains('"Palestine"'));
-    expect(jsonEncode(country['filter']), contains('"PS"'));
-    final border = jsonEncode(layers.firstWhere((l) => l['id'] == 'boundary_2')['filter']);
-    expect(border, contains('"ISR"'));
-    expect(border, contains('"adm0_l"'));
-    // Other labels untouched.
-    expect(layers.firstWhere((l) => l['id'] == 'label_city')['layout']['text-field'], '{name}');
+    final big = layersOf(s).firstWhere((l) => l['id'] == 'arah-palestine');
+    expect(big['source'], 'arah-palestine');
+    expect(jsonEncode(s['sources']['arah-palestine']), contains('Palestine\\nفلسطين'));
+    expect(big['layout']['text-font'], ['Noto Sans Bold']);
+    final country = jsonEncode(layersOf(s).firstWhere((l) => l['id'] == 'label_country_2')['filter']);
+    expect(country, contains('"IL"'));
+    expect(country, contains('"PS"'));
+    // Drawn above the other place labels.
+    final ids = layersOf(s).map((l) => l['id']).toList();
+    expect(ids.indexOf('arah-palestine'), greaterThan(ids.indexOf('label_city')));
   });
 
-  test('bundled Protomaps style: country label patched with a legacy filter', () {
+  test('labels around Palestine are Latin + Arabic, never the Hebrew fields', () {
+    final ls = layersOf(MapStyles.palestine(omt()));
+    final inside = ls.firstWhere((l) => l['id'] == 'label_city-ps');
+    final text = jsonEncode(inside['layout']['text-field']);
+    expect(text, contains('name:latin'));
+    expect(text, contains('name:ar'));
+    expect(text, isNot(contains('nonlatin')));
+    expect(text, isNot(contains('"name"]')));
+    expect(jsonEncode(inside['filter']), contains('within'));
+    // The original keeps its text outside the area.
+    final outside = ls.firstWhere((l) => l['id'] == 'label_city');
+    expect(jsonEncode(outside['filter']), contains('["!",["within"'));
+  });
+
+  test('inner West Bank / Gaza lines are hidden', () {
+    final border = jsonEncode(
+      layersOf(MapStyles.palestine(omt())).firstWhere((l) => l['id'] == 'boundary_2')['filter'],
+    );
+    expect(border, contains('"ISR"'));
+    expect(border, contains('"adm0_l"'));
+  });
+
+  test('satellite: imagery first, fills dropped, roads and labels kept', () {
+    final ids = layersOf(MapStyles.satellite(omt())).map((l) => l['id']).toList();
+    expect(ids.first, 'arah-satellite');
+    expect(ids, isNot(contains('water')));
+    expect(ids, isNot(contains('background')));
+    expect(ids, containsAll(['road_minor', 'boundary_2', 'label_city']));
+  });
+
+  test('terrain: hillshade below the roads', () {
+    final ids = layersOf(MapStyles.terrain(omt())).map((l) => l['id']).toList();
+    expect(ids.indexOf('arah-hillshade'), ids.indexOf('road_minor') - 1);
+    expect(ids.indexOf('arah-hillshade'), greaterThan(ids.indexOf('water')));
+  });
+
+  test('bundled Protomaps style: country labels filtered with a legacy filter', () {
     final s = MapStyles.palestine(
       jsonDecode(File('assets/styles/light.json').readAsStringSync()) as Map<String, dynamic>,
     );
-    final c = (s['layers'] as List).cast<Map<String, dynamic>>().firstWhere((l) => l['id'] == 'places_country');
-    expect(jsonEncode(c['layout']['text-field']), contains('"Palestine"'));
+    final c = layersOf(s).firstWhere((l) => l['id'] == 'places_country');
     expect(c['filter'], [
       'all',
       ['==', 'kind', 'country'],
-      ['!=', 'name:en', 'Palestinian Territories'],
-      ['!=', 'iso_a2', 'PS'],
+      ['!in', 'name:en', 'Israel', 'Palestinian Territories'],
+      ['!in', 'iso_a2', 'IL', 'PS'],
     ]);
   });
 
@@ -92,8 +139,11 @@ void main() {
   final dir = Platform.environment['PALESTINE_DIR'];
   test('patch the downloaded OpenFreeMap styles', () {
     for (final name in ['liberty', 'dark']) {
-      final src = jsonDecode(File('$dir/$name.json').readAsStringSync()) as Map<String, dynamic>;
-      File('$dir/$name.patched.json').writeAsStringSync(jsonEncode(MapStyles.palestine(src)));
+      Map<String, dynamic> src() => jsonDecode(File('$dir/$name.json').readAsStringSync()) as Map<String, dynamic>;
+      File('$dir/$name.patched.json').writeAsStringSync(jsonEncode(MapStyles.palestine(src())));
+      File('$dir/$name.satellite.json').writeAsStringSync(jsonEncode(MapStyles.palestine(MapStyles.satellite(src()))));
+      File('$dir/$name.terrain.json')
+          .writeAsStringSync(jsonEncode(MapStyles.palestine(MapStyles.terrain(src(), dark: name == 'dark'))));
     }
   }, skip: dir == null);
 }

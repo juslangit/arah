@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -91,6 +92,8 @@ class PackManager extends ChangeNotifier {
   final Map<String, bool> _cancel = {};
 
   static Future<PackManager> create() async {
+    // The web app has no file system: no packs, online only.
+    if (kIsWeb) return PackManager._(Directory(''))..catalog = _parseCatalog(_builtInCatalog);
     final base = await getApplicationSupportDirectory();
     final dir = Directory('${base.path}/packs')..createSync(recursive: true);
     final m = PackManager._(dir);
@@ -123,6 +126,7 @@ class PackManager extends ChangeNotifier {
   }
 
   Future<void> refreshCatalog() async {
+    if (kIsWeb) return;
     try {
       final res = await http.get(Uri.parse(ArahConfig.packCatalogUrl)).timeout(const Duration(seconds: 15));
       if (res.statusCode == 200) {
@@ -211,7 +215,7 @@ class PackManager extends ChangeNotifier {
     if (have >= f.bytes) return;
     final req = http.Request('GET', Uri.parse(f.url));
     if (have > 0) req.headers['Range'] = 'bytes=$have-';
-    req.headers['User-Agent'] = ArahConfig.serverHeaders['User-Agent']!;
+    req.headers.addAll(ArahConfig.userAgent);
     final client = http.Client();
     try {
       final res = await client.send(req);

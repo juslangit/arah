@@ -84,7 +84,8 @@ class _NavScreenState extends State<NavScreen> {
     super.initState();
     _stopsLeft = List.of(widget.stops);
     _setRoute(widget.route);
-    WakelockPlus.enable();
+    // A browser may refuse (page hidden, battery saver); navigation still works.
+    WakelockPlus.enable().catchError((_) {});
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     WidgetsBinding.instance.addPostFrameCallback((_) => _startGps());
     _recenterTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -196,7 +197,7 @@ class _NavScreenState extends State<NavScreen> {
     _sub?.cancel();
     _recenterTimer?.cancel();
     _askTimer?.cancel();
-    WakelockPlus.disable();
+    WakelockPlus.disable().catchError((_) {});
     context.appRead.speech.stop();
     super.dispose();
   }

@@ -57,3 +57,6 @@ tools/style/node_modules/
 .playwright-cli/
 docs/index.html
 __pycache__/
+
+# Cloudflare wrangler cache
+.wrangler/

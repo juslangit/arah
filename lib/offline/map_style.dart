@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 import '../config.dart';
+import '../core/settings.dart';
 import 'packs.dart';
 
 class MapStyles {
@@ -105,68 +106,160 @@ class MapStyles {
     return jsonEncode(palestine(template));
   }
 
-  static final _online = <bool, String>{};
+  static final _base = <bool, Map<String, dynamic>>{};
+  static final _online = <String, String>{};
 
-  /// OpenFreeMap's style, fetched and patched with [palestine]; null if it
+  /// OpenFreeMap's style for [view], patched with [palestine]; null if it
   /// can't be fetched.
-  static Future<String?> onlineStyle({bool dark = false}) async {
-    final cached = _online[dark];
+  static Future<String?> onlineStyle({bool dark = false, MapView view = MapView.standard}) async {
+    final key = '$dark|${view.name}';
+    final cached = _online[key];
     if (cached != null) return cached;
-    final url = dark ? ArahConfig.onlineDarkStyleUrl : ArahConfig.onlineStyleUrl;
-    try {
-      final res = await http
-          .get(Uri.parse(url), headers: ArahConfig.serverHeaders)
-          .timeout(const Duration(seconds: 10));
-      if (res.statusCode != 200) return null;
-      final style = palestine(jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>);
-      return _online[dark] = jsonEncode(style);
-    } catch (_) {
-      return null;
+    var base = _base[dark];
+    if (base == null) {
+      try {
+        final url = dark ? ArahConfig.onlineDarkStyleUrl : ArahConfig.onlineStyleUrl;
+        final res = await http.get(Uri.parse(url), headers: ArahConfig.userAgent).timeout(const Duration(seconds: 10));
+        if (res.statusCode != 200) return null;
+        base = _base[dark] = jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
+      } catch (_) {
+        return null;
+      }
     }
+    final style = jsonDecode(jsonEncode(base)) as Map<String, dynamic>;
+    switch (view) {
+      case MapView.standard:
+        break;
+      case MapView.satellite:
+        satellite(style);
+      case MapView.terrain:
+        terrain(style, dark: dark);
+    }
+    return _online[key] = jsonEncode(palestine(style));
   }
 
-  /// Malaysia does not recognise Israel: the map shows the whole of it as
-  /// Palestine. Israel's country label (iso IL) reads "Palestine", the separate
-  /// "Palestinian Territories" label (PS) is hidden so there is one, and the
-  /// lines between Israel and the West Bank / Gaza are not drawn. Those are the
-  /// country borders with ISR on one side and no country on the other (the
-  /// tiles give Palestine no code); borders with Jordan, Egypt, Lebanon and
-  /// Syria stay.
-  static Map<String, dynamic> palestine(Map<String, dynamic> style) {
-    const isIsrael = [
-      'any',
-      [
-        '==',
-        ['get', 'iso_a2'],
-        'IL',
-      ],
-      [
-        '==',
-        ['get', 'name:en'],
-        'Israel',
-      ],
-      [
-        '==',
-        ['get', 'name_en'],
-        'Israel',
-      ],
+  /// Esri World Imagery under the map's roads, borders and labels (like
+  /// Google's satellite view with labels).
+  static Map<String, dynamic> satellite(Map<String, dynamic> style) {
+    (style['sources'] as Map<String, dynamic>)['arah-satellite'] = {
+      'type': 'raster',
+      'tiles': ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+      'tileSize': 256,
+      'maxzoom': 19,
+      'attribution': 'Imagery © Esri, Maxar, Earthstar Geographics',
+    };
+    final keep = <Map<String, dynamic>>[
+      {'id': 'arah-satellite', 'type': 'raster', 'source': 'arah-satellite'},
     ];
-    const isPalestine = [
+    for (final l in (style['layers'] as List).cast<Map<String, dynamic>>()) {
+      final layer = l['source-layer'];
+      final type = l['type'];
+      if (type == 'symbol') {
+        final paint = (l['paint'] ??= <String, dynamic>{}) as Map<String, dynamic>;
+        if (paint.containsKey('text-color') || (l['layout'] as Map?)?['text-field'] != null) {
+          paint['text-color'] = '#ffffff';
+          paint['text-halo-color'] = 'rgba(0,0,0,0.85)';
+          paint['text-halo-width'] = 1.4;
+        }
+        keep.add(l);
+      } else if (type == 'line' &&
+          (layer == 'boundary' || (layer == 'transportation' && !'${l['id']}'.contains('casing')))) {
+        final paint = (l['paint'] ??= <String, dynamic>{}) as Map<String, dynamic>;
+        paint['line-opacity'] = layer == 'boundary' ? 0.9 : 0.45;
+        if (layer == 'boundary') paint['line-color'] = '#ffffff';
+        keep.add(l);
+      }
+    }
+    style['layers'] = keep;
+    return style;
+  }
+
+  /// Hill shading from the AWS Terrain Tiles elevation data (open data), under
+  /// the roads and labels.
+  static Map<String, dynamic> terrain(Map<String, dynamic> style, {bool dark = false}) {
+    (style['sources'] as Map<String, dynamic>)['arah-dem'] = {
+      'type': 'raster-dem',
+      'tiles': ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
+      'tileSize': 256,
+      'maxzoom': 15,
+      'encoding': 'terrarium',
+      'attribution': 'Elevation: Mapzen, AWS Terrain Tiles',
+    };
+    final layers = (style['layers'] as List).cast<Map<String, dynamic>>();
+    // Above land and water fills, below roads, buildings and labels.
+    var at = layers.indexWhere((l) => l['source-layer'] == 'transportation' || l['source-layer'] == 'aeroway');
+    if (at < 0) at = layers.length;
+    layers.insert(at, {
+      'id': 'arah-hillshade',
+      'type': 'hillshade',
+      'source': 'arah-dem',
+      'paint': {
+        'hillshade-exaggeration': dark ? 0.35 : 0.55,
+        'hillshade-shadow-color': dark ? '#000000' : '#5a5040',
+        'hillshade-highlight-color': dark ? '#3a3a3a' : '#ffffff',
+        'hillshade-accent-color': dark ? '#111111' : '#6b5d45',
+      },
+    });
+    style['layers'] = layers;
+    return style;
+  }
+
+  /// Around Palestine (with the Golan): labels here are built from the Latin
+  /// name and the Arabic name, never the Hebrew one. A style can't test which
+  /// alphabet a name is in, and the tiles put Hebrew in name, name:nonlatin
+  /// and even name_en, so the switch is by area. name:latin is never Hebrew.
+  static const _palestineArea = {
+    'type': 'Polygon',
+    'coordinates': [
+      [
+        [33.9, 29.3],
+        [36.1, 29.3],
+        [36.1, 33.6],
+        [33.9, 33.6],
+        [33.9, 29.3],
+      ],
+    ],
+  };
+
+  /// Where the one big "Palestine" label goes: the middle of the whole country.
+  static const _palestineLabel = [34.95, 31.35];
+
+  /// Malaysia does not recognise Israel: the map shows the whole of it as
+  /// Palestine, in English and Arabic.
+  ///  - The tiles' Israel (IL) and Palestinian Territories (PS) country labels
+  ///    are hidden; one large "Palestine / فلسطين" label sits over the middle.
+  ///  - Inside [_palestineArea] every label is Latin + Arabic, no Hebrew.
+  ///  - The lines between Israel and the West Bank / Gaza are not drawn: the
+  ///    country borders with ISR on one side and no country on the other (the
+  ///    tiles give Palestine no code). Borders with Jordan, Egypt, Lebanon and
+  ///    Syria stay.
+  static Map<String, dynamic> palestine(Map<String, dynamic> style) {
+    const ilOrPs = [
       'any',
       [
-        '==',
-        ['get', 'iso_a2'],
-        'PS',
+        'in',
+        [
+          'coalesce',
+          ['get', 'iso_a2'],
+          '',
+        ],
+        [
+          'literal',
+          ['IL', 'PS'],
+        ],
       ],
       [
-        '==',
-        ['get', 'name:en'],
-        'Palestinian Territories',
-      ],
-      [
-        '==',
-        ['get', 'name_en'],
-        'Palestinian Territories',
+        'in',
+        [
+          'coalesce',
+          ['get', 'name:en'],
+          ['get', 'name_en'],
+          '',
+        ],
+        [
+          'literal',
+          ['Israel', 'Palestinian Territories'],
+        ],
       ],
     ];
     const side = ['ISR', 'PSE', ''];
@@ -226,30 +319,143 @@ class MapStyles {
         ],
       ],
     ];
+    // Latin name, then the Arabic one on a second line when there is one.
+    const latin = [
+      'coalesce',
+      ['get', 'name:latin'],
+      ['get', 'name:en'],
+      '',
+    ];
+    const latinArabic = [
+      'case',
+      [
+        'all',
+        ['has', 'name:ar'],
+        [
+          '!=',
+          ['get', 'name:ar'],
+          latin,
+        ],
+      ],
+      [
+        'concat',
+        latin,
+        '\n',
+        ['get', 'name:ar'],
+      ],
+      latin,
+    ];
+    const inArea = ['within', _palestineArea];
     Object? and(Object? filter, Object extra) => filter == null ? extra : ['all', filter, extra];
 
-    for (final l in (style['layers'] as List).cast<Map<String, dynamic>>()) {
+    final layers = (style['layers'] as List).cast<Map<String, dynamic>>();
+    final out = <Map<String, dynamic>>[];
+    Map<String, dynamic>? countryLayer;
+    var lastPlace = -1;
+    for (final l in layers) {
       final layer = l['source-layer'];
       final filter = l['filter'];
       // Legacy filters (Protomaps style: ["==", "kind", "country"]) can't be
       // mixed with expressions, so they get the legacy form.
       final legacy = filter is List && filter.length > 1 && filter[1] is String;
-      if ((layer == 'place' || layer == 'places') && l['type'] == 'symbol' && '${l['id']}'.contains('countr')) {
-        final layout = (l['layout'] ??= <String, dynamic>{}) as Map<String, dynamic>;
-        final text = layout['text-field'];
-        if (text != null) layout['text-field'] = ['case', isIsrael, 'Palestine', text];
+      final layout = l['layout'] as Map<String, dynamic>?;
+      final isCountry =
+          (layer == 'place' || layer == 'places') && l['type'] == 'symbol' && '${l['id']}'.contains('countr');
+      if (isCountry) {
+        countryLayer ??= l;
         l['filter'] = legacy
             ? [
                 'all',
                 filter,
-                ['!=', 'name:en', 'Palestinian Territories'],
-                ['!=', 'iso_a2', 'PS'],
+                ['!in', 'name:en', 'Israel', 'Palestinian Territories'],
+                ['!in', 'iso_a2', 'IL', 'PS'],
               ]
-            : and(filter, ['!', isPalestine]);
+            : and(filter, ['!', ilOrPs]);
+        out.add(l);
       } else if (layer == 'boundary' && l['type'] == 'line' && !legacy) {
         l['filter'] = and(filter, ['!', innerLine]);
+        out.add(l);
+      } else if (l['type'] == 'symbol' &&
+          jsonEncode(layout?['text-field'] ?? '').contains('name') &&
+          !legacy &&
+          layer != null) {
+        // Road shields show the road number (ref), not a name: left alone.
+        // Two copies: the original outside the area, Latin + Arabic inside it.
+        final inside = jsonDecode(jsonEncode(l)) as Map<String, dynamic>;
+        inside['id'] = '${l['id']}-ps';
+        inside['filter'] = and(filter, inArea);
+        (inside['layout'] as Map<String, dynamic>)['text-field'] = latinArabic;
+        l['filter'] = and(filter, ['!', inArea]);
+        out
+          ..add(l)
+          ..add(inside);
+      } else {
+        out.add(l);
       }
+      if (layer == 'place' || layer == 'places') lastPlace = out.length - 1;
     }
+
+    // The one big label, drawn over everything else in its area like a
+    // country name on a paper map, fading as you zoom in.
+    final font = (countryLayer?['layout'] as Map?)?['text-font'] ?? ['Noto Sans Bold'];
+    (style['sources'] as Map<String, dynamic>)['arah-palestine'] = {
+      'type': 'geojson',
+      'data': {
+        'type': 'Feature',
+        'properties': {'name': 'Palestine\nفلسطين'},
+        'geometry': {'type': 'Point', 'coordinates': _palestineLabel},
+      },
+    };
+    final dark = '${(countryLayer?['paint'] as Map?)?['text-halo-color']}'.contains('0,0,0');
+    out.insert(lastPlace + 1, {
+      'id': 'arah-palestine',
+      'type': 'symbol',
+      'source': 'arah-palestine',
+      'minzoom': 2,
+      'maxzoom': 10,
+      'layout': {
+        'text-field': ['get', 'name'],
+        'text-font': font,
+        'text-size': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          2,
+          13,
+          4,
+          20,
+          6,
+          30,
+          8,
+          42,
+          10,
+          52,
+        ],
+        'text-letter-spacing': 0.12,
+        'text-line-height': 1.25,
+        'text-allow-overlap': true,
+        'text-ignore-placement': true,
+      },
+      'paint': {
+        'text-color': dark ? '#d8d8d8' : '#1f1f1f',
+        'text-halo-color': dark ? 'rgba(0,0,0,0.75)' : 'rgba(255,255,255,0.85)',
+        'text-halo-width': 1.6,
+        'text-opacity': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          2,
+          1,
+          6,
+          0.9,
+          8,
+          0.6,
+          10,
+          0.35,
+        ],
+      },
+    });
+    style['layers'] = out;
     return style;
   }
 }
