@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../app/app_state.dart';
 import '../app/theme.dart';
 import '../nav/phrases.dart';
+import 'mochi.dart';
 import 'offline_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -111,14 +112,32 @@ class _Page extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          'Arah',
-          style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900, color: ArahColors.brand, letterSpacing: -1),
+        const Row(
+          children: [
+            Mochi(size: 52),
+            SizedBox(width: 10),
+            Text(
+              'Arah',
+              style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900, color: ArahColors.brand, letterSpacing: -1),
+            ),
+          ],
         ),
         const Spacer(),
-        Icon(icon, size: 72, color: ArahColors.brand),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            width: 104,
+            height: 104,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              shape: BoxShape.circle,
+              boxShadow: ArahColors.shadow(context),
+            ),
+            child: Icon(icon, size: 56, color: ArahColors.brand),
+          ),
+        ),
         const SizedBox(height: 24),
-        Text(title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+        Text(title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900)),
         const SizedBox(height: 12),
         Text(text, style: Theme.of(context).textTheme.bodyLarge),
         const Spacer(flex: 2),

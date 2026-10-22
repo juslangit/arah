@@ -69,14 +69,16 @@ class MapStyles {
     }
     if (maps.isEmpty) return null;
     final dir = await _ensureAssets();
-    final template = jsonDecode(
-      await rootBundle.loadString('assets/styles/${dark ? 'dark' : 'light'}.json'),
-    ) as Map<String, dynamic>;
+    // The light Protomaps style, recoloured: Mochi pastel by day, plum at night.
+    final template = mochi(
+      jsonDecode(await rootBundle.loadString('assets/styles/light.json')) as Map<String, dynamic>,
+      night: dark,
+    );
     // Online, the full font set covers Chinese and Tamil labels too.
     template['glyphs'] = online
         ? 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf'
         : 'file://$dir/glyphs/{fontstack}/{range}.pbf';
-    template['sprite'] = 'file://$dir/sprites/${dark ? 'dark' : 'light'}';
+    template['sprite'] = 'file://$dir/sprites/light';
     final baseLayers = (template['layers'] as List).cast<Map<String, dynamic>>();
     final sources = <String, dynamic>{};
     final layers = <Map<String, dynamic>>[];
@@ -106,7 +108,7 @@ class MapStyles {
     return jsonEncode(palestine(template));
   }
 
-  static final _base = <bool, Map<String, dynamic>>{};
+  static Map<String, dynamic>? _base;
   static final _online = <String, String>{};
 
   /// OpenFreeMap's style for [view], patched with [palestine]; null if it
@@ -115,18 +117,20 @@ class MapStyles {
     final key = '$dark|${view.name}';
     final cached = _online[key];
     if (cached != null) return cached;
-    var base = _base[dark];
+    // Liberty for both themes: recoloured light or night by [mochi].
+    var base = _base;
     if (base == null) {
       try {
-        final url = dark ? ArahConfig.onlineDarkStyleUrl : ArahConfig.onlineStyleUrl;
-        final res = await http.get(Uri.parse(url), headers: ArahConfig.userAgent).timeout(const Duration(seconds: 10));
+        final res = await http
+            .get(Uri.parse(ArahConfig.onlineStyleUrl), headers: ArahConfig.userAgent)
+            .timeout(const Duration(seconds: 10));
         if (res.statusCode != 200) return null;
-        base = _base[dark] = jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
+        base = _base = jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
       } catch (_) {
         return null;
       }
     }
-    final style = jsonDecode(jsonEncode(base)) as Map<String, dynamic>;
+    final style = mochi(jsonDecode(jsonEncode(base)) as Map<String, dynamic>, night: dark);
     switch (view) {
       case MapView.standard:
         break;
@@ -136,6 +140,85 @@ class MapStyles {
         terrain(style, dark: dark);
     }
     return _online[key] = jsonEncode(palestine(style));
+  }
+
+  static const _mochiDay = {
+    'land': '#FFF7F0', 'land2': '#FCEDE4', 'park': '#CDEFD6', 'water': '#BFE3FF', //
+    'hwy': '#DCCBF7', 'hwyc': '#BBA5EA', 'major': '#FFE3A3', 'majorc': '#F2C66B', //
+    'minor': '#FFFFFF', 'minorc': '#F1DCCF', 'bld': '#F6E1D6', 'rail': '#E7C8D8', //
+    'text': '#7A5566', 'halo': '#FFF7F0', 'bnd': '#E8B7C9',
+  };
+  static const _mochiNight = {
+    'land': '#241C29', 'land2': '#2A2030', 'park': '#263A30', 'water': '#22304A', //
+    'hwy': '#7C5C9E', 'hwyc': '#4E3A66', 'major': '#8C6E4E', 'majorc': '#5E4935', //
+    'minor': '#3E3146', 'minorc': '#2E2434', 'bld': '#34283B', 'rail': '#4A3A52', //
+    'text': '#F3E6EE', 'halo': '#241C29', 'bnd': '#8C6A80',
+  };
+
+  /// The Mochi map: pastel by day, plum by night. Works on both the online
+  /// OpenMapTiles style and the offline Protomaps one by reading each layer's
+  /// id and source layer (water, park, building, highway/major/minor, casing…).
+  static Map<String, dynamic> mochi(Map<String, dynamic> style, {bool night = false}) {
+    final t = night ? _mochiNight : _mochiDay;
+    final out = <Map<String, dynamic>>[];
+    for (final l in (style['layers'] as List).cast<Map<String, dynamic>>()) {
+      final id = '${l['id']}';
+      final sl = '${l['source-layer'] ?? ''}';
+      final key = '$id $sl';
+      final type = l['type'];
+      final paint = (l['paint'] ??= <String, dynamic>{}) as Map<String, dynamic>;
+      bool has(List<String> words) => words.any(key.contains);
+      if (type == 'raster' || id == 'road_area_pattern') continue; // grey shaded relief, hatched areas
+      switch (type) {
+        case 'background':
+          paint['background-color'] = t['land'];
+        case 'fill':
+          paint['fill-color'] = has(['water'])
+              ? t['water']
+              : has(['park', 'wood', 'grass', 'urban_green', 'zoo', 'wetland'])
+              ? t['park']
+              : has(['building'])
+              ? t['bld']
+              : has(['earth'])
+              ? t['land']
+              : t['land2'];
+          paint.remove('fill-outline-color');
+          if (has(['building'])) l.remove('maxzoom');
+          if (has(['park', 'wood', 'grass'])) paint['fill-opacity'] = 1;
+        case 'fill-extrusion':
+          continue; // Mochi is flat: no 3D buildings (flat ones are drawn at every zoom below)
+        case 'line':
+          final casing = id.contains('casing');
+          paint['line-color'] = has(['waterway', 'water', 'stream', 'river'])
+              ? t['water']
+              : has(['boundar'])
+              ? t['bnd']
+              : has(['rail'])
+              ? t['rail']
+              : has(['park'])
+              ? t['park']
+              : has(['runway', 'taxiway', 'aeroway'])
+              ? t['land2']
+              : has(['path', 'pedestrian', 'track', 'other', 'pier'])
+              ? t['minorc']
+              : has(['motorway', 'highway'])
+              ? t[casing ? 'hwyc' : 'hwy']
+              : has(['trunk', 'primary', 'major'])
+              ? t[casing ? 'majorc' : 'major']
+              : t[casing ? 'minorc' : 'minor'];
+        case 'symbol':
+          final layout = l['layout'] as Map<String, dynamic>?;
+          if (layout?['text-field'] != null && !has(['shield'])) {
+            paint['text-color'] = t['text'];
+            paint['text-halo-color'] = t['halo'];
+            paint['text-halo-width'] = 1.6;
+          }
+      }
+      out.add(l);
+    }
+    style['layers'] = out;
+    (style['sources'] as Map<String, dynamic>).remove('ne2_shaded');
+    return style;
   }
 
   /// Esri World Imagery under the map's roads, borders and labels (like
@@ -406,7 +489,8 @@ class MapStyles {
         'geometry': {'type': 'Point', 'coordinates': _palestineLabel},
       },
     };
-    final dark = '${(countryLayer?['paint'] as Map?)?['text-halo-color']}'.contains('0,0,0');
+    final countryPaint = countryLayer?['paint'] as Map?;
+    final dark = '${countryPaint?['text-halo-color']}'.contains('0,0,0');
     out.insert(lastPlace + 1, {
       'id': 'arah-palestine',
       'type': 'symbol',
@@ -437,8 +521,17 @@ class MapStyles {
         'text-ignore-placement': true,
       },
       'paint': {
-        'text-color': dark ? '#d8d8d8' : '#1f1f1f',
-        'text-halo-color': dark ? 'rgba(0,0,0,0.75)' : 'rgba(255,255,255,0.85)',
+        // The map's own label colours when they're plain colours (the Mochi map's are).
+        'text-color': countryPaint?['text-color'] is String
+            ? countryPaint!['text-color']
+            : dark
+            ? '#d8d8d8'
+            : '#1f1f1f',
+        'text-halo-color': countryPaint?['text-halo-color'] is String
+            ? countryPaint!['text-halo-color']
+            : dark
+            ? 'rgba(0,0,0,0.75)'
+            : 'rgba(255,255,255,0.85)',
         'text-halo-width': 1.6,
         'text-opacity': [
           'interpolate',

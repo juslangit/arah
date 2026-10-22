@@ -20,6 +20,7 @@ import '../routing/tolls.dart';
 import '../search/place.dart';
 import 'format.dart';
 import 'map_kit.dart';
+import 'mochi.dart';
 import 'nav_screen.dart';
 import 'offline_screen.dart';
 import 'report_sheet.dart';
@@ -36,6 +37,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   MapLibreMapController? _map;
   MapLayers? _layers;
+  late final _puck = MochiPuck(() => _styleReady ? _layers : null);
+
+  /// Mochi's hello on the home map; hides after a few seconds or on any trip.
+  bool _greet = true;
   String? _style;
   String _styleKey = '';
   bool _styleReady = false;
@@ -61,6 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _start());
+    Future<void>.delayed(const Duration(seconds: 8), () {
+      if (mounted && _greet) setState(() => _greet = false);
+    });
   }
 
   Future<void> _start() async {
@@ -80,6 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _puck.dispose();
     _fixSub?.cancel();
     final app = context.appRead;
     app.packs.removeListener(_refreshStyle);
@@ -119,14 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onFix(Fix fix) {
     final m = _map;
     if (m == null) return;
-    m.updateManualLocation(
-      ManualLocationUpdate(
-        target: ll(fix.pos),
-        horizontalAccuracy: fix.accuracyM,
-        bearing: fix.headingDeg,
-        speed: fix.speedMps < 0 ? null : fix.speedMps,
-      ),
-    );
+    _puck.moveTo(fix.pos, fix.headingDeg, glide: const Duration(milliseconds: 600));
     if (!_movedToFix) {
       _movedToFix = true;
       context.appRead.routing.preload(fix.pos);
@@ -142,6 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _layers = MapLayers(m);
     await _layers!.install();
     _styleReady = true;
+    _puck.redraw();
     await _drawReports();
     await _drawSelection();
     final fix = context.appRead.location.last;
@@ -180,6 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _select(Place p) async {
     setState(() {
+      _greet = false;
       _place = p;
       _from = null;
       _to = null;
@@ -486,7 +490,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
               onStyleLoadedCallback: _onStyleLoaded,
-              myLocationEnabled: true,
+              // Mochi marks where you are (MochiPuck), not the built-in dot.
+              myLocationEnabled: false,
               locationSource: const ManualLocationSource(),
               myLocationRenderMode: MyLocationRenderMode.compass,
               trackCameraPosition: true,
@@ -506,44 +511,61 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(28),
-                    color: Theme.of(context).colorScheme.surface,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(28),
-                      onTap: () => _openSearch(),
-                      child: SizedBox(
-                        height: 56,
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 18),
-                            Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                context.tr('Cari tempat', 'Search here'),
-                                style: TextStyle(fontSize: 17, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(999),
+                      boxShadow: ArahColors.shadow(context),
+                    ),
+                    child: Material(
+                      shape: const StadiumBorder(),
+                      color: Theme.of(context).colorScheme.surface,
+                      child: InkWell(
+                        customBorder: const StadiumBorder(),
+                        onTap: () => _openSearch(),
+                        child: SizedBox(
+                          height: 58,
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 10),
+                              const Mochi(size: 40),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  context.tr('Nak ke mana hari ni?', 'Where to today?'),
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w800,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
                               ),
-                            ),
-                            IconButton(
-                              tooltip: context.tr('Tetapan', 'Settings'),
-                              icon: const Icon(Icons.menu),
-                              onPressed: () =>
-                                  Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
-                            ),
-                            const SizedBox(width: 4),
-                          ],
+                              Material(
+                                color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                                shape: const CircleBorder(),
+                                child: IconButton(
+                                  tooltip: context.tr('Tetapan', 'Settings'),
+                                  icon: const Icon(Icons.menu_rounded),
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  if (!_previewing) const SizedBox(height: 8),
+                  if (!_previewing) const SizedBox(height: 10),
                   if (!_previewing)
                     SizedBox(
-                      height: 40,
+                      height: 52,
                       child: ListView(
                         scrollDirection: Axis.horizontal,
+                        // Let the chips' soft shadows spill out instead of being cut square.
+                        clipBehavior: Clip.none,
                         children: [
                           _chip(Icons.home, context.tr('Rumah', 'Home'), () {
                             final h = app.settings.home;
@@ -578,17 +600,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Container(
                         margin: const EdgeInsets.only(top: 8),
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(20)),
+                        decoration: BoxDecoration(color: ArahColors.ink, borderRadius: BorderRadius.circular(999)),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.cloud_off, color: Colors.white, size: 16),
+                            const Icon(Icons.cloud_off_rounded, color: Colors.white, size: 16),
                             const SizedBox(width: 6),
                             Text(
                               app.packs.installed.isEmpty
                                   ? context.tr('Luar talian — tiada peta dimuat turun', 'Offline — no downloaded map')
                                   : context.tr('Luar talian — guna peta tersimpan', 'Offline — using saved map'),
-                              style: const TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),
@@ -610,12 +632,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _fab(Icons.layers_outlined, context.tr('Jenis peta', 'Map type'), _layersSheet, small: true),
+                    _fab(Icons.layers_rounded, context.tr('Jenis peta', 'Map type'), _layersSheet, small: true),
                     const SizedBox(height: 12),
-                    _fab(Icons.report_gmailerrorred, context.tr('Lapor', 'Report'), _report, color: ArahColors.amber),
+                    _fab(Icons.report_rounded, context.tr('Lapor', 'Report'), _report, color: ArahColors.amber),
                     const SizedBox(height: 12),
                     _fab(
-                      _following ? Icons.my_location : Icons.location_searching,
+                      _following ? Icons.my_location_rounded : Icons.location_searching_rounded,
                       context.tr('Lokasi saya', 'My location'),
                       _myLocation,
                     ),
@@ -625,6 +647,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           if (bottomPanel != null) Positioned(left: 0, right: 0, bottom: 0, child: bottomPanel),
+          if (_greet && bottomPanel == null && (kIsWeb || app.packs.installed.isNotEmpty))
+            Positioned(
+              left: 12,
+              bottom: 32 + MediaQuery.of(context).padding.bottom,
+              right: 96,
+              child: _Greeting(onClose: () => setState(() => _greet = false)),
+            ),
           if (!kIsWeb && app.packs.installed.isEmpty && bottomPanel == null)
             Positioned(
               left: 12,
@@ -639,30 +668,121 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _chip(IconData icon, String label, VoidCallback onTap) => Padding(
-    padding: const EdgeInsets.only(right: 8),
-    child: ActionChip(
-      avatar: Icon(icon, size: 18),
-      label: Text(label),
-      onPressed: onTap,
-      elevation: 2,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: const StadiumBorder(),
-    ),
-  );
+  /// A white pill with the icon in a soft pink dot (Mochi chips).
+  Widget _chip(IconData icon, String label, VoidCallback onTap) {
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(right: 8, bottom: 10),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: ArahColors.shadow(context, blur: 12, y: 4),
+        ),
+        child: Material(
+          color: scheme.surface,
+          shape: const StadiumBorder(),
+          child: InkWell(
+            customBorder: const StadiumBorder(),
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(6, 6, 14, 6),
+              child: Row(
+                children: [
+                  Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(color: scheme.primaryContainer, shape: BoxShape.circle),
+                    child: Icon(icon, size: 17, color: scheme.primary),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(label, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-  Widget _fab(IconData icon, String tip, VoidCallback onTap, {Color? color, bool small = false}) => SizedBox(
-    width: small ? 48 : 60,
-    height: small ? 48 : 60,
-    child: FloatingActionButton(
-      heroTag: tip,
-      tooltip: tip,
-      onPressed: onTap,
-      backgroundColor: color ?? Theme.of(context).colorScheme.surface,
-      foregroundColor: color != null ? Colors.black : Theme.of(context).colorScheme.primary,
-      child: Icon(icon, size: small ? 22 : 28),
-    ),
-  );
+  /// Round button with a soft pink shadow.
+  Widget _fab(IconData icon, String tip, VoidCallback onTap, {Color? color, bool small = false}) {
+    final scheme = Theme.of(context).colorScheme;
+    final size = small ? 50.0 : 62.0;
+    return Tooltip(
+      message: tip,
+      child: DecoratedBox(
+        decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: ArahColors.shadow(context, blur: 16, y: 6)),
+        child: Material(
+          color: color ?? scheme.surface,
+          shape: const CircleBorder(),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onTap,
+            child: SizedBox(
+              width: size,
+              height: size,
+              child: Icon(icon, size: small ? 24 : 30, color: color != null ? const Color(0xFF6B4300) : scheme.primary),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Mochi says hello when the app opens; goes away by itself.
+class _Greeting extends StatelessWidget {
+  final VoidCallback onClose;
+  const _Greeting({required this.onClose});
+  @override
+  Widget build(BuildContext context) {
+    final h = DateTime.now().hour;
+    final hello = h < 12
+        ? context.tr('Selamat pagi!', 'Good morning!')
+        : h < 15
+        ? context.tr('Selamat tengah hari!', 'Good afternoon!')
+        : h < 19
+        ? context.tr('Selamat petang!', 'Good evening!')
+        : context.tr('Selamat malam!', 'Good night!');
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: DecoratedBox(
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), boxShadow: ArahColors.shadow(context)),
+        child: Material(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(24),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(24),
+            onTap: onClose,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 16, 10),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Mochi(size: 38),
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(hello, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
+                        Text(
+                          context.tr('Tekan carian untuk mula', 'Tap search to start a trip'),
+                          style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _OfflineNudge extends StatelessWidget {
@@ -670,17 +790,18 @@ class _OfflineNudge extends StatelessWidget {
   const _OfflineNudge({required this.onTap});
   @override
   Widget build(BuildContext context) => Material(
-    elevation: 3,
-    borderRadius: BorderRadius.circular(16),
+    elevation: 0,
+    borderRadius: BorderRadius.circular(24),
     color: Theme.of(context).colorScheme.surface,
+    shadowColor: Colors.transparent,
     child: InkWell(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(24),
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            Icon(Icons.download_for_offline, color: Theme.of(context).colorScheme.primary),
+            const Mochi(size: 36),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -888,7 +1009,7 @@ class _RoutePreview extends StatelessWidget {
                   children: [
                     _EndField(
                       icon: Icons.trip_origin,
-                      color: ArahColors.route,
+                      color: ArahColors.sky,
                       label: context.tr('Dari', 'From'),
                       text: from.name,
                       onTap: onEditFrom,
@@ -897,7 +1018,7 @@ class _RoutePreview extends StatelessWidget {
                       _StopRow(icon: Icons.flag_outlined, text: stops[i].name, onRemove: () => onRemoveStop(i)),
                     _EndField(
                       icon: Icons.place,
-                      color: ArahColors.warn,
+                      color: ArahColors.brand,
                       label: context.tr('Ke', 'To'),
                       text: to.name,
                       onTap: onEditTo,
@@ -939,7 +1060,7 @@ class _RoutePreview extends StatelessWidget {
             ),
           if (routes.isNotEmpty && !loading) ...[
             SizedBox(
-              height: 92,
+              height: 104,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: routes.length,
@@ -954,14 +1075,18 @@ class _RoutePreview extends StatelessWidget {
                       ? context.tr('Hampir sama', 'About the same')
                       : '+${(extra / 60).round()} min';
                   return InkWell(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(20),
                     onTap: () => onSelect(i),
                     child: Container(
-                      width: 150,
-                      padding: const EdgeInsets.all(10),
+                      width: 156,
+                      padding: const EdgeInsets.fromLTRB(12, 10, 10, 8),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: sel ? ArahColors.route : theme.dividerColor, width: sel ? 2.5 : 1),
+                        borderRadius: BorderRadius.circular(20),
+                        color: sel ? theme.colorScheme.surfaceContainerHigh : theme.colorScheme.surface,
+                        border: Border.all(
+                          color: sel ? theme.colorScheme.primary : theme.colorScheme.outlineVariant,
+                          width: sel ? 2.5 : 2,
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -969,9 +1094,9 @@ class _RoutePreview extends StatelessWidget {
                           Text(
                             fmtDuration(r.durationS, app.lang),
                             style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                              color: sel ? ArahColors.route : null,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              color: sel ? theme.colorScheme.primary : null,
                             ),
                           ),
                           Row(
@@ -981,14 +1106,42 @@ class _RoutePreview extends StatelessWidget {
                                 const SizedBox(width: 6),
                                 Text(
                                   '${tolls[i]!.approximate ? '~' : ''}${fmtRm(tolls[i]!.total)}',
-                                  style: const TextStyle(fontWeight: FontWeight.w700, color: ArahColors.amber),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    color: theme.brightness == Brightness.light ? ArahColors.toll : ArahColors.amber,
+                                  ),
                                 ),
                               ],
                             ],
                           ),
                           Row(
                             children: [
-                              Text(tag, style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700)),
+                              if (i == 0)
+                                Container(
+                                  margin: const EdgeInsets.only(top: 3),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.primary,
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.auto_awesome_rounded, size: 12, color: theme.colorScheme.onPrimary),
+                                      const SizedBox(width: 3),
+                                      Text(
+                                        tag,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w900,
+                                          color: theme.colorScheme.onPrimary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              else
+                                Text(tag, style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w800)),
                               if (r.hasToll && (i >= tolls.length || tolls[i] == null || tolls[i]!.isEmpty)) ...[
                                 const SizedBox(width: 6),
                                 const Icon(Icons.toll, size: 16),
@@ -1017,16 +1170,28 @@ class _RoutePreview extends StatelessWidget {
               children: [
                 OutlinedButton.icon(
                   onPressed: () => showStepsSheet(context, routes[selected]),
-                  icon: const Icon(Icons.list),
+                  icon: const Icon(Icons.format_list_bulleted_rounded),
                   label: Text(context.tr('Langkah', 'Steps')),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   // Always Start: from somewhere else, Arah guides you to that start first.
-                  child: FilledButton.icon(
-                    onPressed: onStart,
-                    icon: const Icon(Icons.navigation),
-                    label: Text(context.tr('Mula', 'Start')),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(999),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.primary.withValues(alpha: 0.35),
+                          blurRadius: 18,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: FilledButton.icon(
+                      onPressed: onStart,
+                      icon: const Icon(Icons.navigation_rounded),
+                      label: Text(context.tr('Jom!', "Let's go!")),
+                    ),
                   ),
                 ),
               ],
@@ -1124,37 +1289,55 @@ class _RouteInfo extends StatelessWidget {
       if (offline) context.tr('Laluan luar talian', 'Offline route'),
     ];
     final t = toll;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final scheme = Theme.of(context).colorScheme;
+    Widget pill(IconData icon, String text, {VoidCallback? onTap, bool strong = false}) => Material(
+      color: scheme.surfaceContainerHigh,
+      shape: const StadiumBorder(),
+      child: InkWell(
+        customBorder: const StadiumBorder(),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 16, color: scheme.primary),
+              const SizedBox(width: 5),
+              Text(
+                text,
+                style: TextStyle(fontSize: strong ? 15 : 13.5, fontWeight: FontWeight.w800),
+              ),
+              if (onTap != null) const Icon(Icons.chevron_right_rounded, size: 18),
+            ],
+          ),
+        ),
+      ),
+    );
+    return Wrap(
+      spacing: 6,
+      runSpacing: 6,
       children: [
         if (t != null && !t.isEmpty)
-          InkWell(
+          pill(
+            Icons.toll_rounded,
+            '${context.tr('Tol', 'Tolls')} ${t.approximate ? '~' : ''}${fmtRm(t.total)} · '
+            '${context.app.settings.mode == TravelMode.motorcycle ? context.tr('motosikal', 'motorbike') : context.tr('kereta', 'car')}',
             onTap: () => _breakdown(context, t),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                children: [
-                  const Icon(Icons.toll, size: 20, color: ArahColors.amber),
-                  const SizedBox(width: 6),
-                  Text(
-                    '${context.tr('Tol', 'Tolls')} ${t.approximate ? '~' : ''}${fmtRm(t.total)}',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    context.app.settings.mode == TravelMode.motorcycle
-                        ? context.tr('motosikal', 'motorbike')
-                        : context.tr('kereta (Kelas 1)', 'car (Class 1)'),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const Icon(Icons.chevron_right, size: 18),
-                ],
-              ),
-            ),
+            strong: true,
           ),
-        Text(parts.join(' · '), style: Theme.of(context).textTheme.bodyMedium),
+        for (final p in parts) pill(_iconFor(p, context), p),
       ],
     );
+  }
+
+  IconData _iconFor(String part, BuildContext context) {
+    final p = part.toLowerCase();
+    if (p.startsWith(context.tr('tiba', 'arrive').toLowerCase())) return Icons.schedule_rounded;
+    if (p.contains(context.tr('kamera', 'camera'))) return Icons.photo_camera_rounded;
+    if (p.contains(context.tr('feri', 'ferry'))) return Icons.directions_boat_rounded;
+    if (p.contains(context.tr('tol', 'toll'))) return Icons.toll_rounded;
+    if (p.contains(context.tr('luar talian', 'offline'))) return Icons.cloud_off_rounded;
+    return Icons.campaign_rounded;
   }
 
   /// Plaza-by-plaza list, with where the prices came from.
@@ -1230,22 +1413,35 @@ class _EndField extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 3),
     child: Material(
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      borderRadius: BorderRadius.circular(12),
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
+      shape: const StadiumBorder(),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        customBorder: const StadiumBorder(),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           child: Row(
             children: [
-              Icon(icon, size: 20, color: color),
+              Container(
+                width: 14,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2.5),
+                ),
+              ),
               const SizedBox(width: 10),
               Text('$label  ', style: Theme.of(context).textTheme.bodySmall),
               Expanded(
-                child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
+                child: Text(
+                  text,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                ),
               ),
-              const Icon(Icons.edit_outlined, size: 18),
+              Icon(Icons.edit_rounded, size: 18, color: Theme.of(context).colorScheme.primary),
             ],
           ),
         ),
@@ -1284,13 +1480,38 @@ class _Panel extends StatelessWidget {
   final Widget child;
   const _Panel({required this.child});
   @override
-  Widget build(BuildContext context) => Material(
-    elevation: 12,
-    color: Theme.of(context).colorScheme.surface,
-    borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-    child: SafeArea(
-      top: false,
-      child: Padding(padding: const EdgeInsets.fromLTRB(16, 14, 16, 12), child: child),
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+      boxShadow: ArahColors.shadow(context, blur: 24, y: -6),
+    ),
+    child: Material(
+      color: Theme.of(context).colorScheme.surface,
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  margin: const EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
+              child,
+            ],
+          ),
+        ),
+      ),
     ),
   );
 }

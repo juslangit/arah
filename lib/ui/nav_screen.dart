@@ -24,6 +24,7 @@ import '../search/place.dart';
 import 'format.dart';
 import 'lanes.dart';
 import 'map_kit.dart';
+import 'mochi.dart';
 import 'report_sheet.dart';
 import 'steps_sheet.dart';
 
@@ -52,6 +53,7 @@ class _NavScreenState extends State<NavScreen> {
   MapLibreMapController? _map;
   MapLayers? _layers;
   bool _styleReady = false;
+  late final _puck = MochiPuck(() => _styleReady ? _layers : null);
   StreamSubscription<Fix>? _sub;
 
   bool _following = true;
@@ -194,6 +196,7 @@ class _NavScreenState extends State<NavScreen> {
 
   @override
   void dispose() {
+    _puck.dispose();
     _sub?.cancel();
     _recenterTimer?.cancel();
     _askTimer?.cancel();
@@ -210,14 +213,8 @@ class _NavScreenState extends State<NavScreen> {
     final app = context.appRead;
     setState(() => _u = u);
 
-    _map?.updateManualLocation(
-      ManualLocationUpdate(
-        target: ll(u.position),
-        bearing: u.bearingDeg,
-        horizontalAccuracy: fix.accuracyM,
-        speed: fix.speedMps < 0 ? null : fix.speedMps,
-      ),
-    );
+    // Glides over the same 950 ms as the camera, so Mochi stays put on screen.
+    _puck.moveTo(u.position, u.bearingDeg, glide: const Duration(milliseconds: 950));
     if (_following && !_overview) _camera(u);
     _drawRemaining(u);
     _passStops(u);
@@ -412,6 +409,7 @@ class _NavScreenState extends State<NavScreen> {
     _layers = MapLayers(m);
     await _layers!.install();
     _styleReady = true;
+    _puck.redraw();
     await _layers!.showReports(context.appRead.reports.alive());
     await _layers!.showPins([for (final s in _stopsLeft) (s.pos, 'arah-stop'), (widget.destination.pos, 'arah-pin')]);
     await _layers!.showRoutes([_route], 0);
@@ -487,7 +485,8 @@ class _NavScreenState extends State<NavScreen> {
                 ),
                 onMapCreated: (c) => _map = c,
                 onStyleLoadedCallback: _onStyleLoaded,
-                myLocationEnabled: true,
+                // Mochi marks where you are (MochiPuck), not the built-in dot.
+                myLocationEnabled: false,
                 locationSource: const ManualLocationSource(),
                 myLocationRenderMode: MyLocationRenderMode.gps,
                 compassEnabled: false,
@@ -547,7 +546,11 @@ class _NavScreenState extends State<NavScreen> {
                 child: Column(
                   children: [
                     _RoundBtn(
-                      icon: [Icons.volume_up, Icons.campaign_outlined, Icons.volume_off][app.settings.sound],
+                      icon: [
+                        Icons.volume_up_rounded,
+                        Icons.campaign_rounded,
+                        Icons.volume_off_rounded,
+                      ][app.settings.sound],
                       tip: [
                         context.tr('Bunyi', 'Sound on'),
                         context.tr('Amaran sahaja', 'Alerts only'),
@@ -557,7 +560,7 @@ class _NavScreenState extends State<NavScreen> {
                     ),
                     const SizedBox(height: 12),
                     _RoundBtn(
-                      icon: Icons.report_gmailerrorred,
+                      icon: Icons.report_rounded,
                       tip: context.tr('Lapor', 'Report'),
                       big: true,
                       color: ArahColors.amber,
@@ -569,7 +572,7 @@ class _NavScreenState extends State<NavScreen> {
                     ),
                     const SizedBox(height: 12),
                     _RoundBtn(
-                      icon: _overview ? Icons.navigation : Icons.route,
+                      icon: _overview ? Icons.navigation_rounded : Icons.route_rounded,
                       tip: context.tr('Gambaran laluan', 'Route overview'),
                       onTap: _toggleOverview,
                     ),
@@ -627,10 +630,16 @@ class _Banner extends StatelessWidget {
   Widget build(BuildContext context) {
     final exit = maneuver.exitNumber.isNotEmpty ? '${lang == Lang.ms ? 'Keluar' : 'Exit'} ${maneuver.exitNumber}' : '';
     final roadText = maneuver.label;
+    // A floating rounded pink card (Mochi), arrow on a darker tile.
     return Container(
       width: double.infinity,
-      color: ArahColors.banner,
-      padding: EdgeInsets.fromLTRB(16, topPad + 10, 16, 14),
+      margin: EdgeInsets.fromLTRB(10, topPad + 6, 10, 0),
+      padding: const EdgeInsets.fromLTRB(12, 12, 16, 14),
+      decoration: BoxDecoration(
+        color: ArahColors.banner,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: ArahColors.shadow(context),
+      ),
       child: Row(
         children: [
           Column(
@@ -638,7 +647,12 @@ class _Banner extends StatelessWidget {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  Icon(turnIcon(maneuver), color: Colors.white, size: 56),
+                  Container(
+                    width: 72,
+                    height: 66,
+                    decoration: BoxDecoration(color: ArahColors.brandDark, borderRadius: BorderRadius.circular(20)),
+                    child: Icon(turnIcon(maneuver), color: Colors.white, size: 52),
+                  ),
                   if (maneuver.roundaboutExit > 0)
                     Positioned(
                       right: 0,
@@ -656,7 +670,7 @@ class _Banner extends StatelessWidget {
               ),
               Text(
                 displayDistance(distanceM),
-                style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800),
+                style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, height: 1.3),
               ),
             ],
           ),
@@ -669,7 +683,7 @@ class _Banner extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.only(bottom: 4),
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(color: ArahColors.amber, borderRadius: BorderRadius.circular(6)),
+                    decoration: BoxDecoration(color: ArahColors.amber, borderRadius: BorderRadius.circular(999)),
                     child: Text(
                       exit,
                       style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.black),
@@ -679,14 +693,14 @@ class _Banner extends StatelessWidget {
                   roadText.isNotEmpty ? roadText : bannerText(maneuver, lang),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800, height: 1.15),
+                  style: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w900, height: 1.15),
                 ),
                 if (roadText.isNotEmpty)
                   Text(
                     bannerText(maneuver, lang).replaceAll(roadText, '').trim(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                    style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
                   ),
               ],
             ),
@@ -704,17 +718,18 @@ class _ThenStrip extends StatelessWidget {
   Widget build(BuildContext context) => Align(
     alignment: Alignment.centerLeft,
     child: Container(
-      padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
+      margin: const EdgeInsets.only(left: 26),
+      padding: const EdgeInsets.fromLTRB(14, 6, 14, 8),
       decoration: const BoxDecoration(
         color: ArahColors.brandDark,
-        borderRadius: BorderRadius.only(bottomRight: Radius.circular(14)),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             context.tr('Kemudian', 'Then'),
-            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800),
           ),
           const SizedBox(width: 8),
           Icon(turnIcon(maneuver), color: Colors.white, size: 26),
@@ -735,14 +750,18 @@ class _CameraCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final red = cam.kind == CameraKind.redLight;
     final over = !red && cam.maxspeed != null && kmh > cam.maxspeed!;
-    return Card(
+    return Container(
       margin: const EdgeInsets.fromLTRB(12, 10, 12, 0),
-      color: over ? ArahColors.warn : null,
+      decoration: BoxDecoration(
+        color: over ? ArahColors.warn : Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(26),
+        boxShadow: ArahColors.shadow(context),
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.fromLTRB(10, 10, 14, 10),
         child: Row(
           children: [
-            Icon(red ? Icons.traffic : Icons.photo_camera, size: 34, color: over ? Colors.white : null),
+            const Mochi(size: 46, mood: MochiMood.alert),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -751,15 +770,19 @@ class _CameraCard extends StatelessWidget {
                   Text(
                     red
                         ? context.tr('Kamera lampu isyarat', 'Red light camera')
-                        : context.tr('Kamera laju', 'Speed camera'),
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: over ? Colors.white : null),
+                        : context.tr('Kamera laju di depan', 'Speed camera ahead'),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: over ? Colors.white : null),
                   ),
                   Text(
                     [
                       displayDistance(distanceM),
                       if (!cam.verified) context.tr('Tidak disahkan', 'Unverified'),
+                      if (over)
+                        context.tr('perlahan sikit ya', 'slow down a little')
+                      else if (red)
+                        context.tr('tunggu lampu hijau', 'wait for green'),
                     ].join(' · '),
-                    style: TextStyle(fontSize: 16, color: over ? Colors.white : null),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: over ? Colors.white : null),
                   ),
                 ],
               ),
@@ -794,13 +817,16 @@ class _Pill extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     margin: const EdgeInsets.only(top: 8),
     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-    decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.82), borderRadius: BorderRadius.circular(20)),
+    decoration: BoxDecoration(color: ArahColors.ink.withValues(alpha: 0.92), borderRadius: BorderRadius.circular(999)),
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: Colors.white, size: 18),
         const SizedBox(width: 8),
-        Text(text, style: const TextStyle(color: Colors.white, fontSize: 15)),
+        Text(
+          text,
+          style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700),
+        ),
       ],
     ),
   );
@@ -888,7 +914,7 @@ class _Speedo extends StatelessWidget {
           decoration: BoxDecoration(
             color: speeding ? ArahColors.warn : Theme.of(context).colorScheme.surface,
             shape: BoxShape.circle,
-            boxShadow: const [BoxShadow(blurRadius: 6, color: Colors.black26)],
+            boxShadow: ArahColors.shadow(context, blur: 16, y: 6),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -897,7 +923,7 @@ class _Speedo extends StatelessWidget {
                 '${kmh.round()}',
                 style: TextStyle(
                   fontSize: 28,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w900,
                   height: 1,
                   color: speeding ? Colors.white : null,
                 ),
@@ -940,17 +966,23 @@ class _RoundBtn extends StatelessWidget {
     final size = big ? 68.0 : 54.0;
     return Tooltip(
       message: tip,
-      child: Material(
-        shape: const CircleBorder(),
-        elevation: 4,
-        color: color ?? Theme.of(context).colorScheme.surface,
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onTap,
-          child: SizedBox(
-            width: size,
-            height: size,
-            child: Icon(icon, size: big ? 34 : 26, color: color != null ? Colors.black : null),
+      child: DecoratedBox(
+        decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: ArahColors.shadow(context, blur: 16, y: 6)),
+        child: Material(
+          shape: const CircleBorder(),
+          color: color ?? Theme.of(context).colorScheme.surface,
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onTap,
+            child: SizedBox(
+              width: size,
+              height: size,
+              child: Icon(
+                icon,
+                size: big ? 34 : 26,
+                color: color != null ? const Color(0xFF6B4300) : Theme.of(context).colorScheme.primary,
+              ),
+            ),
           ),
         ),
       ),
@@ -971,51 +1003,56 @@ class _EtaBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Material(
-    elevation: 12,
-    color: Theme.of(context).colorScheme.surface,
-    borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
-    child: SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
-        child: Row(
-          children: [
-            IconButton.filledTonal(
-              tooltip: context.tr('Tamat', 'End'),
-              iconSize: 28,
-              onPressed: onEnd,
-              icon: const Icon(Icons.close),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: onSteps,
-                child: Column(
-                  children: [
-                    Text(
-                      fmtEta(remainingS),
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w800,
-                        color: Theme.of(context).colorScheme.primary,
-                        height: 1.1,
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+      boxShadow: ArahColors.shadow(context, blur: 24, y: -6),
+    ),
+    child: Material(
+      color: Theme.of(context).colorScheme.surface,
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+          child: Row(
+            children: [
+              IconButton.filledTonal(
+                tooltip: context.tr('Tamat', 'End'),
+                iconSize: 28,
+                onPressed: onEnd,
+                icon: const Icon(Icons.close_rounded),
+              ),
+              Expanded(
+                child: InkWell(
+                  onTap: onSteps,
+                  child: Column(
+                    children: [
+                      Text(
+                        fmtEta(remainingS),
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900,
+                          color: Theme.of(context).colorScheme.primary,
+                          height: 1.1,
+                        ),
                       ),
-                    ),
-                    Text(
-                      '${fmtDuration(remainingS, lang)} · ${fmtKm(remainingM)}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ],
+                      Text(
+                        '${fmtDuration(remainingS, lang)} · ${fmtKm(remainingM)}',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            IconButton.filledTonal(
-              tooltip: context.tr('Langkah', 'Steps'),
-              iconSize: 28,
-              onPressed: onSteps,
-              icon: const Icon(Icons.list),
-            ),
-          ],
+              IconButton.filledTonal(
+                tooltip: context.tr('Langkah', 'Steps'),
+                iconSize: 28,
+                onPressed: onSteps,
+                icon: const Icon(Icons.format_list_bulleted_rounded),
+              ),
+            ],
+          ),
         ),
       ),
     ),
@@ -1030,9 +1067,9 @@ class _ArrivalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.app.settings;
     return Material(
-      elevation: 12,
+      elevation: 0,
       color: Theme.of(context).colorScheme.surface,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
       child: SafeArea(
         top: false,
         child: Padding(
@@ -1041,10 +1078,10 @@ class _ArrivalCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(Icons.flag_circle, size: 48, color: ArahColors.brand),
-              const SizedBox(height: 8),
+              const Center(child: Mochi(size: 76)),
+              const SizedBox(height: 6),
               Text(
-                context.tr('Anda telah tiba', 'You have arrived'),
+                context.tr('Dah sampai!', 'You made it!'),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
               ),
@@ -1055,7 +1092,7 @@ class _ArrivalCard extends StatelessWidget {
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: s.isFavourite(place) ? null : () => s.addFavourite(place),
-                      icon: const Icon(Icons.star_border),
+                      icon: const Icon(Icons.star_border_rounded),
                       label: Text(context.tr('Simpan', 'Save')),
                     ),
                   ),

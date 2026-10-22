@@ -135,12 +135,33 @@ void main() {
     ]);
   });
 
+  test('mochi recolours land, water, parks, roads and labels, day and night', () {
+    final day = layersOf(MapStyles.mochi(omt()));
+    expect(day.firstWhere((l) => l['id'] == 'background')['paint']['background-color'], '#FFF7F0');
+    expect(day.firstWhere((l) => l['id'] == 'water')['paint']['fill-color'], '#BFE3FF');
+    expect(day.firstWhere((l) => l['id'] == 'label_city')['paint']['text-color'], '#7A5566');
+    final night = layersOf(MapStyles.mochi(omt(), night: true));
+    expect(night.firstWhere((l) => l['id'] == 'background')['paint']['background-color'], '#241C29');
+    final offline = layersOf(
+      MapStyles.mochi(jsonDecode(File('assets/styles/light.json').readAsStringSync()) as Map<String, dynamic>),
+    );
+    expect(offline.firstWhere((l) => l['id'] == 'roads_highway')['paint']['line-color'], '#DCCBF7');
+    expect(offline.firstWhere((l) => l['id'] == 'roads_highway_casing_late')['paint']['line-color'], '#BBA5EA');
+    expect(offline.firstWhere((l) => l['id'] == 'landuse_park')['paint']['fill-color'], '#CDEFD6');
+  });
+
   // Writes the real OpenFreeMap styles, patched, for a browser check (PALESTINE_DIR).
   final dir = Platform.environment['PALESTINE_DIR'];
   test('patch the downloaded OpenFreeMap styles', () {
     for (final name in ['liberty', 'dark']) {
       Map<String, dynamic> src() => jsonDecode(File('$dir/$name.json').readAsStringSync()) as Map<String, dynamic>;
       File('$dir/$name.patched.json').writeAsStringSync(jsonEncode(MapStyles.palestine(src())));
+      if (name == 'liberty') {
+        for (final night in [false, true]) {
+          File('$dir/mochi${night ? '-night' : ''}.json')
+              .writeAsStringSync(jsonEncode(MapStyles.palestine(MapStyles.mochi(src(), night: night))));
+        }
+      }
       File('$dir/$name.satellite.json').writeAsStringSync(jsonEncode(MapStyles.palestine(MapStyles.satellite(src()))));
       File('$dir/$name.terrain.json')
           .writeAsStringSync(jsonEncode(MapStyles.palestine(MapStyles.terrain(src(), dark: name == 'dark'))));

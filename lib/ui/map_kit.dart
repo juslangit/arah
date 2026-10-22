@@ -1,8 +1,11 @@
 // Shared map pieces: icons drawn once into images the map can use, the
-// route/report layers, and the turn-arrow icon for each maneuver.
+// route/report layers, Mochi as your location, and the turn-arrow icon for
+// each maneuver.
+import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 
@@ -10,6 +13,7 @@ import '../app/theme.dart';
 import '../core/geo.dart';
 import '../reports/reports.dart';
 import '../routing/route_model.dart';
+import 'mochi.dart';
 
 LatLng ll(Geo g) => LatLng(g.lat, g.lon);
 Geo geo(LatLng l) => Geo(l.latitude, l.longitude);
@@ -52,7 +56,8 @@ Future<Uint8List> iconBadge(IconData icon, Color bg, {double size = 72, Color fg
   final rec = ui.PictureRecorder();
   final c = Canvas(rec);
   final r = size / 2;
-  c.drawCircle(Offset(r, r + 2), r - 4, Paint()..color = Colors.black26);
+  // Soft pink shadow, white ring: the Mochi look.
+  c.drawCircle(Offset(r, r + 2.5), r - 3.5, Paint()..color = const Color(0x40F078A0));
   c.drawCircle(Offset(r, r), r - 4, Paint()..color = Colors.white);
   c.drawCircle(Offset(r, r), r - 9, Paint()..color = bg);
   final tp = TextPainter(textDirection: TextDirection.ltr)
@@ -76,7 +81,7 @@ Future<Uint8List> pinImage(Color color, {double w = 64, double h = 84}) async {
     ..arcToPoint(Offset(w - 2, w / 2), radius: Radius.circular(w / 2 - 2))
     ..cubicTo(w - 2, h * 0.42, w * 0.85, h * 0.55, w / 2, h - 2)
     ..close();
-  c.drawPath(path.shift(const Offset(0, 2)), Paint()..color = Colors.black26);
+  c.drawPath(path.shift(const Offset(0, 2.5)), Paint()..color = const Color(0x40F078A0));
   c.drawPath(path, Paint()..color = color);
   c.drawPath(
     path,
@@ -114,32 +119,35 @@ Map<String, dynamic> pointFeature(Geo p, {Map<String, dynamic> props = const {}}
 Map<String, dynamic> collection(List<Map<String, dynamic>> f) => {'type': 'FeatureCollection', 'features': f};
 
 /// Adds Arah's own sources and layers on top of whatever map style loaded:
-/// routes (alternatives grey under the chosen blue one), reports and a pin.
+/// routes (lavender alternatives under the chosen pink one), reports, a pin
+/// and Mochi, who marks where you are.
 class MapLayers {
   final MapLibreMapController c;
   MapLayers(this.c);
 
-  static const routes = 'arah-routes', reports = 'arah-reports', pin = 'arah-pin';
+  static const routes = 'arah-routes', reports = 'arah-reports', pin = 'arah-pin', me = 'arah-me';
 
   Future<void> install() async {
     for (final k in ReportKind.values) {
       await c.addImage('report-${k.name}', await iconBadge(reportIcon(k), reportColor(k)));
     }
-    await c.addImage('arah-pin', await pinImage(ArahColors.warn));
-    await c.addImage('arah-stop', await iconBadge(Icons.flag, ArahColors.brand, size: 56));
+    await c.addImage('arah-pin', await pinImage(ArahColors.brand));
+    await c.addImage('arah-stop', await iconBadge(Icons.flag, ArahColors.pink, size: 56));
+    await c.addImage('arah-mochi', await mochiImage(size: 144));
+    await c.addImage('arah-heading', await headingImage(size: 144));
     await c.addImage('arah-cam', await iconBadge(Icons.photo_camera, const Color(0xFF263238), size: 56));
     await c.addImage('arah-cam-red', await iconBadge(Icons.traffic, ArahColors.warn, size: 56));
     // Unverified (OSM-only) cameras: same shapes, greyed.
     await c.addImage('arah-cam-u', await iconBadge(Icons.photo_camera, const Color(0xFF90A4AE), size: 56));
     await c.addImage('arah-cam-red-u', await iconBadge(Icons.traffic, const Color(0xFFE0A39C), size: 56));
-    await c.addImage('arah-start', await iconBadge(Icons.trip_origin, ArahColors.route, size: 56));
+    await c.addImage('arah-start', await iconBadge(Icons.trip_origin, ArahColors.sky, size: 56));
 
     await c.addGeoJsonSource(routes, collection([]));
     await c.addLineLayer(
       routes,
       'arah-route-alt',
       const LineLayerProperties(
-        lineColor: '#9AA4B2',
+        lineColor: '#CDBFE6',
         lineWidth: 7,
         lineCap: 'round',
         lineJoin: 'round',
@@ -154,7 +162,7 @@ class MapLayers {
     await c.addLineLayer(
       routes,
       'arah-route-casing',
-      const LineLayerProperties(lineColor: '#1B3FA6', lineWidth: 11, lineCap: 'round', lineJoin: 'round'),
+      const LineLayerProperties(lineColor: '#FFFFFF', lineWidth: 13, lineCap: 'round', lineJoin: 'round'),
       filter: [
         '==',
         ['get', 'selected'],
@@ -164,7 +172,7 @@ class MapLayers {
     await c.addLineLayer(
       routes,
       'arah-route',
-      const LineLayerProperties(lineColor: '#2F6BFF', lineWidth: 7, lineCap: 'round', lineJoin: 'round'),
+      const LineLayerProperties(lineColor: '#FF6FA0', lineWidth: 8, lineCap: 'round', lineJoin: 'round'),
       filter: [
         '==',
         ['get', 'selected'],
@@ -212,7 +220,46 @@ class MapLayers {
         iconAllowOverlap: true,
       ),
     );
+
+    // You: a pink heading chevron flat on the road, Mochi standing on top.
+    await c.addGeoJsonSource(me, collection([]));
+    await c.addSymbolLayer(
+      me,
+      'arah-me-heading',
+      SymbolLayerProperties(
+        iconImage: 'arah-heading',
+        iconSize: kIsWeb ? 0.62 : 0.9,
+        iconRotate: ['get', 'bearing'],
+        iconRotationAlignment: 'map',
+        iconPitchAlignment: 'map',
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
+      ),
+      filter: ['has', 'bearing'],
+    );
+    await c.addSymbolLayer(
+      me,
+      'arah-me',
+      SymbolLayerProperties(
+        iconImage: 'arah-mochi',
+        // Android draws map images smaller than browsers do for the same bytes.
+        iconSize: kIsWeb ? 0.4 : 0.62,
+        // Feet on the spot: the image's bottom edge is Mochi's ground shadow.
+        iconAnchor: 'bottom',
+        iconOffset: [0, 10],
+        iconPitchAlignment: 'viewport',
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
+      ),
+    );
   }
+
+  Future<void> showMe(Geo p, double? bearing) async => c.setGeoJsonSource(
+    me,
+    collection([
+      pointFeature(p, props: {if (bearing != null) 'bearing': bearing}),
+    ]),
+  );
 
   Future<void> showRoutes(List<ArahRoute> rs, int selected) async {
     // Alternatives first so the chosen route is drawn on top.
@@ -249,6 +296,47 @@ class MapLayers {
       for (final (p, icon) in pins) pointFeature(p, props: {'icon': icon}),
     ]),
   );
+}
+
+/// Moves Mochi smoothly to each new fix, gliding over [glide] like the
+/// navigation camera does, instead of jumping once a second.
+class MochiPuck {
+  /// The map's layers, or null until its style has loaded.
+  final MapLayers? Function() layers;
+  MochiPuck(this.layers);
+
+  Geo? _at;
+  double? _bearing;
+  Timer? _t;
+
+  void moveTo(Geo to, double? bearing, {Duration glide = const Duration(milliseconds: 900)}) {
+    _t?.cancel();
+    final from = _at;
+    _bearing = bearing ?? _bearing;
+    // First fix, or a jump of more than 300 m (a reroute, a new GPS lock): no glide.
+    if (from == null || distanceM(from, to) > 300 || glide == Duration.zero) {
+      _at = to;
+      layers()?.showMe(to, _bearing);
+      return;
+    }
+    const step = Duration(milliseconds: 33);
+    final n = (glide.inMilliseconds / step.inMilliseconds).ceil();
+    var i = 0;
+    _t = Timer.periodic(step, (t) {
+      i++;
+      final f = i / n;
+      _at = Geo(from.lat + (to.lat - from.lat) * f, from.lon + (to.lon - from.lon) * f);
+      layers()?.showMe(_at!, _bearing);
+      if (i >= n) t.cancel();
+    });
+  }
+
+  /// Draws Mochi again where it was (after the map style reloads).
+  void redraw() {
+    if (_at != null) layers()?.showMe(_at!, _bearing);
+  }
+
+  void dispose() => _t?.cancel();
 }
 
 /// Camera that fits a set of points, leaving room for UI at top and bottom.
