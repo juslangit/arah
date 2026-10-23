@@ -46,6 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
   String _styleKey = '';
   bool _styleReady = false;
   bool _following = false;
+
+  /// Until when the my-location button's fly-in runs; GPS follow moves wait
+  /// for it, or each one would cut the zoom short.
+  DateTime _flyingUntil = DateTime(0);
   bool _movedToFix = false;
   StreamSubscription? _fixSub;
 
@@ -129,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _movedToFix = true;
       context.appRead.routing.preload(fix.pos);
       if (_place == null) m.animateCamera(CameraUpdate.newLatLngZoom(ll(fix.pos), 15));
-    } else if (_following) {
+    } else if (_following && DateTime.now().isAfter(_flyingUntil)) {
       // Same glide as Mochi, so Mochi stays in the middle.
       m.animateCamera(CameraUpdate.newLatLng(ll(fix.pos)), duration: const Duration(milliseconds: 600));
     }
@@ -435,6 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
     setState(() => _following = true);
+    _flyingUntil = DateTime.now().add(const Duration(milliseconds: 1000));
     // One smooth move to you; following stays on until a finger moves the map.
     final zoom = _map?.cameraPosition?.zoom ?? 0;
     _map?.animateCamera(
