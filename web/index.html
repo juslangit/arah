@@ -60,6 +60,47 @@
       }
     }).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
   </script>
+  <script>
+    // iPhone Safari caps the graphics memory a page may use. A 3x map canvas
+    // next to Flutter's own canvas can go over it, and Safari then quietly gives
+    // the map a smaller drawing buffer and stretches it (tall, squeezed map,
+    // labels and Mochi). So: draw maps at most at 2x, and if a map's buffer
+    // still comes out smaller than its canvas, step its sharpness down and
+    // redraw. Also redraw when the visible area changes (keyboard, toolbar).
+    (function guard(tries) {
+      const m = window.maplibregl;
+      if (!m || !m.Map) { if (tries < 600) setTimeout(() => guard(tries + 1), 50); return; }
+      const maps = new Set();
+      const P = m.Map.prototype, repaint = P.triggerRepaint;
+      P.triggerRepaint = function () {
+        if (!maps.has(this)) {
+          maps.add(this);
+          try { if (this.getPixelRatio() > 2) this.setPixelRatio(2); } catch (e) {}
+        }
+        return repaint.apply(this, arguments);
+      };
+      function check() {
+        for (const map of maps) {
+          if (map._removed) { maps.delete(map); continue; }
+          try {
+            const gl = map.painter && map.painter.context && map.painter.context.gl;
+            const c = map.getCanvas();
+            if (gl && (gl.drawingBufferWidth < c.width - 1 || gl.drawingBufferHeight < c.height - 1)) {
+              map.setPixelRatio(Math.max(1, map.getPixelRatio() * 0.75));
+            }
+            const box = map.getContainer();
+            if (Math.abs(box.clientWidth - c.clientWidth) > 1 || Math.abs(box.clientHeight - c.clientHeight) > 1) map.resize();
+          } catch (e) {}
+        }
+      }
+      setInterval(check, 1500);
+      const soon = () => setTimeout(check, 300);
+      window.addEventListener('resize', soon);
+      window.addEventListener('orientationchange', soon);
+      document.addEventListener('visibilitychange', soon);
+      if (window.visualViewport) window.visualViewport.addEventListener('resize', soon);
+    })(0);
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

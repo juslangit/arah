@@ -53,6 +53,17 @@ class Settings extends ChangeNotifier {
 
   MapTheme get theme => MapTheme.values[_p.getInt('theme') ?? 0];
   set theme(MapTheme v) => _set(() => _p.setInt('theme', v.index));
+
+  /// Whether the app is dark right now: the map and the buttons use the same
+  /// rule, so Auto follows the time of day, not the phone's own dark mode.
+  bool get darkNow {
+    if (theme == MapTheme.auto) {
+      final h = DateTime.now().hour;
+      return h >= 19 || h < 7;
+    }
+    return theme == MapTheme.dark;
+  }
+
   MapView get mapView => MapView.values[_p.getInt('mapView') ?? 0];
   set mapView(MapView v) => _set(() => _p.setInt('mapView', v.index));
 

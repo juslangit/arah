@@ -96,14 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  bool get _dark {
-    final t = context.appRead.settings.theme;
-    if (t == MapTheme.auto) {
-      final h = DateTime.now().hour;
-      return h >= 19 || h < 7;
-    }
-    return t == MapTheme.dark;
-  }
+  bool get _dark => context.appRead.settings.darkNow;
 
   /// Online: OpenFreeMap's world map. Offline (or if it can't be fetched): the
   /// installed packs, which only cover Malaysia, Singapore and Brunei.
@@ -134,7 +127,8 @@ class _HomeScreenState extends State<HomeScreen> {
       context.appRead.routing.preload(fix.pos);
       if (_place == null) m.animateCamera(CameraUpdate.newLatLngZoom(ll(fix.pos), 15));
     } else if (_following) {
-      m.animateCamera(CameraUpdate.newLatLng(ll(fix.pos)));
+      // Same glide as Mochi, so Mochi stays in the middle.
+      m.animateCamera(CameraUpdate.newLatLng(ll(fix.pos)), duration: const Duration(milliseconds: 600));
     }
   }
 
@@ -419,7 +413,12 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
     setState(() => _following = true);
-    _map?.animateCamera(CameraUpdate.newLatLngZoom(ll(fix.pos), 16));
+    // One smooth move to you; following stays on until a finger moves the map.
+    final zoom = _map?.cameraPosition?.zoom ?? 0;
+    _map?.animateCamera(
+      CameraUpdate.newCameraPosition(CameraPosition(target: ll(fix.pos), zoom: zoom < 15 ? 16 : zoom)),
+      duration: const Duration(milliseconds: 900),
+    );
   }
 
   // ---- UI -----------------------------------------------------------------
@@ -473,36 +472,39 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Stack(
         children: [
           if (_style != null)
-            MapLibreMap(
-              key: ValueKey(_style.hashCode),
-              styleString: _style!,
-              initialCameraPosition: CameraPosition(target: ll(app.here), zoom: app.hasFix ? 15 : 11),
-              onMapCreated: (c) {
-                _map = c;
-                c.onFeatureTapped.add((_, _, id, layerId, _) {
-                  if (layerId == 'arah-route-alt' || layerId == 'arah-route') {
-                    final i = int.tryParse(id);
-                    if (i != null && i < _routes.length) {
-                      setState(() => _sel = i);
-                      _drawSelection();
-                    }
-                  }
-                });
-              },
-              onStyleLoadedCallback: _onStyleLoaded,
-              // Mochi marks where you are (MochiPuck), not the built-in dot.
-              myLocationEnabled: false,
-              locationSource: const ManualLocationSource(),
-              myLocationRenderMode: MyLocationRenderMode.compass,
-              trackCameraPosition: true,
-              compassEnabled: true,
-              compassViewPosition: CompassViewPosition.topRight,
-              compassViewMargins: const Point(16, 190),
-              attributionButtonPosition: AttributionButtonPosition.bottomLeft,
-              onMapLongClick: _longPress,
-              onCameraMove: (_) {
+            // A finger on the map stops following you (the camera's own moves don't).
+            Listener(
+              onPointerDown: (_) {
                 if (_following) setState(() => _following = false);
               },
+              child: MapLibreMap(
+                key: ValueKey(_style.hashCode),
+                styleString: _style!,
+                initialCameraPosition: CameraPosition(target: ll(app.here), zoom: app.hasFix ? 15 : 11),
+                onMapCreated: (c) {
+                  _map = c;
+                  c.onFeatureTapped.add((_, _, id, layerId, _) {
+                    if (layerId == 'arah-route-alt' || layerId == 'arah-route') {
+                      final i = int.tryParse(id);
+                      if (i != null && i < _routes.length) {
+                        setState(() => _sel = i);
+                        _drawSelection();
+                      }
+                    }
+                  });
+                },
+                onStyleLoadedCallback: _onStyleLoaded,
+                // Mochi marks where you are (MochiPuck), not the built-in dot.
+                myLocationEnabled: false,
+                locationSource: const ManualLocationSource(),
+                myLocationRenderMode: MyLocationRenderMode.compass,
+                trackCameraPosition: true,
+                compassEnabled: true,
+                compassViewPosition: CompassViewPosition.topRight,
+                compassViewMargins: const Point(16, 190),
+                attributionButtonPosition: AttributionButtonPosition.bottomLeft,
+                onMapLongClick: _longPress,
+              ),
             ),
           // Search bar and quick categories.
           SafeArea(
