@@ -67,6 +67,10 @@ class Settings extends ChangeNotifier {
   MapView get mapView => MapView.values[_p.getInt('mapView') ?? 0];
   set mapView(MapView v) => _set(() => _p.setInt('mapView', v.index));
 
+  /// Show live traffic (slow and jammed roads) on the online map.
+  bool get traffic => _p.getBool('traffic') ?? true;
+  set traffic(bool v) => _set(() => _p.setBool('traffic', v));
+
   /// Warn about fixed speed and red-light cameras ahead.
   bool get cameraAlerts => _p.getBool('cameraAlerts') ?? true;
   set cameraAlerts(bool v) => _set(() => _p.setBool('cameraAlerts', v));

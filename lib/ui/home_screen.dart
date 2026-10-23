@@ -103,10 +103,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _refreshStyle() async {
     final app = context.appRead;
     final view = app.settings.mapView;
-    final key = '${app.packs.installed.keys.join(',')}|$_dark|${app.online}|${view.name}';
+    final traffic = app.settings.traffic;
+    final key = '${app.packs.installed.keys.join(',')}|$_dark|${app.online}|${view.name}|$traffic';
     if (key == _styleKey) return;
     _styleKey = key;
-    final online = app.online ? await MapStyles.onlineStyle(dark: _dark, view: view) : null;
+    final online = app.online ? await MapStyles.onlineStyle(dark: _dark, view: view, traffic: traffic) : null;
     final style =
         online ??
         await MapStyles.offlineStyle(app.packs, dark: _dark) ??
@@ -1592,6 +1593,24 @@ class _LayersSheet extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
+            if (ArahConfig.tomtomKey.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                secondary: const Icon(Icons.traffic_outlined),
+                title: Text(context.tr('Trafik', 'Traffic')),
+                subtitle: Text(
+                  app.online
+                      ? context.tr('Jalan perlahan dan sesak', 'Slow and jammed roads')
+                      : context.tr('Perlukan internet', 'Needs internet'),
+                ),
+                value: s.traffic,
+                onChanged: (v) {
+                  s.traffic = v;
+                  onChanged();
+                },
+              ),
+            ],
             const SizedBox(height: 16),
             Text(context.tr('Tema', 'Theme'), style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),

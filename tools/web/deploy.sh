@@ -15,7 +15,10 @@ PROJECT=arah
 cd "$ROOT"
 
 source "$HOME/Documents/dev/tools/flutter-env.sh"
-flutter build web --release --no-wasm-dry-run --no-web-resources-cdn
+# Keys (TOMTOM_API_KEY for live traffic) come from ~/.claude/.env, never the repo.
+set -a; [ -f "$HOME/.claude/.env" ] && . "$HOME/.claude/.env"; set +a
+flutter build web --release --no-wasm-dry-run --no-web-resources-cdn \
+  --dart-define=TOMTOM_API_KEY="${TOMTOM_API_KEY:-}"
 
 # The project was created once on 2026-10-22 with
 #   wrangler pages project create arah --production-branch main --force

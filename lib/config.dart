@@ -25,6 +25,11 @@ class ArahConfig {
   static const supabaseUrl = String.fromEnvironment('ARAH_SUPABASE_URL');
   static const supabaseAnonKey = String.fromEnvironment('ARAH_SUPABASE_ANON_KEY');
 
+  /// Live traffic (TomTom Traffic Flow tiles). Passed at build time with
+  /// --dart-define=TOMTOM_API_KEY=... from ~/.claude/.env; empty = no traffic.
+  static const tomtomKey = String.fromEnvironment('TOMTOM_API_KEY');
+  static const trafficTilesUrl = 'https://api.tomtom.com/traffic/map/4/tile/flow/relative/{z}/{x}/{y}.pbf';
+
   /// Browsers don't let a page set User-Agent (they send their own).
   static Map<String, String> get userAgent =>
       kIsWeb ? {} : {'User-Agent': 'Arah/$appVersion (github.com/juslangit/arah)'};

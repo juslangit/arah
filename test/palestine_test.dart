@@ -122,6 +122,17 @@ void main() {
     expect(ids.indexOf('arah-hillshade'), greaterThan(ids.indexOf('water')));
   });
 
+  test('traffic: TomTom flow tiles under the first label, only slow roads', () {
+    final style = MapStyles.addTraffic(omt(), key: 'test-key');
+    final ids = layersOf(style).map((l) => l['id']).toList();
+    final firstLabel = layersOf(style).indexWhere((l) => l['type'] == 'symbol');
+    expect(ids.indexOf('arah-traffic'), firstLabel - 1);
+    expect((style['sources'] as Map)['arah-traffic']['tiles'].single, endsWith('?key=test-key'));
+    final traffic = layersOf(style).firstWhere((l) => l['id'] == 'arah-traffic');
+    expect(traffic['source-layer'], 'Traffic flow');
+    expect(jsonEncode(traffic['filter']), contains('0.75'));
+  });
+
   test('bundled Protomaps style: country labels filtered with a legacy filter', () {
     final s = MapStyles.palestine(
       jsonDecode(File('assets/styles/light.json').readAsStringSync()) as Map<String, dynamic>,

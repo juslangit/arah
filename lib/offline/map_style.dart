@@ -113,8 +113,8 @@ class MapStyles {
 
   /// OpenFreeMap's style for [view], patched with [palestine]; null if it
   /// can't be fetched.
-  static Future<String?> onlineStyle({bool dark = false, MapView view = MapView.standard}) async {
-    final key = '$dark|${view.name}';
+  static Future<String?> onlineStyle({bool dark = false, MapView view = MapView.standard, bool traffic = false}) async {
+    final key = '$dark|${view.name}|$traffic';
     final cached = _online[key];
     if (cached != null) return cached;
     // Liberty for both themes: recoloured light or night by [mochi].
@@ -139,7 +139,63 @@ class MapStyles {
       case MapView.terrain:
         terrain(style, dark: dark);
     }
+    if (traffic && ArahConfig.tomtomKey.isNotEmpty) addTraffic(style);
     return _online[key] = jsonEncode(palestine(style));
+  }
+
+  /// Live traffic from TomTom's flow tiles, under the labels: only roads
+  /// moving slower than usual, orange when slow and red when jammed (Mochi's
+  /// soft versions of the usual traffic colours). Free-flowing roads stay as
+  /// they are. The tiles carry an expiry, so the map fetches fresh ones by
+  /// itself while it is open.
+  static Map<String, dynamic> addTraffic(Map<String, dynamic> style, {String key = ArahConfig.tomtomKey}) {
+    (style['sources'] as Map<String, dynamic>)['arah-traffic'] = {
+      'type': 'vector',
+      'tiles': ['${ArahConfig.trafficTilesUrl}?key=$key'],
+      'minzoom': 0,
+      'maxzoom': 22,
+      'attribution': 'Traffic © TomTom',
+    };
+    // traffic_level is the current speed as a share of the free-flow speed.
+    final level = ['get', 'traffic_level'];
+    final closed = ['==', ['get', 'road_closure'], true];
+    // One-direction data sits on the side that direction drives on.
+    final side = [
+      'case',
+      ['!=', ['get', 'traffic_road_coverage'], 'one_side'], 0,
+      ['==', ['get', 'left_hand_traffic'], true], -1,
+      1,
+    ];
+    final layer = {
+      'id': 'arah-traffic',
+      'type': 'line',
+      'source': 'arah-traffic',
+      'source-layer': 'Traffic flow',
+      'minzoom': 6,
+      'filter': ['any', closed, ['<', level, 0.75]],
+      'layout': {'line-cap': 'round', 'line-join': 'round'},
+      'paint': {
+        'line-color': [
+          'case',
+          closed, '#8E1B3A',
+          ['<', level, 0.25], '#C81E3C',
+          ['<', level, 0.5], '#F0484D',
+          '#FFA14A',
+        ],
+        'line-width': ['interpolate', ['linear'], ['zoom'], 6, 1.5, 10, 2.5, 14, 4, 18, 8],
+        'line-offset': [
+          'interpolate', ['linear'], ['zoom'],
+          10, ['*', side, 1],
+          14, ['*', side, 3],
+          18, ['*', side, 7],
+        ],
+        'line-opacity': 0.9,
+      },
+    };
+    final layers = (style['layers'] as List).cast<Map<String, dynamic>>();
+    final firstLabel = layers.indexWhere((l) => l['type'] == 'symbol');
+    layers.insert(firstLabel < 0 ? layers.length : firstLabel, layer);
+    return style;
   }
 
   static const _mochiDay = {
