@@ -48,18 +48,10 @@
       }
     })(0);
   </script>
-  <script>
-    // MapLibre opens the map credits expanded on load, over the bottom sheets.
-    // Start them folded into the (i) button, as on the phone apps; tapping it
-    // still shows them.
-    new MutationObserver(() => {
-      for (const el of document.querySelectorAll('.maplibregl-ctrl-attrib.maplibregl-compact-show:not([data-folded])')) {
-        el.dataset.folded = '1';
-        el.classList.remove('maplibregl-compact-show');
-        el.removeAttribute('open');
-      }
-    }).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
-  </script>
+  <style>
+    /* No (i) credits button on the map: the credits are in Settings → About. */
+    .maplibregl-ctrl-attrib, .maplibregl-ctrl-bottom-left .maplibregl-ctrl-attrib { display: none !important; }
+  </style>
   <script>
     // iPhone Safari caps the graphics memory a page may use. A 3x map canvas
     // next to Flutter's own canvas can go over it, and Safari then quietly gives
@@ -102,9 +94,9 @@
         }
       }
       let fixes = 0;
-      // Hidden size readout for chasing the stretch on a real iPhone: tap the
-      // (i) button three times quickly to show or hide it.
-      let taps = [], panel = null;
+      // Hidden size readout for chasing the stretch on a real iPhone: open
+      // the app with #debug at the end of the address.
+      let panel = null;
       function readout() {
         const out = ['window ' + innerWidth + 'x' + innerHeight + ' dpr ' + devicePixelRatio +
           (window.visualViewport ? ' vv ' + Math.round(visualViewport.width) + 'x' + Math.round(visualViewport.height) + ' s' + visualViewport.scale.toFixed(2) : '') +
@@ -121,17 +113,14 @@
             out.push('map box ' + b.clientWidth + 'x' + b.clientHeight + ' css ' + c.clientWidth + 'x' + c.clientHeight +
               ' rect ' + Math.round(r.width) + 'x' + Math.round(r.height) + ' attr ' + c.width + 'x' + c.height +
               (gl ? ' buf ' + gl.drawingBufferWidth + 'x' + gl.drawingBufferHeight + (gl.isContextLost() ? ' LOST' : '') : ' nogl') +
-              ' pr ' + map.getPixelRatio() + (tr.length ? '\n  ' + tr.join('\n  ') : ''));
+              ' pr ' + map.getPixelRatio() +
+              (map.painter ? ' painter ' + map.painter.width + 'x' + map.painter.height : '') +
+              (gl ? ' view ' + Array.from(gl.getParameter(gl.VIEWPORT)).join(',') : '') + (tr.length ? '\n  ' + tr.join('\n  ') : ''));
           } catch (e) { out.push('map ? ' + e.message); }
         }
         panel.textContent = out.join('\n');
       }
-      document.addEventListener('click', (ev) => {
-        if (!ev.target.closest || !ev.target.closest('.maplibregl-ctrl-attrib')) return;
-        const now = Date.now();
-        taps = taps.filter((t) => now - t < 1500).concat(now);
-        if (taps.length < 3) return;
-        taps = [];
+      function toggleReadout() {
         if (panel) { clearInterval(panel.timer); panel.remove(); panel = null; return; }
         panel = document.createElement('pre');
         panel.style.cssText = 'position:fixed;left:8px;right:8px;top:calc(env(safe-area-inset-top) + 8px);z-index:99999;margin:0;padding:10px;' +
@@ -139,12 +128,34 @@
         document.body.appendChild(panel);
         readout();
         panel.timer = setInterval(readout, 500);
-      }, true);
+      }
+      if (location.hash === '#debug') toggleReadout();
       setInterval(check, 1500);
-      const soon = () => setTimeout(check, 300);
+      // After a rotation or any size change, iPhone Safari can keep showing
+      // the map's old drawing surface stretched to the new shape even though
+      // every size reads correct. So once the screen has settled, rebuild the
+      // surface outright (setting the pixel ratio re-creates the canvas
+      // buffer) instead of trusting the sizes.
+      function rebuild() {
+        for (const map of maps) {
+          if (map._removed) continue;
+          try {
+            map.resize();
+            map.setPixelRatio(map.getPixelRatio());
+            map.triggerRepaint();
+          } catch (e) {}
+        }
+      }
+      let timers = [];
+      const soon = () => {
+        timers.forEach(clearTimeout);
+        timers = [300, 900, 2000].map((ms) => setTimeout(() => { check(); rebuild(); }, ms));
+      };
       window.addEventListener('resize', soon);
       window.addEventListener('orientationchange', soon);
+      if (screen.orientation) screen.orientation.addEventListener('change', soon);
       document.addEventListener('visibilitychange', soon);
+      window.addEventListener('pageshow', soon);
       if (window.visualViewport) window.visualViewport.addEventListener('resize', soon);
     })(0);
   </script>

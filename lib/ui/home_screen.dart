@@ -17,6 +17,7 @@ import '../nav/nav_engine.dart';
 import '../offline/map_style.dart';
 import '../routing/route_model.dart';
 import '../routing/tolls.dart';
+import '../routing/traffic.dart';
 import '../search/place.dart';
 import 'format.dart';
 import 'map_kit.dart';
@@ -57,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<ArahRoute> _routes = [];
   List<TollEstimate?> _tolls = [];
   int _sel = 0;
+  bool _picked = false; // the user chose a route themselves
   bool _routing = false;
   String? _routeError;
   bool _routeOffline = false;
@@ -144,6 +146,23 @@ class _HomeScreenState extends State<HomeScreen> {
     await _drawSelection();
     final fix = context.appRead.location.last;
     if (fix != null) _onFix(fix);
+  }
+
+  /// Live traffic times for the routes on screen; then the fastest one with
+  /// today's traffic is chosen, unless the user already picked one.
+  Future<void> _addTraffic(List<ArahRoute> routes) async {
+    final times = await Future.wait([for (final r in routes) TrafficEta.along(r.points)]);
+    if (!mounted || !identical(routes, _routes)) return;
+    setState(() {
+      for (var i = 0; i < routes.length; i++) {
+        final t = times[i];
+        if (t == null) continue;
+        routes[i].liveS = t.liveS;
+        routes[i].trafficDelayS = t.delayS;
+      }
+      if (!_picked) _sel = fastestRoute(routes);
+    });
+    await _drawSelection();
   }
 
   Future<void> _drawReports() async {
@@ -255,10 +274,12 @@ class _HomeScreenState extends State<HomeScreen> {
         _routes = r.routes;
         _tolls = [for (final rt in r.routes) t?.estimate(rt, app.settings.mode)];
         _sel = 0;
+        _picked = false;
         _routing = false;
         _routeOffline = r.usedOffline;
       });
       await _drawSelection();
+      if (!r.usedOffline) _addTraffic(r.routes);
       _following = false;
       _map?.animateCamera(fitPoints([for (final rt in _routes) ...rt.points], top: 120, bottom: 420));
     } on RoutingException catch (e) {
@@ -446,7 +467,10 @@ class _HomeScreenState extends State<HomeScreen> {
             error: _routeError,
             offline: _routeOffline,
             onSelect: (i) {
-              setState(() => _sel = i);
+              setState(() {
+                _sel = i;
+                _picked = true;
+              });
               _drawSelection();
             },
             onStart: _startNav,
@@ -488,7 +512,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (layerId == 'arah-route-alt' || layerId == 'arah-route') {
                       final i = int.tryParse(id);
                       if (i != null && i < _routes.length) {
-                        setState(() => _sel = i);
+                        setState(() {
+                          _sel = i;
+                          _picked = true;
+                        });
                         _drawSelection();
                       }
                     }
@@ -503,7 +530,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 compassEnabled: true,
                 compassViewPosition: CompassViewPosition.topRight,
                 compassViewMargins: const Point(16, 190),
+                // No (i) on the map: the credits are in Settings → About.
                 attributionButtonPosition: AttributionButtonPosition.bottomLeft,
+                attributionButtonMargins: const Point(-400, -400),
                 onMapLongClick: _longPress,
               ),
             ),
@@ -965,7 +994,8 @@ class _RoutePreview extends StatelessWidget {
     final app = context.app;
     final s = app.settings;
     final theme = Theme.of(context);
-    final fastest = routes.isEmpty ? 0.0 : routes.map((r) => r.durationS).reduce((a, b) => a < b ? a : b);
+    final best = fastestRoute(routes);
+    final fastest = routes.isEmpty ? 0.0 : routes[best].etaS;
 
     return _Panel(
       child: Column(
@@ -1071,8 +1101,8 @@ class _RoutePreview extends StatelessWidget {
                 itemBuilder: (_, i) {
                   final r = routes[i];
                   final sel = i == selected;
-                  final extra = r.durationS - fastest;
-                  final tag = i == 0
+                  final extra = r.etaS - fastest;
+                  final tag = i == best
                       ? context.tr('Terpantas', 'Fastest')
                       : extra < 60
                       ? context.tr('Hampir sama', 'About the same')
@@ -1095,7 +1125,7 @@ class _RoutePreview extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            fmtDuration(r.durationS, app.lang),
+                            fmtDuration(r.etaS, app.lang),
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w900,
@@ -1119,7 +1149,7 @@ class _RoutePreview extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              if (i == 0)
+                              if (i == best)
                                 Container(
                                   margin: const EdgeInsets.only(top: 3),
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -1145,6 +1175,18 @@ class _RoutePreview extends StatelessWidget {
                                 )
                               else
                                 Text(tag, style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w800)),
+                              if (r.trafficDelayS >= 120) ...[
+                                const SizedBox(width: 6),
+                                Icon(Icons.traffic_rounded, size: 15, color: trafficColor(r.trafficDelayS, r.etaS)),
+                                Text(
+                                  '+${(r.trafficDelayS / 60).round()}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w900,
+                                    color: trafficColor(r.trafficDelayS, r.etaS),
+                                  ),
+                                ),
+                              ],
                               if (r.hasToll && (i >= tolls.length || tolls[i] == null || tolls[i]!.isEmpty)) ...[
                                 const SizedBox(width: 6),
                                 const Icon(Icons.toll, size: 16),
@@ -1278,7 +1320,12 @@ class _RouteInfo extends StatelessWidget {
     final cams = camList.where((c) => c.camera.verified).length;
     final unverified = camList.length - cams;
     final parts = <String>[
-      '${context.tr('Tiba', 'Arrive')} ${fmtEta(route.durationS)}',
+      '${context.tr('Tiba', 'Arrive')} ${fmtEta(route.etaS)}',
+      if (route.trafficDelayS >= 120)
+        context.tr(
+          '+${(route.trafficDelayS / 60).round()} min sebab trafik',
+          '+${(route.trafficDelayS / 60).round()} min for traffic',
+        ),
       if (route.hasToll && (toll == null || toll!.isEmpty))
         context.tr('Ada tol (harga tidak diketahui)', 'Has tolls (price unknown)'),
       if (route.hasFerry) context.tr('Ada feri', 'Has ferry'),
@@ -1338,6 +1385,7 @@ class _RouteInfo extends StatelessWidget {
     if (p.startsWith(context.tr('tiba', 'arrive').toLowerCase())) return Icons.schedule_rounded;
     if (p.contains(context.tr('kamera', 'camera'))) return Icons.photo_camera_rounded;
     if (p.contains(context.tr('feri', 'ferry'))) return Icons.directions_boat_rounded;
+    if (p.contains(context.tr('trafik', 'traffic'))) return Icons.traffic_rounded;
     if (p.contains(context.tr('tol', 'toll'))) return Icons.toll_rounded;
     if (p.contains(context.tr('luar talian', 'offline'))) return Icons.cloud_off_rounded;
     return Icons.campaign_rounded;

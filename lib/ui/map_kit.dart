@@ -29,6 +29,11 @@ IconData reportIcon(ReportKind k) => switch (k) {
 
 Color reportColor(ReportKind k) => ArahColors.report[k.name]!;
 
+/// Orange for some traffic, red when it adds a third or more to the trip;
+/// the same colours as the jams on the map, a shade darker to read as text.
+Color trafficColor(double delayS, double totalS) =>
+    totalS > 0 && delayS / totalS >= 0.3 ? const Color(0xFFD9383E) : const Color(0xFFD9741A);
+
 IconData turnIcon(Maneuver m) => switch (m.turn) {
   Turn.start || Turn.startLeft || Turn.startRight => Icons.navigation,
   Turn.destination || Turn.destinationLeft || Turn.destinationRight => Icons.flag,

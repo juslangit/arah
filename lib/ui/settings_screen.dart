@@ -230,7 +230,9 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             title: Text('Arah ${ArahConfig.appVersion}'),
             subtitle: const Text(
-              'Map data © OpenStreetMap contributors (ODbL). Tiles: OpenFreeMap, Protomaps. '
+              'Map data © OpenStreetMap contributors (ODbL). Tiles: OpenFreeMap © OpenMapTiles, Protomaps. '
+              'Traffic © TomTom. Satellite imagery © Esri, Maxar, Earthstar Geographics. '
+              'Elevation: Mapzen, AWS Terrain Tiles. '
               'Routing: Valhalla (FOSSGIS). Search: Photon (Komoot). Map engine: MapLibre.',
             ),
             onTap: () =>

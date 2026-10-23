@@ -178,8 +178,9 @@ class NavEngine {
       if (thenGap <= t.thenWithinM) thenIdx = next + 1;
     }
 
-    // 6. Remaining time: the route's own estimate, scaled by distance left.
-    final remainingS = route.distanceM > 0 ? route.durationS * (remaining / cum.last.clamp(1, double.infinity)) : 0.0;
+    // 6. Remaining time: the route's own estimate (live traffic when known),
+    // scaled by distance left.
+    final remainingS = route.distanceM > 0 ? route.remainingS(remaining) : 0.0;
 
     // Bearing: follow the road when moving on it, else the GPS heading.
     double bearing = _lastBearing;

@@ -20,6 +20,7 @@ import '../nav/phrases.dart';
 import '../nav/voice_planner.dart';
 import '../reports/reports.dart';
 import '../routing/route_model.dart';
+import '../routing/traffic.dart';
 import '../search/place.dart';
 import 'format.dart';
 import 'lanes.dart';
@@ -60,6 +61,7 @@ class _NavScreenState extends State<NavScreen> {
   bool _overview = false;
   DateTime _lastTouch = DateTime.now();
   Timer? _recenterTimer;
+  Timer? _trafficTimer;
 
   bool _rerouting = false;
   int _rerouteCount = 0;
@@ -90,6 +92,8 @@ class _NavScreenState extends State<NavScreen> {
     WakelockPlus.enable().catchError((_) {});
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     WidgetsBinding.instance.addPostFrameCallback((_) => _startGps());
+    // Time left follows live traffic: checked again every 3 minutes.
+    _trafficTimer = Timer.periodic(const Duration(minutes: 3), (_) => _refreshTraffic());
     _recenterTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       // Google Maps behaviour: back to following 10 s after the last touch.
       if (!_following && !_overview && DateTime.now().difference(_lastTouch) > const Duration(seconds: 10)) {
@@ -109,6 +113,27 @@ class _NavScreenState extends State<NavScreen> {
     _speedCams = st.cameraAlerts ? (app.cameras?.along(r, unverified: st.unverifiedCameras) ?? const []) : const [];
     _camAhead = null;
     _drawCameras();
+    // A new route (reroute) has no traffic time yet.
+    if (r.liveS == null) WidgetsBinding.instance.addPostFrameCallback((_) => _refreshTraffic());
+  }
+
+  /// Live traffic time from here to the end of the route.
+  Future<void> _refreshTraffic() async {
+    if (!mounted || !context.appRead.online) return;
+    final r = _route;
+    final from = _u?.travelledM ?? 0;
+    final cum = r.cumDist;
+    var i = 0;
+    while (i < cum.length - 1 && cum[i] < from) {
+      i++;
+    }
+    final t = await TrafficEta.along([if (_u != null) _u!.position, ...r.points.sublist(i)]);
+    if (!mounted || t == null || !identical(r, _route)) return;
+    setState(() {
+      r.liveS = t.liveS;
+      r.liveFromM = from;
+      if (from == 0) r.trafficDelayS = t.delayS;
+    });
   }
 
   void _drawCameras() {
@@ -199,6 +224,7 @@ class _NavScreenState extends State<NavScreen> {
     _puck.dispose();
     _sub?.cancel();
     _recenterTimer?.cancel();
+    _trafficTimer?.cancel();
     _askTimer?.cancel();
     WakelockPlus.disable().catchError((_) {});
     context.appRead.speech.stop();
@@ -491,7 +517,8 @@ class _NavScreenState extends State<NavScreen> {
                 myLocationRenderMode: MyLocationRenderMode.gps,
                 compassEnabled: false,
                 attributionButtonPosition: AttributionButtonPosition.bottomLeft,
-                attributionButtonMargins: Point(8, 120 + pad.bottom),
+                // No (i) on the map: the credits are in Settings → About.
+                attributionButtonMargins: const Point(-400, -400),
               ),
             ),
 

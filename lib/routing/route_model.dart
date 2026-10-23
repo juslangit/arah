@@ -150,6 +150,27 @@ class ArahRoute {
   /// filled in afterwards from the offline road network, when a pack is there.
   List<int> speedLimits;
 
+  /// Live traffic (TomTom), when known: seconds from [liveFromM] metres along
+  /// the route to the end with today's traffic, and the clear-road time and
+  /// delay for the whole route as first measured.
+  double? liveS;
+  double liveFromM = 0;
+  double trafficDelayS = 0;
+
+  /// Best time estimate for the whole route: live traffic when known.
+  double get etaS => liveS != null && liveFromM == 0 ? liveS! : durationS;
+
+  /// Seconds to the end from [remainingM] metres before it.
+  double remainingS(double remainingM) {
+    final total = cumDist.isEmpty ? distanceM : cumDist.last;
+    if (total <= 0) return 0;
+    final live = liveS;
+    if (live != null && total - liveFromM > 0) {
+      return live * (remainingM / (total - liveFromM)).clamp(0, 1.5);
+    }
+    return durationS * (remainingM / total);
+  }
+
   /// Lazily computed cumulative distance per point.
   late final List<double> cumDist = cumulativeDistances(points);
 
@@ -194,4 +215,13 @@ class RoutingException implements Exception {
   const RoutingException(this.message, {this.busy = false});
   @override
   String toString() => 'RoutingException: $message';
+}
+
+/// Index of the quickest route, counting live traffic where known.
+int fastestRoute(List<ArahRoute> routes) {
+  var best = 0;
+  for (var i = 1; i < routes.length; i++) {
+    if (routes[i].etaS < routes[best].etaS) best = i;
+  }
+  return best;
 }
