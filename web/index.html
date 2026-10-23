@@ -90,9 +90,56 @@
             }
             const box = map.getContainer();
             if (Math.abs(box.clientWidth - c.clientWidth) > 1 || Math.abs(box.clientHeight - c.clientHeight) > 1) map.resize();
+            // The drawing's shape must match the shape on screen; if it
+            // doesn't, the map shows stretched. Redraw it at the screen shape.
+            const r = c.getBoundingClientRect();
+            if (r.width > 0 && r.height > 0 && c.width > 0 && c.height > 0 &&
+                Math.abs((c.height / c.width) / (r.height / r.width) - 1) > 0.03) {
+              fixes++;
+              map.resize();
+            }
           } catch (e) {}
         }
       }
+      let fixes = 0;
+      // Hidden size readout for chasing the stretch on a real iPhone: tap the
+      // (i) button three times quickly to show or hide it.
+      let taps = [], panel = null;
+      function readout() {
+        const out = ['window ' + innerWidth + 'x' + innerHeight + ' dpr ' + devicePixelRatio +
+          (window.visualViewport ? ' vv ' + Math.round(visualViewport.width) + 'x' + Math.round(visualViewport.height) + ' s' + visualViewport.scale.toFixed(2) : '') +
+          ' standalone ' + !!navigator.standalone + ' fixes ' + fixes];
+        for (const map of maps) {
+          try {
+            const c = map.getCanvas(), b = map.getContainer(), r = c.getBoundingClientRect();
+            const gl = map.painter && map.painter.context && map.painter.context.gl;
+            const tr = [];
+            for (let e = b; e && e !== document.documentElement; e = e.parentElement) {
+              const s = getComputedStyle(e).transform;
+              if (s && s !== 'none' && !/^matrix\(1, 0, 0, 1,/.test(s)) tr.push(e.tagName.toLowerCase() + ' ' + s);
+            }
+            out.push('map box ' + b.clientWidth + 'x' + b.clientHeight + ' css ' + c.clientWidth + 'x' + c.clientHeight +
+              ' rect ' + Math.round(r.width) + 'x' + Math.round(r.height) + ' attr ' + c.width + 'x' + c.height +
+              (gl ? ' buf ' + gl.drawingBufferWidth + 'x' + gl.drawingBufferHeight + (gl.isContextLost() ? ' LOST' : '') : ' nogl') +
+              ' pr ' + map.getPixelRatio() + (tr.length ? '\n  ' + tr.join('\n  ') : ''));
+          } catch (e) { out.push('map ? ' + e.message); }
+        }
+        panel.textContent = out.join('\n');
+      }
+      document.addEventListener('click', (ev) => {
+        if (!ev.target.closest || !ev.target.closest('.maplibregl-ctrl-attrib')) return;
+        const now = Date.now();
+        taps = taps.filter((t) => now - t < 1500).concat(now);
+        if (taps.length < 3) return;
+        taps = [];
+        if (panel) { clearInterval(panel.timer); panel.remove(); panel = null; return; }
+        panel = document.createElement('pre');
+        panel.style.cssText = 'position:fixed;left:8px;right:8px;top:calc(env(safe-area-inset-top) + 8px);z-index:99999;margin:0;padding:10px;' +
+          'background:rgba(0,0,0,.8);color:#fff;font:11px/1.4 ui-monospace,Menlo,monospace;white-space:pre-wrap;border-radius:12px;pointer-events:none';
+        document.body.appendChild(panel);
+        readout();
+        panel.timer = setInterval(readout, 500);
+      }, true);
       setInterval(check, 1500);
       const soon = () => setTimeout(check, 300);
       window.addEventListener('resize', soon);
